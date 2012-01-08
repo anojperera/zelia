@@ -168,6 +168,21 @@
 /* macros */
 #define Z_SHEET(obj) ((zSheet*) obj->z_gsheet_child)
 
+#define Z_CHECK_OBJ(obj) \
+    if(!obj) \
+	return 1
+
+#define Z_CHECK_OBJ_PTR(obj) \
+    if(!obj) \
+	return NULL
+
+#define Z_CHECK_OBJ_DOUBLE(obj) \
+    if(!obj) \
+	return 0.0
+
+#define Z_CHECK_OBJ_VOID(obj) \
+    if(!obj) \
+	return
 
 /* error messages */
 #define Z_ERROR_PANGO_LAYOUT "Unable to create pango layout"
