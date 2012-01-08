@@ -23,8 +23,8 @@ extern "C" {
 
     struct _zGeneric
     {
-	zDevice** z_gdev;		/* primary device */
-	void* z_gsheet_child;		/* child sheet object */
+	zDevice* z_gdev;		/* primary device */
+	void* z_child;			/* child sheet object */
 		
 	cairo_t* z_gcairo_dev;		/* cairo device */
 
@@ -35,44 +35,46 @@ extern "C" {
 	zLineColour z_gline_color_ix;	/* line color index */
 	zLineWeights z_gline_weight;	/* line weight */
 	zLineTypes z_gltype;		/* line type */
+	unsigned int z_int_flg;		/* internal flag */
     };
 
     /* create and delete object */
-    zGeneric* zGeneric_Create();
-    void zGeneric_Delete(zGeneric** obj);
+    zGeneric* zGeneric_New(zGeneric* obj);
+    void zGeneric_Delete(zGeneric* obj);
 
-    /* set device */
-    void zGeneric_Set_Device(zGeneric* obj, zDevice** var);
-    zDevice* zGeneric_Get_Device(zGeneric* obj);
+    /* Create generic device context */
+    int zGeneric_Create_Dev_Context(zGeneric* obj);
 
-    /* set line colour ix */
-    void zGeneric_Set_LineColour(zGeneric* obj,
+    /* Property Methods */
+    /***************************************************************/
+
+    /* Set and get device */
+    inline int zGeneric_Set_Device(zGeneric* obj, zDevice* var);
+    inline zDevice* zGeneric_Get_Device(zGeneric* obj);
+
+    /* Set and get line colour ix */
+    inline int zGeneric_Set_LineColour(zGeneric* obj,
 				 zLineColour var);
-    zLineColour zGeneric_Get_LineColour(zGeneric* obj);
+    inline zLineColour zGeneric_Get_LineColour(zGeneric* obj);
 
-    /* set line weight */
-    void zGeneric_Set_LineWeight(zGeneric* obj,
+    /* Set and line weight */
+    inline int zGeneric_Set_LineWeight(zGeneric* obj,
 				 zLineWeights var);
-    zLineWeights zGeneric_Get_LineWeight(zGeneric* obj);
+    inline zLineWeights zGeneric_Get_LineWeight(zGeneric* obj);
 
-    /* set default device context */
-    void zGeneric_Set_Default_Dev_Context(zGeneric* obj);
-
-    /* create generic device context */
-    void zGeneric_Create_Dev_Context(zGeneric* obj);
+    /* Set default device context */
+    inline int zGeneric_Set_Default_Dev_Context(zGeneric* obj);
 
     /* set defaults */
-    void zGeneric_Set_Defauts(zGeneric* obj);
+    inline int zGeneric_Set_Defauts(zGeneric* obj);
 	
     /* get device context */
-    cairo_t** zGeneric_Get_Dev_Context(zGeneric* obj);
+    inline cairo_t* zGeneric_Get_Dev_Context(zGeneric* obj);
 	
     /* set and get line type */
-    void zGeneric_Set_LintType(zGeneric* obj, zLineTypes var);
-    zLineTypes zGeneric_Get_LineType(zGeneric* obj);
+    inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var);
+    inline zLineTypes zGeneric_Get_LineType(zGeneric* obj);
 
-    /* private functions */
-    inline void zgeneric_set_lineweight(zGeneric** obj);
     
 #ifdef __cplusplus
 }
