@@ -241,8 +241,7 @@ inline cairo_t* zDevice_Get_Context(zDevice* obj)
     /* check for NULL pointer */
     Z_CHECK_OBJ_PTR(obj);
 
-    /* check for device context */
-    Z_CHECK_OBJ_PTR(obj->z_device);
+    zdevice_create_context(obj);
     return obj->z_device;
 }
 
