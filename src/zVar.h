@@ -164,10 +164,11 @@
 #define Z_LINE_WEIGHT7 1.75
 #define Z_LINE_WEIGHT8 2.0
 
-
-/* macros */
+/* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_gsheet_child)
 
+
+/* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
     if(!obj) \
 	return 1
