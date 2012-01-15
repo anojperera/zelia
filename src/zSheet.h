@@ -27,17 +27,19 @@ extern "C" {
 
     struct _zSheet
     {
-	zGeneric* z_sgeneric;			/* inherited generic class */
-
-	char* z_slogo_path;			/* logo path */
-	zBrd_Attrib** z_sbrd_attrib;		/* border attributes */
+	zGeneric z_sgeneric;			/* inherited generic class */
+	unsigned int z_int_flg;			/* internal flag */
+	char z_slogo_path[256];			/* logo path */
+	zBrd_Attrib* z_sbrd_attrib;		/* border attributes */
 	int z_sgrid_flg;			/* grid flag */
 	int z_ssafe_flg;			/* flag to indicate
 						   border created */
 	
 	double z_x_attrib[Z_MAX_ATTRIB];	/* maximum number of
 						   attributes */
-	double z_y_attrib[Z_MAX_ATTRIB];		
+	double z_y_attrib[Z_MAX_ATTRIB];
+	zgeneric_fptr z_draw_func;		/* draw function */
+	void* z_child;				/* child pointer */
     };
 		
     struct _zBrd_Attrib
@@ -62,52 +64,28 @@ extern "C" {
     };
 
     /* constructor and destructor */
-    zGeneric* zSheet_Create();
-    void zSheet_Delete(zSheet** obj);
+    zGeneric* zSheet_Create(zSheet* obj);
+    void zSheet_Delete(zSheet* obj);
 
     /* set and get device */
     /* void zSheet_Set_Device(zSheet* obj, zDevice** var); */
     /* zDevice* zSheet_Get_Device(zSheet* obj); */
 
     /* set and get border attributes */
-    void zSheet_Set_Attributes(zSheet* obj,
-			       zBrd_Attrib** var);
-    zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj);
+    inline int zSheet_Set_Attributes(zSheet* obj,
+			       zBrd_Attrib* var);
+    inline zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj);
 
     /* set and get Grid Flag */
-    void zSheet_Set_GridFlag(zSheet* obj, int var);
-    int zSheet_Get_GridFlag(zSheet* obj);
+    inline int zSheet_Set_GridFlag(zSheet* obj, int var);
+    inline int zSheet_Get_GridFlag(zSheet* obj);
 
     /* set and get logo path */
-    void zSheet_Set_LogoPath(zSheet* obj, const char* var);
-    char* zSheet_Get_LogoPath(zSheet* obj);
-	
+    inline int zSheet_Set_LogoPath(zSheet* obj, const char* var);
+    inline char* zSheet_Get_LogoPath(zSheet* obj);
+
     /* creates border */
-    void zSheet_Create_Border(zSheet* obj);
-    
-    /* private functions */
-    inline int zsheet_draw_oborder(zSheet** obj);
-    inline int zsheet_draw_grid(zSheet** obj);
-    inline int zsheet_draw_top_revbox(zSheet** obj);
-    inline int zsheet_draw_decal(zSheet** obj);
-
-    inline int zsheet_draw_matbox(zSheet** obj);
-    inline int zsheet_draw_projn(zSheet** obj);
-
-    /* add drawing header details */
-    inline int zsheet_add_attrib_headers(zSheet** obj);
-
-    /* paints the logo into current context */
-    inline int zsheet_paint_logo(zSheet** obj);
-
-    /* constructs wozair address from
-       constants */
-    inline char* zsheet_wozair_address();
-
-    /* add drawing attributes */
-    inline int zsheet_add_attribs(zSheet** obj);
-    
-
+    int zSheet_Create_Border(zSheet* obj);
 #ifdef __cplusplus
 }
 #endif

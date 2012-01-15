@@ -1,181 +1,169 @@
 /* implementation of sheet object
    Sat Oct 16 23:50:14 BST 2010 */
-
 #include "zSheet.h"
 
 /* token for cairo stroke in each
    function */
 /* #define Z_SHEET_STROKE_FUNCTION */
+    
+/* private functions */
+static int zsheet_draw_oborder(zSheet* obj);
+static int zsheet_draw_grid(zSheet* obj);
+static int zsheet_draw_top_revbox(zSheet* obj);
+static int zsheet_draw_decal(zSheet* obj);
+
+static int zsheet_draw_matbox(zSheet* obj);
+static int zsheet_draw_projn(zSheet* obj);
+
+/* add drawing header details */
+static int zsheet_add_attrib_headers(zSheet* obj);
+
+/* paints the logo into current context */
+static int zsheet_paint_logo(zSheet* obj);
+
+/* constructs wozair address from
+   constants */
+static char* zsheet_wozair_address();
+
+/* add drawing attributes */
+static int zsheet_add_attribs(zSheet** obj);
+
+/*==================================================================*/
+/* draw function */
+static int _zsheet_draw_function(zGeneric* obj);
+
 
 /* create generic sheet object */
-zGeneric* zSheet_Create()
+zGeneric* zSheet_Create(zSheet* obj)
 {
-    /* declare temporary object */
-    zSheet* tmp;
-
-    /* create object */
-    tmp = (zSheet*) malloc(sizeof(zSheet));
-
-    /* create generic object */
-    tmp->z_sgeneric = zGeneric_Create();
-
-    zGeneric_Set_LineWeight(tmp->z_sgeneric,
-			    zLWeight2);
-    /* check for NULL pointer */
-    if(tmp->z_sgeneric == NULL)
+    /* check for object, if not create it */
+    if(obj == NULL)
 	{
-	    free(tmp);
-	    return NULL;
+	    obj = (zGeneric*) malloc(sizeof(zGeneric));
+	    Z_CHECK_OBJ_PTR(obj);
+	    obj->z_int_flg = 1;
 	}
+    else
+	obj->z_int_flg = 0;
 
+
+    /* create generic object and check for function call */
+    Z_CHECK_OBJ_PTR(zGeneric_Create(&obj->z_sgeneric));
+
+    zGeneric_Set_LineWeight(obj->z_sgeneric,
+			    zLWeight2);
     /* set properties */
 
-    tmp->z_slogo_path = NULL;
-    tmp->z_sbrd_attrib = NULL;
-    tmp->z_sgrid_flg = 0;
-    tmp->z_ssafe_flg = 0;
-
+    obj->-z_slogo_path = NULL;
+    obj->z_sbrd_attrib = NULL;
+    obj->z_sgrid_flg = 0;
+    obj->z_ssafe_flg = 0;
+    obj->z_child = NULL;
+    obj->z_draw_func = _zsheet_draw_function;
     /* initialise array coordinates */
     int i = 0;
     for(i=0; i<Z_MAX_ATTRIB; i++)
 	{
-	    tmp->z_x_attrib[i] = 0;
-	    tmp->z_y_attrib[i] = 0;
+	    obj->z_x_attrib[i] = 0;
+	    obj->z_y_attrib[i] = 0;
 	}
     
     /* assign child pointer to base object */
-    tmp->z_sgeneric->z_gsheet_child = tmp;
+    obj->z_sgeneric.z_gsheet_child = (void*) obj;
     
-    return tmp->z_sgeneric;
+    return &obj->z_sgeneric;
 
 }
 
 /* delete sheet object */
-void zSheet_Delete(zSheet** obj)
+void zSheet_Delete(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
-	return;
+    Z_CHECK_OBJ_VOID(obj);
 
     /* destroy parent object */
-    zGeneric_Delete(&(*obj)->z_sgeneric);
+    zGeneric_Delete(obj->z_sgeneric);
 
-    /* delete logo path */
-    if((*obj)->z_slogo_path)
-	{
-	    free((*obj)->z_slogo_path);
-	    (*obj)->z_slogo_path = NULL;
-	}
-
-    /* delete border attributes */
-    if((*obj)->z_sbrd_attrib != NULL &&
-       *(*obj)->z_sbrd_attrib != NULL)
-	{
-	    free(*(*obj)->z_sbrd_attrib);
-	    *(*obj)->z_sbrd_attrib = NULL;
-	}
-
-    /* finally delete object it self */
-    free(*obj);
-    *obj = NULL;
+    /* set border attributes pointer to NULL */
+    obj->z_sbrd_attrib = NULL;
+    
+    /* delete object if it was internally created */
+    if(obj->z_int_flg)
+	free(*obj);
 }
 
 
 /* set attributes */
-void zSheet_Set_Attributes(zSheet* obj,
-			   zBrd_Attrib** var)
+inline int zSheet_Set_Attributes(zSheet* obj,
+			   zBrd_Attrib* var)
 {
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return;
-
-    /* check parameter */
-    if(var == NULL || *var == NULL)
-	return;
-
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(obj);
     obj->z_sbrd_attrib = var;
+    return 0;
 }
 
 /* get attributes */
-zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj)
+inline zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL)
-	return NULL;
-    else
-	return *obj->z_sbrd_attrib;
+    Z_CHECK_OBJ_PTR(obj);
+    return *obj->z_sbrd_attrib;
 }
 
 /* set grid flag */
-void zSheet_Set_GridFlag(zSheet* obj, int var)
+inline int  zSheet_Set_GridFlag(zSheet* obj, int var)
 {
     /* check for NULL pointer */
-    if(obj == NULL)
-	return;
-
+    Z_CHECK_OBJ(obj);
     obj->z_sgrid_flg = var;
+    return 0;
 }
 
 /* get grid flag */
-int zSheet_Get_GridFlag(zSheet* obj)
+inline int zSheet_Get_GridFlag(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL)
-	return 0;
-    else
-	return obj->z_sgrid_flg;
+    Z_CHECK_OBJ(obj);
+    return obj->z_sgrid_flg;
 }
 
 /* set logo path */
-void zSheet_Set_LogoPath(zSheet* obj, const char* var)
+inline int zSheet_Set_LogoPath(zSheet* obj, const char* var)
 {
     /* check for NULL pointer */
-    if(obj == NULL)
-	return;
-
-    /* check for var pointer */
-    if(!var)
-	return;
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(var);
 
     /* get length */
     int i = strlen(var) + 1;
 
-    /* if buffer exist delete */
-    if(obj->z_slogo_path)
-	free(obj->z_slogo_path);
-
-    obj->z_slogo_path = (char*) malloc(sizeof(char) * i);
-
     /* copy to buffer */
     strcpy(obj->z_slogo_path, var);
 
-    return;
+    return 0;
 }
 
 /* get logo path */
-char* zSheet_Get_LogoPath(zSheet* obj)
+inline char* zSheet_Get_LogoPath(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL)
-	return NULL;
-    else
-	return obj->z_slogo_path;
+    Z_CHECK_OBJ_PTR(obj);
+    return obj->z_slogo_path;
 }
 
 /* create border */
-void zSheet_Create_Border(zSheet* obj)
+int zSheet_Create_Border(zSheet* obj)
 {
     /* draw border */
     int dec = 0;
 
     /* check for NULL pointer */
-    if(obj == NULL)
-	return;
+    Z_CHECK_OBJ(obj);
     
     /* return if border already drawn */
     if(obj->z_ssafe_flg)
-	return;
+	return 0;
     
     dec += zsheet_draw_oborder(&obj);
     dec += zsheet_draw_grid(&obj);
@@ -196,27 +184,23 @@ void zSheet_Create_Border(zSheet* obj)
 	}	
 
     obj->z_ssafe_flg = 1;
+    return 0;
 }
 
 /* private functions */
-int zsheet_draw_oborder(zSheet** obj)
+static int zsheet_draw_oborder(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL || *obj == NULL)
-	return 0;
+    if(obj == NULL);
 
 
     /* check device context */
-    if(!zGeneric_Get_Device((*obj)->z_sgeneric))
+    if(!zGeneric_Get_Device(&obj->z_sgeneric))
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 
-    /* check for NULL pointer */
-    if(dev == NULL)
-	return 0;
-	
     /* draw outer border */
     const int NUM = 5;
     int i = 0;
@@ -262,21 +246,21 @@ int zsheet_draw_oborder(zSheet** obj)
     X1[5] = X1[0];
     Y1[5] = Y1[0];
 	
-    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		  ConvToPoints(&X[0]),
 		  ConvToPoints(&Y[0]));
 		
     for(i=1; i<NUM; i++)
 	{
-	    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+	    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			  ConvToPoints(&X[i]),
 			  ConvToPoints(&Y[i]));
 	}
 
     
-    if((*obj)->z_sgrid_flg > 0)
+    if(obj->z_sgrid_flg > 0)
 	{
-	    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+	    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			  ConvToPoints(&X1[0]),
 			  ConvToPoints(&Y1[0]));
 		
@@ -284,13 +268,13 @@ int zsheet_draw_oborder(zSheet** obj)
 		{
 		    if(i==3)
 			{
-			    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					  ConvToPoints(&X1[i]),
 					  ConvToPoints(&Y1[i]));
 			}
 		    else
 			{
-			    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					  ConvToPoints(&X1[i]),
 					  ConvToPoints(&Y1[i]));
 			}
@@ -298,29 +282,25 @@ int zsheet_draw_oborder(zSheet** obj)
 	}
 	
 #ifdef Z_SHEET_STROKE_FUNCTION
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 #endif
 	
     return i;
 }
 
 /* draws grid */
-int zsheet_draw_grid(zSheet** obj)
+static int zsheet_draw_grid(zSheet* obj)
 {
     /* check fo NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
-    if(!(*obj)->z_sgrid_flg)
+    if(!obj->z_sgrid_flg)
 	return 0;
     
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 	
-    /* check device context */
-    if(!dev)
-	return 0;	
 
     /* horizontal and vertical number
        grid */
@@ -352,12 +332,12 @@ int zsheet_draw_grid(zSheet** obj)
     char* grd_cord_v = (char*) calloc(2, sizeof(char));
 
     /* set font face */
-    cairo_select_font_face((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_select_font_face(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			   Z_GRD_FONT_STYLE,
 			   CAIRO_FONT_SLANT_NORMAL,
 			   CAIRO_FONT_WEIGHT_NORMAL);
     /* set font size */
-    cairo_set_font_size((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_set_font_size(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			Z_GRD_FONT_SZ);
 
     /* vertical pitch */
@@ -388,7 +368,7 @@ int zsheet_draw_grid(zSheet** obj)
 		    
 
 		    /* grid lines */
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&x),
 				  ConvToPoints(&y));
 		    
@@ -397,24 +377,24 @@ int zsheet_draw_grid(zSheet** obj)
 			{
 			    if(i%DEV)
 				{
-				    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+				    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 						  ConvToPoints(&x1),
 						  ConvToPoints(&y));
 			
 				}
 			    else
 				{
-				    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+				    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 						  ConvToPoints(&x2),
 						  ConvToPoints(&y));					
 				}
 
 			    /* grid reference */
-			    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					  ConvToPoints(&ch_x),
 					  ConvToPoints(&ch_y));
 			    /* display text */
-			    cairo_show_text((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_show_text(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					    grd_cord_v);
 		    			    
 			}
@@ -429,11 +409,11 @@ int zsheet_draw_grid(zSheet** obj)
     ch_y += v_pitch;
     
     /* grid reference */
-    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		  ConvToPoints(&ch_x),
 		  ConvToPoints(&ch_y));
     /* display text */
-    cairo_show_text((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_show_text(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		    grd_cord_v);
     free(grd_cord_v);
     grd_cord_v = NULL;
@@ -472,7 +452,7 @@ int zsheet_draw_grid(zSheet** obj)
 
 		    /* grid lines */
 
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&x),
 				  ConvToPoints(&y));
 		    if(a==0 || x < dev->z_page_width -
@@ -482,7 +462,7 @@ int zsheet_draw_grid(zSheet** obj)
 			       (x < (Z_WOZ_MAIN_REVBOX_WIDTH + Z_DEFAULT_GRID_SZ
 				     + Z_DEFAULT_BORDER_SZ)))
 				{
-				    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+				    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 						  ConvToPoints(&x),
 						  ConvToPoints(&y1));
 			
@@ -491,17 +471,17 @@ int zsheet_draw_grid(zSheet** obj)
 				{
 
 
-				    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+				    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 						  ConvToPoints(&x),
 						  ConvToPoints(&y2));
 
 				}
 			    /* grid reference */
-			    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					  ConvToPoints(&ch_x),
 					  ConvToPoints(&ch_y));
 			    /* display text */
-			    cairo_show_text((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_show_text(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					    grd_cord_v);			    
 			}
 		}
@@ -512,29 +492,24 @@ int zsheet_draw_grid(zSheet** obj)
 	free(grd_cord_v);
 	
 #ifdef Z_SHEET_STROKE_FUNCTION
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 #endif
 	
     return i;
 }
 
 /* draw top revision box */
-int zsheet_draw_top_revbox(zSheet** obj)
+static int zsheet_draw_top_revbox(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 	
-    /* check device context */
-    if(!dev)
-	return 0;
-
     double x, y;
-    if((*obj)->z_sgrid_flg > 0)
+    if(obj->z_sgrid_flg > 0)
 	{
 	    x = Z_DEFAULT_GRID_SZ;
 	    y = Z_DEFAULT_GRID_SZ;
@@ -573,27 +548,27 @@ int zsheet_draw_top_revbox(zSheet** obj)
     X[6] = X[5];
     Y[6] = Y[2];
 
-    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
 		  ConvToPoints(&X[0]),
 		  ConvToPoints(&Y[0]));
     for(i=1; i<NUM; i++)
 	{
 	    if(i==3 || i==5)
 		{
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	    else
 		{
-		    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION	
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
 #endif
 	
     return i;
@@ -601,15 +576,14 @@ int zsheet_draw_top_revbox(zSheet** obj)
 
 
 /* draw decal */
-int zsheet_draw_decal(zSheet** obj)
+static int zsheet_draw_decal(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 	
     /* check device context */
     if(!dev)
@@ -775,12 +749,12 @@ int zsheet_draw_decal(zSheet** obj)
 		case 29:
 		case 31:
 		case 34:
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
 		default:
-		    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
@@ -788,33 +762,29 @@ int zsheet_draw_decal(zSheet** obj)
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
 #endif
 	
     return i;
 }
 
 /* draw material and quantity box */
-int zsheet_draw_matbox(zSheet** obj)
+static int zsheet_draw_matbox(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 
-    if(!dev)
-	return 0;
-    
     const int NUM = 5;
     int i = 0;
     
     double X[NUM], Y[NUM];
     double x, y;
 	
-    if((*obj)->z_sgrid_flg > 0)
+    if(obj->z_sgrid_flg > 0)
 	{
 	    x = Z_DEFAULT_GRID_SZ;
 	    y = Z_DEFAULT_GRID_SZ;
@@ -876,45 +846,40 @@ int zsheet_draw_matbox(zSheet** obj)
 	{
 	    if(i==0 || i==3)
 		{
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	    else
 		{
-		    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION	
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
 #endif
 	
     return i;
 }
 
 /* add drawing header details */
-int zsheet_add_attrib_headers(zSheet** obj)
+static int zsheet_add_attrib_headers(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
-		return 0;
+    if(obj == NULL)
+	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 	
-    /* check device context */
-    if(!dev)
-		return 0;
-
     int attrib_cnt = 0;			/* attrib counter */
     
     PangoFontDescription* z_desp_g;	/* font description generic */
     PangoFontDescription* z_desp_s;	/* font description special */
-    PangoFontDescription* z_desp_c;	 /* font description customer */
+    PangoFontDescription* z_desp_c;	/* font description customer */
     PangoFontDescription* z_desp_w;	/* wozair title font */
     PangoFontDescription* z_desp_a;	/* wozair address font */
     PangoFontDescription* z_desp_m;	/* material and qty */
@@ -932,77 +897,77 @@ int zsheet_add_attrib_headers(zSheet** obj)
 
     /* set font family to default */
     pango_font_description_set_family(z_desp_g,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     pango_font_description_set_family(z_desp_s,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     pango_font_description_set_family(z_desp_c,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     pango_font_description_set_family(z_desp_w,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     pango_font_description_set_family(z_desp_a,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     pango_font_description_set_family(z_desp_m,
-									  Z_GRD_FONT_STYLE);
+				      Z_GRD_FONT_STYLE);
     
     /* set style normal */
     pango_font_description_set_style(z_desp_g,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
     pango_font_description_set_style(z_desp_s,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
     pango_font_description_set_style(z_desp_c,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
     pango_font_description_set_style(z_desp_w,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
     pango_font_description_set_style(z_desp_a,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
     pango_font_description_set_style(z_desp_m,
-									 PANGO_STYLE_NORMAL);
+				     PANGO_STYLE_NORMAL);
 	
     /* set font size */
     pango_font_description_set_size(z_desp_g,
-									PANGO_SCALE*Z_GRD_GENERIC_SZ);
+				    PANGO_SCALE*Z_GRD_GENERIC_SZ);
     pango_font_description_set_size(z_desp_s,
-									PANGO_SCALE*Z_GRD_SPECIAL_SZ);
+				    PANGO_SCALE*Z_GRD_SPECIAL_SZ);
     pango_font_description_set_size(z_desp_c,
-									PANGO_SCALE*Z_GRD_CUSTOMER_SZ);
+				    PANGO_SCALE*Z_GRD_CUSTOMER_SZ);
     pango_font_description_set_size(z_desp_w,
-									PANGO_SCALE*Z_GRD_WOZ_SZ);
+				    PANGO_SCALE*Z_GRD_WOZ_SZ);
     pango_font_description_set_size(z_desp_a,
-									PANGO_SCALE*Z_GRD_WOZ_ADRS_SZ);
+				    PANGO_SCALE*Z_GRD_WOZ_ADRS_SZ);
     pango_font_description_set_size(z_desp_m,
-									PANGO_SCALE*Z_GRD_MAT_SZ);
+				    PANGO_SCALE*Z_GRD_MAT_SZ);
 
     /* set font weight for special font */
     pango_font_description_set_weight(z_desp_g,
-									  PANGO_WEIGHT_LIGHT);
+				      PANGO_WEIGHT_LIGHT);
     pango_font_description_set_weight(z_desp_s,
-									  PANGO_WEIGHT_LIGHT);
+				      PANGO_WEIGHT_LIGHT);
     pango_font_description_set_weight(z_desp_c,
-									  PANGO_WEIGHT_LIGHT);
+				      PANGO_WEIGHT_LIGHT);
     pango_font_description_set_weight(z_desp_w,
-									  PANGO_WEIGHT_NORMAL);
+				      PANGO_WEIGHT_NORMAL);
     pango_font_description_set_weight(z_desp_a,
-									  PANGO_WEIGHT_NORMAL);
+				      PANGO_WEIGHT_NORMAL);
     pango_font_description_set_weight(z_desp_m,
-									  PANGO_WEIGHT_SEMIBOLD);    
+				      PANGO_WEIGHT_SEMIBOLD);    
     /************************************************************/
 
     /* create pango layout for dev context */
     z_pango_layout =
-		pango_cairo_create_layout((*obj)->z_sgeneric->z_gcairo_dev);
+	pango_cairo_create_layout(obj->z_sgeneric->z_gcairo_dev);
 
     /* check for NULL pointer */
     if(!z_pango_layout)
-		{
-			pango_font_description_free(z_desp_g);
-			pango_font_description_free(z_desp_s);
-			pango_font_description_free(z_desp_c);
-			pango_font_description_free(z_desp_w);
-			pango_font_description_free(z_desp_a);
-			pango_font_description_free(z_desp_m);
-			printf("%s\n", Z_ERROR_PANGO_LAYOUT);
-			return 0;
-		}
+	{
+	    pango_font_description_free(z_desp_g);
+	    pango_font_description_free(z_desp_s);
+	    pango_font_description_free(z_desp_c);
+	    pango_font_description_free(z_desp_w);
+	    pango_font_description_free(z_desp_a);
+	    pango_font_description_free(z_desp_m);
+	    printf("%s\n", Z_ERROR_PANGO_LAYOUT);
+	    return 0;
+	}
 
     const int NUM = 26;
     int i = 0;			/* counter */
@@ -1035,9 +1000,9 @@ int zsheet_add_attrib_headers(zSheet** obj)
 
     char* ch = zDevice_Get_PageSizeStr(dev);
     if(ch != NULL)
-		zcCopy(&buff[21], ch);
+	zcCopy(&buff[21], ch);
     else
-		zcCopy(&buff[21], "N/A");
+	zcCopy(&buff[21], "N/A");
 
     zcCopy(&buff[22], Z_BORDER_TXT_WOZ_DES);	
 
@@ -1055,21 +1020,21 @@ int zsheet_add_attrib_headers(zSheet** obj)
     /***********************************************/
     double x, y, adj;
 	
-    if((*obj)->z_sgrid_flg > 0)
-		{
-			x = Z_DEFAULT_GRID_SZ;
-			y = Z_DEFAULT_GRID_SZ;
-		}
+    if(obj->z_sgrid_flg > 0)
+	{
+	    x = Z_DEFAULT_GRID_SZ;
+	    y = Z_DEFAULT_GRID_SZ;
+	}
     else
-		{
-			x = 0;
-			y = 0;
-		}    
+	{
+	    x = 0;
+	    y = 0;
+	}    
 
     adj = Z_WOZ_MAIN_DES_HEIGHT + Z_WOZ_MAIN_CLT_HEIGHT
-		+ Z_WOZ_MAIN_PROJ_HEIGHT + Z_WOZ_MAIN_JOB_HEIGHT
-		+ Z_WOZ_MAIN_PROJN_HEIGHT + 2 *
-		Z_WOZ_MAIN_GEN_HEIGHT;
+	+ Z_WOZ_MAIN_PROJ_HEIGHT + Z_WOZ_MAIN_JOB_HEIGHT
+	+ Z_WOZ_MAIN_PROJN_HEIGHT + 2 *
+	Z_WOZ_MAIN_GEN_HEIGHT;
 	
     /* coordinates */
     /* drawing number top */
@@ -1086,106 +1051,106 @@ int zsheet_add_attrib_headers(zSheet** obj)
 
     /* drawing notes, scale debur and dimensions */
     if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait)
-		{
-			X[3] = Z_DEFAULT_BORDER_SZ + x +
-				Z_BORDER_TXT_LEFT_ADJ2;
+	{
+	    X[3] = Z_DEFAULT_BORDER_SZ + x +
+		Z_BORDER_TXT_LEFT_ADJ2;
 
-			Y[3] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-				- x - Z_WOZ_MAIN_BRD_HEIGHT +
-				Z_WOZ_MAIN_DES_HEIGHT +
-				Z_WOZ_MAIN_CLT_HEIGHT +
-				Z_WOZ_MAIN_PROJ_HEIGHT;
+	    Y[3] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
+		- x - Z_WOZ_MAIN_BRD_HEIGHT +
+		Z_WOZ_MAIN_DES_HEIGHT +
+		Z_WOZ_MAIN_CLT_HEIGHT +
+		Z_WOZ_MAIN_PROJ_HEIGHT;
 
-			X[4] = X[3];
-			Y[4] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-				- x - Z_BORDER_ATTRIB_SCALE_DIST_A4_PORT;
+	    X[4] = X[3];
+	    Y[4] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
+		- x - Z_BORDER_ATTRIB_SCALE_DIST_A4_PORT;
 
-			X[5] = X[3];
-			Y[5] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-				- x - Z_BORDER_ATTRIB_BUR_DIST_A4_PORT;
+	    X[5] = X[3];
+	    Y[5] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
+		- x - Z_BORDER_ATTRIB_BUR_DIST_A4_PORT;
 	    
-			/* material and qty */
-			X[24] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-				- x - Z_BORDER_MAT_BOX_WIDTH +
-				Z_BORDER_TXT_LEFT_ADJ;
-			Y[24] = Z_DEFAULT_BORDER_SZ + y + Z_BORDER_TXT_TOP_ADJ1;
+	    /* material and qty */
+	    X[24] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
+		- x - Z_BORDER_MAT_BOX_WIDTH +
+		Z_BORDER_TXT_LEFT_ADJ;
+	    Y[24] = Z_DEFAULT_BORDER_SZ + y + Z_BORDER_TXT_TOP_ADJ1;
 
-			X[25] = X[24];
-			Y[25] = Y[24] + Z_BORDER_MAT_BOX_HEIGHT;
+	    X[25] = X[24];
+	    Y[25] = Y[24] + Z_BORDER_MAT_BOX_HEIGHT;
 
-		}
+	}
     else
-		{
-			X[3] = X[0] + Z_BORDER_ATTRIB_MM_DIST;
-			Y[3] = Y[0];
+	{
+	    X[3] = X[0] + Z_BORDER_ATTRIB_MM_DIST;
+	    Y[3] = Y[0];
 
-			X[4] = X[0] + Z_BORDER_ATTRIB_SCALE_DIST;
-			Y[4] = Y[0];
+	    X[4] = X[0] + Z_BORDER_ATTRIB_SCALE_DIST;
+	    Y[4] = Y[0];
 
-			X[5] = X[0] + Z_BORDER_ATTRIB_BUR_DIST;
-			Y[5] = Y[0];
+	    X[5] = X[0] + Z_BORDER_ATTRIB_BUR_DIST;
+	    Y[5] = Y[0];
 
-			/* material and qty */
-			X[24] = X[0];
-			Y[24] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-				- y - 2 * Z_BORDER_MAT_BOX_HEIGHT +
-				Z_BORDER_TXT_CLEAR;
+	    /* material and qty */
+	    X[24] = X[0];
+	    Y[24] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
+		- y - 2 * Z_BORDER_MAT_BOX_HEIGHT +
+		Z_BORDER_TXT_CLEAR;
 
-			X[25] = X[24];
-			Y[25] = Y[24] + Z_BORDER_MAT_BOX_HEIGHT;
-			/* - Z_BORDER_TXT_TOP_ADJ1; */
-		}
+	    X[25] = X[24];
+	    Y[25] = Y[24] + Z_BORDER_MAT_BOX_HEIGHT;
+	    /* - Z_BORDER_TXT_TOP_ADJ1; */
+	}
 
     /* drawing number decal */
     X[6] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_PROJ_LEFT +
-		Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_PROJ_LEFT +
+	Z_BORDER_TXT_LEFT_ADJ;
     Y[6] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_HEIGHT +
-		adj + Z_BORDER_TXT_TOP_ADJ;
+	- Z_WOZ_MAIN_BRD_HEIGHT +
+	adj + Z_BORDER_TXT_TOP_ADJ;
 
     /* sheet number */
     X[7] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_SHT_LEFT + 
-		Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_SHT_LEFT + 
+	Z_BORDER_TXT_LEFT_ADJ;
     Y[7] = Y[6];
 
     /* revision number */
     X[8] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_REV_LEFT +
-		Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_REV_LEFT +
+	Z_BORDER_TXT_LEFT_ADJ;
     Y[8] = Y[6];
 
     /* title description */
     X[9] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_WIDTH +
-		Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_BRD_WIDTH +
+	Z_BORDER_TXT_LEFT_ADJ;
     Y[9] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_HEIGHT + Z_BORDER_TXT_TOP_ADJ;
+	- Z_WOZ_MAIN_BRD_HEIGHT + Z_BORDER_TXT_TOP_ADJ;
 
     /* scale */
     X[10] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_PROJ_LEFT + Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_PROJ_LEFT + Z_BORDER_TXT_LEFT_ADJ;
     Y[10] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_HEIGHT + adj - 2 *
-		Z_WOZ_MAIN_GEN_HEIGHT + Z_BORDER_TXT_TOP_ADJ;
+	- Z_WOZ_MAIN_BRD_HEIGHT + adj - 2 *
+	Z_WOZ_MAIN_GEN_HEIGHT + Z_BORDER_TXT_TOP_ADJ;
 
     /* drawn */
     X[11] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_GEN_LEFT + Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_GEN_LEFT + Z_BORDER_TXT_LEFT_ADJ;
     Y[11] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_HEIGHT + Z_WOZ_MAIN_DES_HEIGHT
-		+ Z_WOZ_MAIN_CLT_HEIGHT - Z_BORDER_TXT_TOP_ADJ3;
+	- Z_WOZ_MAIN_BRD_HEIGHT + Z_WOZ_MAIN_DES_HEIGHT
+	+ Z_WOZ_MAIN_CLT_HEIGHT - Z_BORDER_TXT_TOP_ADJ3;
 
     /* drawn date */
     X[12] = X[11];
     Y[12] = Y[11] + Z_WOZ_MAIN_CLT_HEIGHT -
-		Z_BORDER_TXT_TOP_ADJ3;
+	Z_BORDER_TXT_TOP_ADJ3;
 
     /* checked */
     X[13] = X[11];
     Y[13] = Y[12] + Z_WOZ_MAIN_GEN_HEIGHT -
-		Z_BORDER_TXT_TOP_ADJ3;
+	Z_BORDER_TXT_TOP_ADJ3;
 
     /* checked date */
     X[14] = X[11];
@@ -1203,147 +1168,147 @@ int zsheet_add_attrib_headers(zSheet** obj)
 
     /* project description */
     X[17] = dev->z_page_width - Z_DEFAULT_BORDER_SZ -
-		Z_WOZ_MAIN_BRD_WIDTH + Z_BORDER_TXT_LEFT_ADJ;
+	Z_WOZ_MAIN_BRD_WIDTH + Z_BORDER_TXT_LEFT_ADJ;
     Y[17] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_HEIGHT +
-		Z_WOZ_MAIN_DES_HEIGHT + Z_WOZ_MAIN_CLT_HEIGHT
-		+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ3;
+	- Z_WOZ_MAIN_BRD_HEIGHT +
+	Z_WOZ_MAIN_DES_HEIGHT + Z_WOZ_MAIN_CLT_HEIGHT
+	+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ3;
 
     /* job number */
     X[18] = X[17];
     Y[18] = Y[17] + Z_WOZ_MAIN_PROJ_HEIGHT -
-		Z_BORDER_TXT_TOP_ADJ3;
+	Z_BORDER_TXT_TOP_ADJ3;
 
     /* client's p.o */
     X[19] = dev->z_page_width - Z_DEFAULT_BORDER_SZ -
-		Z_WOZ_MAIN_MAIN_CLIENT_LEFT +
-		Z_BORDER_TXT_LEFT_ADJ;
+	Z_WOZ_MAIN_MAIN_CLIENT_LEFT +
+	Z_BORDER_TXT_LEFT_ADJ;
     Y[19] = Y[18];
 
     /* client name */
     X[20] = X[17];
     Y[20] = dev->z_page_height - Z_DEFAULT_BORDER_SZ -
-		Z_WOZ_MAIN_BRD_HEIGHT + Z_WOZ_MAIN_DES_HEIGHT
-		+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ3;
+	Z_WOZ_MAIN_BRD_HEIGHT + Z_WOZ_MAIN_DES_HEIGHT
+	+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ3;
 
     /* page size string */
     X[21] = dev->z_page_width - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_PROJ_LEFT + Z_BORDER_TXT_LEFT_ADJ;
+	- Z_WOZ_MAIN_PROJ_LEFT + Z_BORDER_TXT_LEFT_ADJ;
     Y[21] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- Z_WOZ_MAIN_BRD_BOTTOM - Z_WOZ_MAIN_GEN_HEIGHT
-		+ Z_BORDER_TXT_TOP_ADJ3;
+	- Z_WOZ_MAIN_BRD_BOTTOM - Z_WOZ_MAIN_GEN_HEIGHT
+	+ Z_BORDER_TXT_TOP_ADJ3;
 
     /* wozair */
     X[22] = X[20];
     Y[22] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
-		- x - Z_WOZ_MAIN_BRD_HEIGHT +
-		Z_WOZ_MAIN_DES_HEIGHT +
-		Z_WOZ_MAIN_CLT_HEIGHT + Z_WOZ_MAIN_PROJ_HEIGHT
-		+ Z_WOZ_MAIN_JOB_HEIGHT + Z_BORDER_TXT_TOP_ADJ1;
+	- x - Z_WOZ_MAIN_BRD_HEIGHT +
+	Z_WOZ_MAIN_DES_HEIGHT +
+	Z_WOZ_MAIN_CLT_HEIGHT + Z_WOZ_MAIN_PROJ_HEIGHT
+	+ Z_WOZ_MAIN_JOB_HEIGHT + Z_BORDER_TXT_TOP_ADJ1;
 
     /* address */
     X[23] = X[22];
     Y[23] = Y[22] + Z_BORDER_TXT_TOP_ADJ2 +
-		Z_BORDER_TXT_TOP_ADJ3;
+	Z_BORDER_TXT_TOP_ADJ3;
 
     for(i=0; i<NUM; i++)
+	{
+	    if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
+	       && i>2 && i<6)
 		{
-			if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
-			   && i>2 && i<6)
-				{
 
-					cairo_save((*obj)->z_sgeneric->z_gcairo_dev);
+		    cairo_save(obj->z_sgeneric->z_gcairo_dev);
 
-					cairo_translate((*obj)->z_sgeneric->z_gcairo_dev,
-									ConvToPoints(&X[i]),
-									ConvToPoints(&Y[i]));
-					cairo_rotate((*obj)->z_sgeneric->z_gcairo_dev,
-								 -90 * G_PI / 180);
+		    cairo_translate(obj->z_sgeneric->z_gcairo_dev,
+				    ConvToPoints(&X[i]),
+				    ConvToPoints(&Y[i]));
+		    cairo_rotate(obj->z_sgeneric->z_gcairo_dev,
+				 -90 * G_PI / 180);
 
-					cairo_translate((*obj)->z_sgeneric->z_gcairo_dev,
-									-1 * ConvToPoints(&X[i]),
-									-1 * ConvToPoints(&Y[i]));
-				}
+		    cairo_translate(obj->z_sgeneric->z_gcairo_dev,
+				    -1 * ConvToPoints(&X[i]),
+				    -1 * ConvToPoints(&Y[i]));
+		}
 	    
-			if(i>23)
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_m);
-				}
-			else if(i>22 && i<24)
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_a);
-				}
-			else if(i>21 && i<23)
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_w);
-				}
-			else if(i>19 && i<21)
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_c);
-				}			
-			else if((i>10 && i<20) || (i>20 && i<22))
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_s);
-				}
-			else
-				{
-					pango_layout_set_font_description(z_pango_layout,
-													  z_desp_g);
-				}
+	    if(i>23)
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_m);
+		}
+	    else if(i>22 && i<24)
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_a);
+		}
+	    else if(i>21 && i<23)
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_w);
+		}
+	    else if(i>19 && i<21)
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_c);
+		}			
+	    else if((i>10 && i<20) || (i>20 && i<22))
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_s);
+		}
+	    else
+		{
+		    pango_layout_set_font_description(z_pango_layout,
+						      z_desp_g);
+		}
 					
-			pango_layout_set_text(z_pango_layout, buff[i], -1);
-			cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
-						  ConvToPoints(&X[i]), ConvToPoints(&Y[i]));
+	    pango_layout_set_text(z_pango_layout, buff[i], -1);
+	    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+			  ConvToPoints(&X[i]), ConvToPoints(&Y[i]));
     
-			pango_cairo_update_layout((*obj)->z_sgeneric->z_gcairo_dev,
-									  z_pango_layout);
-			pango_cairo_show_layout((*obj)->z_sgeneric->z_gcairo_dev,
-									z_pango_layout);
+	    pango_cairo_update_layout(obj->z_sgeneric->z_gcairo_dev,
+				      z_pango_layout);
+	    pango_cairo_show_layout(obj->z_sgeneric->z_gcairo_dev,
+				    z_pango_layout);
 
-			if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
-			   && i>2 && i<6)
-				{
-					cairo_restore((*obj)->z_sgeneric->z_gcairo_dev);
-				}
-
-			/* set drawing attribute coordinates */
-			switch(i)
-				{
-				case 3:
-				case 4:
-				case 5:
-					break;
-				case 9:
-					(*obj)->z_x_attrib[attrib_cnt] = X[i];
-					(*obj)->z_y_attrib[attrib_cnt] = Y[i] +
-						Z_BORDER_TXT_TOP_ADJ1;
-					attrib_cnt++;
-					break;
-				case 17:
-				case 20:
-					(*obj)->z_x_attrib[attrib_cnt] = X[i] +
-						Z_BORDER_TXT_LEFT_ADJ4;
-					(*obj)->z_y_attrib[attrib_cnt] = Y[i];
-					attrib_cnt++;					
-					break;
-				case 21:
-				case 22:
-				case 23:
-					break;
-				default:
-					(*obj)->z_x_attrib[attrib_cnt] = X[i];
-					(*obj)->z_y_attrib[attrib_cnt] = Y[i];
-					attrib_cnt++;
-					break;
-				}
+	    if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
+	       && i>2 && i<6)
+		{
+		    cairo_restore(obj->z_sgeneric->z_gcairo_dev);
 		}
 
-    /* cairo_restore((*obj)->z_sgeneric->z_gcairo_dev); */
+	    /* set drawing attribute coordinates */
+	    switch(i)
+		{
+		case 3:
+		case 4:
+		case 5:
+		    break;
+		case 9:
+		    obj->z_x_attrib[attrib_cnt] = X[i];
+		    obj->z_y_attrib[attrib_cnt] = Y[i] +
+			Z_BORDER_TXT_TOP_ADJ1;
+		    attrib_cnt++;
+		    break;
+		case 17:
+		case 20:
+		    obj->z_x_attrib[attrib_cnt] = X[i] +
+			Z_BORDER_TXT_LEFT_ADJ4;
+		    obj->z_y_attrib[attrib_cnt] = Y[i];
+		    attrib_cnt++;					
+		    break;
+		case 21:
+		case 22:
+		case 23:
+		    break;
+		default:
+		    obj->z_x_attrib[attrib_cnt] = X[i];
+		    obj->z_y_attrib[attrib_cnt] = Y[i];
+		    attrib_cnt++;
+		    break;
+		}
+	}
+
+    /* cairo_restore(obj->z_sgeneric->z_gcairo_dev); */
 	
     /* free description */
     pango_font_description_free(z_desp_g);
@@ -1356,26 +1321,21 @@ int zsheet_add_attrib_headers(zSheet** obj)
     g_object_unref(z_pango_layout);
 
     if(buff)
-		free(buff);
+	free(buff);
     
     return 1;
 }
 
 /* draw projection */
-int zsheet_draw_projn(zSheet** obj)
+static int zsheet_draw_projn(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    zDevice* dev = &obj->z_sgeneric;
 	
-    /* check device context */
-    if(!dev)
-	return 0;
-
     const int NUM = 10;
     int i = 0;
     double X[NUM], Y[NUM];
@@ -1436,7 +1396,7 @@ int zsheet_draw_projn(zSheet** obj)
     Y[9] = Y[8];
 
     /* save cairo context */
-    cairo_save((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_save(obj->z_sgeneric->z_gcairo_dev);
 	
     for(i=0; i<NUM; i++)
 	{
@@ -1444,18 +1404,18 @@ int zsheet_draw_projn(zSheet** obj)
 		{
 
 		case 0:
-		    cairo_new_sub_path((*obj)->z_sgeneric->z_gcairo_dev);
+		    cairo_new_sub_path(obj->z_sgeneric->z_gcairo_dev);
 					
-		    cairo_arc((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_arc(obj->z_sgeneric->z_gcairo_dev,
 			      ConvToPoints(&X[i]),
 			      ConvToPoints(&Y[i]),
 			      ConvToPoints(&rad1),
 			      0,
 			      M_PI*180);
 
-		    cairo_new_sub_path((*obj)->z_sgeneric->z_gcairo_dev);
+		    cairo_new_sub_path(obj->z_sgeneric->z_gcairo_dev);
 					
-		    cairo_arc((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_arc(obj->z_sgeneric->z_gcairo_dev,
 			      ConvToPoints(&X[i]),
 			      ConvToPoints(&Y[i]),
 			      ConvToPoints(&rad2),
@@ -1469,20 +1429,20 @@ int zsheet_draw_projn(zSheet** obj)
 										
 		    if(i==6)
 			{
-			    cairo_set_dash((*obj)->z_sgeneric->z_gcairo_dev,
+			    cairo_set_dash(obj->z_sgeneric->z_gcairo_dev,
 					   dashes, NUM_DASHES, 0);
 			}
 					
-		    cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
 		case 5:
-		    cairo_close_path((*obj)->z_sgeneric->z_gcairo_dev);
-		    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+		    cairo_close_path(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
 		    break;
 		default:
-		    cairo_line_to((*obj)->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
@@ -1490,34 +1450,29 @@ int zsheet_draw_projn(zSheet** obj)
 		}
 	}
 
-    cairo_stroke((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
     /* disable dashes */
-    cairo_set_dash((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_set_dash(obj->z_sgeneric->z_gcairo_dev,
 		   dashes,
 		   0,
 		   0);
 
-    cairo_restore((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_restore(obj->z_sgeneric->z_gcairo_dev);
     return i;
 }
 
 /* add logo */
-int zsheet_paint_logo(zSheet** obj)
+static int zsheet_paint_logo(zSheet* obj)
 {
     /* check for NULL pointer */
-    if(obj == NULL ||
-       *obj == NULL)
+    if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
-	
-    /* check device context */
-    if(!dev)
-	return 0;
+    zDevice* dev = &obj->z_sgeneric;
 
     /* check for logo path */
-    if((*obj)->z_slogo_path == NULL)
+    if(obj->z_slogo_path == NULL)
 	return 0;
 
     /* create logo context */
@@ -1529,7 +1484,7 @@ int zsheet_paint_logo(zSheet** obj)
 	- Z_WOZ_MAIN_LOGO_HEIGHT;
 	
     logo_surf =
-	cairo_image_surface_create_from_png((*obj)->z_slogo_path);
+	cairo_image_surface_create_from_png(obj->z_slogo_path);
 
     /* check for NULL pointer */
     if(!logo_surf)
@@ -1539,12 +1494,12 @@ int zsheet_paint_logo(zSheet** obj)
 	}
 
     /* set surface */
-    cairo_set_source_surface((*obj)->z_sgeneric->z_gcairo_dev,
+    cairo_set_source_surface(obj->z_sgeneric->z_gcairo_dev,
     			     logo_surf,
     			     ConvToPoints(&x),
     			     ConvToPoints(&y));
 
-    cairo_paint((*obj)->z_sgeneric->z_gcairo_dev);
+    cairo_paint(obj->z_sgeneric->z_gcairo_dev);
 
     cairo_surface_destroy(logo_surf);
 
@@ -1555,7 +1510,7 @@ int zsheet_paint_logo(zSheet** obj)
 	
 /* constructs wozair address from
    constants */
-char* zsheet_wozair_address()
+static char* zsheet_wozair_address()
 {
     const int NUM = 9;
     char* buff;
@@ -1598,286 +1553,284 @@ char* zsheet_wozair_address()
 }
 
 /* add drawing attributes */
-int zsheet_add_attribs(zSheet** obj)
+static int zsheet_add_attribs(zSheet* obj)
 {
-	/* check for NULL pointer */
-	if(obj == NULL ||
-	   *obj == NULL)
-		return 0;
+    /* check for NULL pointer */
+    if(obj == NULL)
+	return 0;
 
-	/* pointer to under lying device */
-	zDevice* dev = zGeneric_Get_Device((*obj)->z_sgeneric);
+    /* pointer to under lying device */
+    zDevice* dev = &obj->z_sgeneric;
 
-	/* check device context */
-	if(!dev)
-		return 0;
+    /* check for attribute null pointer */
+    /* if(obj->z_sbrd_attrib == NULL || */
+    /*    *obj->z_sbrd_attrib == NULL) */
+    /* 	{ */
+    /* 	    return 0; */
+    /* 	} */
 
-	/* check for attribute null pointer */
-	/* if((*obj)->z_sbrd_attrib == NULL || */
-	/*    *(*obj)->z_sbrd_attrib == NULL) */
-	/* 	{ */
-	/* 	    return 0; */
-	/* 	} */
+    /* obtain pointer to attribute struct */
+    zBrd_Attrib* tmp_attrib = obj->z_sbrd_attrib;
 
-	/* obtain pointer to attribute struct */
-	zBrd_Attrib* tmp_attrib = zSheet_Get_Attributes(*obj);
+    PangoFontDescription* z_desp_g;	/* font description generic */
+    PangoFontDescription* z_desp_s;	/* font description special */
+    PangoFontDescription* z_desp_t;	/* font description title */
 
-	/* check for null pointer */
-	if(!tmp_attrib)
-		return 0;
-
-	PangoFontDescription* z_desp_g;	/* font description generic */
-	PangoFontDescription* z_desp_s;	/* font description special */
-	PangoFontDescription* z_desp_t;	/* font description title */
-
-	PangoLayout* z_pango_layout;	/* main pango layout */
+    PangoLayout* z_pango_layout;	/* main pango layout */
     
-	/* create new description */
-	z_desp_g = pango_font_description_new();
-	z_desp_s = pango_font_description_new();
-	z_desp_t = pango_font_description_new();
+    /* create new description */
+    z_desp_g = pango_font_description_new();
+    z_desp_s = pango_font_description_new();
+    z_desp_t = pango_font_description_new();
 
-	/* set font family to default */
-	pango_font_description_set_family(z_desp_g,
-									  Z_GRD_FONT_STYLE);
-	pango_font_description_set_family(z_desp_s,
-									  Z_GRD_FONT_STYLE);
-	pango_font_description_set_family(z_desp_t,
-									  Z_GRD_FONT_STYLE);
+    /* set font family to default */
+    pango_font_description_set_family(z_desp_g,
+				      Z_GRD_FONT_STYLE);
+    pango_font_description_set_family(z_desp_s,
+				      Z_GRD_FONT_STYLE);
+    pango_font_description_set_family(z_desp_t,
+				      Z_GRD_FONT_STYLE);
 	
-	/* set style normal */
-	pango_font_description_set_style(z_desp_g,
-									 PANGO_STYLE_NORMAL);
-	pango_font_description_set_style(z_desp_s,
-									 PANGO_STYLE_NORMAL);
-	pango_font_description_set_style(z_desp_t,
-									 PANGO_STYLE_NORMAL);
+    /* set style normal */
+    pango_font_description_set_style(z_desp_g,
+				     PANGO_STYLE_NORMAL);
+    pango_font_description_set_style(z_desp_s,
+				     PANGO_STYLE_NORMAL);
+    pango_font_description_set_style(z_desp_t,
+				     PANGO_STYLE_NORMAL);
 
-	/* set font size */
-	pango_font_description_set_size(z_desp_g,
-									PANGO_SCALE*Z_GRD_FONT_SZ);
-	pango_font_description_set_size(z_desp_s,
-									PANGO_SCALE*Z_GRD_SPECIAL2_SZ);
-	pango_font_description_set_size(z_desp_t,
-									PANGO_SCALE*Z_GRD_TITLE_SZ);
+    /* set font size */
+    pango_font_description_set_size(z_desp_g,
+				    PANGO_SCALE*Z_GRD_FONT_SZ);
+    pango_font_description_set_size(z_desp_s,
+				    PANGO_SCALE*Z_GRD_SPECIAL2_SZ);
+    pango_font_description_set_size(z_desp_t,
+				    PANGO_SCALE*Z_GRD_TITLE_SZ);
 
-	/* set font weight for special font */
-	pango_font_description_set_weight(z_desp_g,
-									  PANGO_WEIGHT_LIGHT);
-	pango_font_description_set_weight(z_desp_s,
-									  PANGO_WEIGHT_LIGHT);
-	pango_font_description_set_weight(z_desp_t,
-									  PANGO_WEIGHT_LIGHT);
+    /* set font weight for special font */
+    pango_font_description_set_weight(z_desp_g,
+				      PANGO_WEIGHT_LIGHT);
+    pango_font_description_set_weight(z_desp_s,
+				      PANGO_WEIGHT_LIGHT);
+    pango_font_description_set_weight(z_desp_t,
+				      PANGO_WEIGHT_LIGHT);
 
-	/* create pango layout for dev context */
-	z_pango_layout =
-		pango_cairo_create_layout((*obj)->z_sgeneric->z_gcairo_dev);
+    /* create pango layout for dev context */
+    z_pango_layout =
+	pango_cairo_create_layout(obj->z_sgeneric->z_gcairo_dev);
 
-	/* check for NULL pointer */
-	if(!z_pango_layout)
-		{
-			pango_font_description_free(z_desp_g);
-			pango_font_description_free(z_desp_s);
-			pango_font_description_free(z_desp_t);
-			printf("%s\n", Z_ERROR_PANGO_LAYOUT);
-			return 0;
-		}
+    /* check for NULL pointer */
+    if(!z_pango_layout)
+	{
+	    pango_font_description_free(z_desp_g);
+	    pango_font_description_free(z_desp_s);
+	    pango_font_description_free(z_desp_t);
+	    printf("%s\n", Z_ERROR_PANGO_LAYOUT);
+	    return 0;
+	}
 
-	const int ATTRIB_ARR = 17;
-	/* temporary buffer to assign
-	   attributes */
-	char** buff = (char**) calloc(ATTRIB_ARR,
-								  sizeof(char*));
+    const int ATTRIB_ARR = 17;
+    /* temporary buffer to assign
+       attributes */
+    char** buff = (char**) calloc(ATTRIB_ARR,
+				  sizeof(char*));
 
-	int i = Z_MAX_ATTRIB;
-	int MATCH_ATTRIB[Z_MAX_ATTRIB];
+    int i = Z_MAX_ATTRIB;
+    int MATCH_ATTRIB[Z_MAX_ATTRIB];
     
-	/* drawing number */
-	if(tmp_attrib->z_dwg_num != NULL)
-		buff[0] = tmp_attrib->z_dwg_num;
-	else
-		buff[0] = NULL;
+    /* drawing number */
+    if(tmp_attrib->z_dwg_num != NULL)
+	buff[0] = tmp_attrib->z_dwg_num;
+    else
+	buff[0] = NULL;
     
-	MATCH_ATTRIB[0] = 0;
-	MATCH_ATTRIB[3] = 0;
-	/**************************************/
-	/* sheet number */
-	if(tmp_attrib->z_sht_num != NULL)
-		buff[1] = tmp_attrib->z_sht_num;
-	else
-		buff[1] = NULL;
+    MATCH_ATTRIB[0] = 0;
+    MATCH_ATTRIB[3] = 0;
+    /**************************************/
+    /* sheet number */
+    if(tmp_attrib->z_sht_num != NULL)
+	buff[1] = tmp_attrib->z_sht_num;
+    else
+	buff[1] = NULL;
     
-	MATCH_ATTRIB[1] = 1;
-	MATCH_ATTRIB[4] = 1;
-	/**************************************/
-	/* revision number */
-	if(tmp_attrib->z_rev_num != NULL)
-		buff[2] = tmp_attrib->z_rev_num;
-	else
-		buff[2] = NULL;
+    MATCH_ATTRIB[1] = 1;
+    MATCH_ATTRIB[4] = 1;
+    /**************************************/
+    /* revision number */
+    if(tmp_attrib->z_rev_num != NULL)
+	buff[2] = tmp_attrib->z_rev_num;
+    else
+	buff[2] = NULL;
 
-	MATCH_ATTRIB[2] = 2;
-	MATCH_ATTRIB[5] = 2;
-	/**************************************/
-	/* scale */
-	if(tmp_attrib->z_scale != NULL)
-		buff[3] = tmp_attrib->z_scale;
-	else
-		buff[3] = NULL;
+    MATCH_ATTRIB[2] = 2;
+    MATCH_ATTRIB[5] = 2;
+    /**************************************/
+    /* scale */
+    if(tmp_attrib->z_scale != NULL)
+	buff[3] = tmp_attrib->z_scale;
+    else
+	buff[3] = NULL;
     
-	MATCH_ATTRIB[7] = 3;
-	/**************************************/
-	/* drawing title */
-	if(tmp_attrib->z_title != NULL)
-		buff[4] = tmp_attrib->z_title;
-	else
-		buff[4] = NULL;
+    MATCH_ATTRIB[7] = 3;
+    /**************************************/
+    /* drawing title */
+    if(tmp_attrib->z_title != NULL)
+	buff[4] = tmp_attrib->z_title;
+    else
+	buff[4] = NULL;
 
-	MATCH_ATTRIB[6] = 4;
-	/**************************************/
-	/* client */
-	if(tmp_attrib->z_client != NULL)
-		buff[5] = tmp_attrib->z_client;
-	else
-		buff[5] = NULL;
+    MATCH_ATTRIB[6] = 4;
+    /**************************************/
+    /* client */
+    if(tmp_attrib->z_client != NULL)
+	buff[5] = tmp_attrib->z_client;
+    else
+	buff[5] = NULL;
 
-	MATCH_ATTRIB[17] = 5;
-	/**************************************/
-	/* site */
-	if(tmp_attrib->z_site != NULL)
+    MATCH_ATTRIB[17] = 5;
+    /**************************************/
+    /* site */
+    if(tmp_attrib->z_site != NULL)
 
-		buff[6] = tmp_attrib->z_site;
-	else
-		buff[6] = NULL;
+	buff[6] = tmp_attrib->z_site;
+    else
+	buff[6] = NULL;
 
-	MATCH_ATTRIB[14] = 6;
-	/**************************************/
-	/* job number */
-	if(tmp_attrib->z_jobnum != NULL)
-		buff[7] = tmp_attrib->z_jobnum;
-	else
-		buff[7] = NULL;
+    MATCH_ATTRIB[14] = 6;
+    /**************************************/
+    /* job number */
+    if(tmp_attrib->z_jobnum != NULL)
+	buff[7] = tmp_attrib->z_jobnum;
+    else
+	buff[7] = NULL;
 
-	MATCH_ATTRIB[15] = 7;
-	/**************************************/
-	/* order number */
-	if(tmp_attrib->z_ordnum != NULL)
-		buff[8] = tmp_attrib->z_ordnum;
-	else
-		buff[8] = NULL;
+    MATCH_ATTRIB[15] = 7;
+    /**************************************/
+    /* order number */
+    if(tmp_attrib->z_ordnum != NULL)
+	buff[8] = tmp_attrib->z_ordnum;
+    else
+	buff[8] = NULL;
 
-	MATCH_ATTRIB[16] = 8;
-	/**************************************/
-	/* drawn */
-	if(tmp_attrib->z_drawn != NULL)
-		buff[9] = tmp_attrib->z_drawn;
-	else
-		buff[9] = NULL;
+    MATCH_ATTRIB[16] = 8;
+    /**************************************/
+    /* drawn */
+    if(tmp_attrib->z_drawn != NULL)
+	buff[9] = tmp_attrib->z_drawn;
+    else
+	buff[9] = NULL;
 
-	MATCH_ATTRIB[8] = 9;
-	/**************************************/
+    MATCH_ATTRIB[8] = 9;
+    /**************************************/
   
-	/* drawn date */
-	if(tmp_attrib->z_drawn_date != NULL)
-		buff[10] = tmp_attrib->z_drawn_date;
-	else
-		buff[10] = NULL;
+    /* drawn date */
+    if(tmp_attrib->z_drawn_date != NULL)
+	buff[10] = tmp_attrib->z_drawn_date;
+    else
+	buff[10] = NULL;
 
-	MATCH_ATTRIB[9] = 10;
-	/**************************************/
-	/* checked by */
-	if(tmp_attrib->z_chked != NULL)
-		buff[11] = tmp_attrib->z_chked;
-	else
-		buff[11] = NULL;
+    MATCH_ATTRIB[9] = 10;
+    /**************************************/
+    /* checked by */
+    if(tmp_attrib->z_chked != NULL)
+	buff[11] = tmp_attrib->z_chked;
+    else
+	buff[11] = NULL;
 
-	MATCH_ATTRIB[10] = 11;
-	/**************************************/
-	/* checked date */
-	if(tmp_attrib->z_chk_date != NULL)
-		buff[12] = tmp_attrib->z_chk_date;
-	else
-		buff[12] = NULL;
+    MATCH_ATTRIB[10] = 11;
+    /**************************************/
+    /* checked date */
+    if(tmp_attrib->z_chk_date != NULL)
+	buff[12] = tmp_attrib->z_chk_date;
+    else
+	buff[12] = NULL;
 
-	MATCH_ATTRIB[11] = 12;
-	/**************************************/
-	/* approved by */
-	if(tmp_attrib->z_app != NULL)
-		buff[13] = tmp_attrib->z_app;
-	else
-		buff[13] = NULL;
+    MATCH_ATTRIB[11] = 12;
+    /**************************************/
+    /* approved by */
+    if(tmp_attrib->z_app != NULL)
+	buff[13] = tmp_attrib->z_app;
+    else
+	buff[13] = NULL;
 
-	MATCH_ATTRIB[12] = 13;
-	/**************************************/
-	/* approved date */
-	if(tmp_attrib->z_app_date != NULL)
-		buff[14] = tmp_attrib->z_app_date;
-	else
-		buff[14] = NULL;
+    MATCH_ATTRIB[12] = 13;
+    /**************************************/
+    /* approved date */
+    if(tmp_attrib->z_app_date != NULL)
+	buff[14] = tmp_attrib->z_app_date;
+    else
+	buff[14] = NULL;
 
-	MATCH_ATTRIB[13] = 14;
-	/**************************************/
-	/* materials */
-	if(tmp_attrib->z_material != NULL)
-		buff[15] = tmp_attrib->z_material;
-	else
-		buff[15] = NULL;
+    MATCH_ATTRIB[13] = 14;
+    /**************************************/
+    /* materials */
+    if(tmp_attrib->z_material != NULL)
+	buff[15] = tmp_attrib->z_material;
+    else
+	buff[15] = NULL;
 
-	MATCH_ATTRIB[18] = 15;
-	/**************************************/
-	/* quantity */
-	if(tmp_attrib->z_qty != NULL)
-		buff[16] = tmp_attrib->z_qty;
-	else
-		buff[16] = NULL;
+    MATCH_ATTRIB[18] = 15;
+    /**************************************/
+    /* quantity */
+    if(tmp_attrib->z_qty != NULL)
+	buff[16] = tmp_attrib->z_qty;
+    else
+	buff[16] = NULL;
 
-	MATCH_ATTRIB[19] = 16;
-	/**************************************/
-	for(i=0; i<Z_MAX_ATTRIB; i++)
+    MATCH_ATTRIB[19] = 16;
+    /**************************************/
+    for(i=0; i<Z_MAX_ATTRIB; i++)
+	{
+
+	    if(buff[MATCH_ATTRIB[i]] != NULL)
 		{
 
-			if(buff[MATCH_ATTRIB[i]] != NULL)
-				{
+		    pango_layout_set_text(z_pango_layout,
+					  buff[MATCH_ATTRIB[i]],
+					  -1);
 
-					pango_layout_set_text(z_pango_layout,
-										  buff[MATCH_ATTRIB[i]],
-										  -1);
-
-					switch(i)
-						{
-						case 6:
-							/* title */
-							pango_layout_set_font_description(z_pango_layout,
-															  z_desp_t);
-							break;
-						default:
-							pango_layout_set_font_description(z_pango_layout,
-															  z_desp_g);
-							break;
-						}
+		    switch(i)
+			{
+			case 6:
+			    /* title */
+			    pango_layout_set_font_description(z_pango_layout,
+							      z_desp_t);
+			    break;
+			default:
+			    pango_layout_set_font_description(z_pango_layout,
+							      z_desp_g);
+			    break;
+			}
 
 
-					cairo_move_to((*obj)->z_sgeneric->z_gcairo_dev,
-								  ConvToPoints(&(*obj)->z_x_attrib[i]),
-								  ConvToPoints(&(*obj)->z_y_attrib[i]));
+		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+				  ConvToPoints(&obj->z_x_attrib[i]),
+				  ConvToPoints(&obj->z_y_attrib[i]));
 
-					pango_cairo_update_layout((*obj)->z_sgeneric->z_gcairo_dev,
-											  z_pango_layout);
+		    pango_cairo_update_layout(obj->z_sgeneric->z_gcairo_dev,
+					      z_pango_layout);
 
-					pango_cairo_show_layout((*obj)->z_sgeneric->z_gcairo_dev,
-											z_pango_layout);
-				}
-	    
+		    pango_cairo_show_layout(obj->z_sgeneric->z_gcairo_dev,
+					    z_pango_layout);
 		}
+	    
+	}
 
-	pango_font_description_free(z_desp_g);
-	pango_font_description_free(z_desp_s);
-	pango_font_description_free(z_desp_t);
+    pango_font_description_free(z_desp_g);
+    pango_font_description_free(z_desp_s);
+    pango_font_description_free(z_desp_t);
 
-	g_object_unref(z_pango_layout);
+    g_object_unref(z_pango_layout);
 
-	if(buff)
-		free(buff);
+    if(buff)
+	free(buff);
 
-	return i;
+    return i;
+}
+
+/*=====================================================================*/
+/* Virtual function implementation */
+static int _zsheet_draw_function(zGeneric* obj)
+{
+    return zSheet_Create_Border(Z_SHEET(obj));
 }
