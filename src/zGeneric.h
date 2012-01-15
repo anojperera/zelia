@@ -21,6 +21,8 @@ extern "C" {
     /* forward declaration of generic object */
     typedef struct _zGeneric zGeneric;
 
+    /* Declaration of callback function */
+    typedef int (*zgeneric_fptr) (zGeneric* obj);
     struct _zGeneric
     {
 	zDevice* z_gdev;		/* primary device */
@@ -36,6 +38,7 @@ extern "C" {
 	zLineWeights z_gline_weight;	/* line weight */
 	zLineTypes z_gltype;		/* line type */
 	unsigned int z_int_flg;		/* internal flag */
+	zgeneric_fptr z_draw_func;	/* draw function pointer */
     };
 
     /* create and delete object */
