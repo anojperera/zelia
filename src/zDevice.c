@@ -9,7 +9,7 @@ static inline int zdevice_page_dims(zDevice** obj);
 static inline int zdevice_create_context(zDevice* obj)
 
 /* constructor */
-    zDevice* zDevice_New(zDevice* obj)
+zDevice* zDevice_New(zDevice* obj)
 {
     /* declare temporary object */
     if(obj == NULL)
