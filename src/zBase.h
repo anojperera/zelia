@@ -14,7 +14,7 @@ struct _zBase
 {
     zGeneric z_sgeneric;			/* inherited parent object */
     unsigned int z_int_flg;			/* internal flag */
-    void* var_child;				/* child pointer */
+    void* z_child;				/* child pointer */
     /* base coordinates */
     double z_x;
     double z_y;
@@ -27,7 +27,7 @@ struct _zBase
 
 #ifdef __cplusplus
 extern "C" {
-#ifdef
+#endif
 
     /* Constructor and destructor */
     zGeneric* zBase_New(zBase* obj);
@@ -44,15 +44,16 @@ extern "C" {
     inline double zBase_Get_Orientation(zBase* obj);
 
     /* Set and Get width height */
+    inline int zBase_Set_Width_and_Height(zBase* obj, double width, double height);
     inline int zBase_Set_Width(zBase* obj, double width);
     inline double zBase_Get_Width(zBase* obj);
 
-    inline int zBase_Get_Height(zBase* obj, double height);
+    inline int zBase_Set_Height(zBase* obj, double height);
     inline double zBase_Get_Height(zBase* obj);
     
 
 #ifdef __cplusplus
 }
-#ifdef
+#endif
 
 #endif /* _ZBASE_H_ */

@@ -20,7 +20,7 @@ zGeneric* zBase_New(zBase* obj)
 	obj->z_int_flg = 0;
 
     /* create parent object */
-    zGeneric_New(&obj->z_sgeneric)
+    zGeneric_New(&obj->z_sgeneric);
 
     /* set properties */
     obj->z_x = 0.0;
@@ -80,6 +80,15 @@ inline double zBase_Get_Orientation(zBase* obj)
     return obj->z_ang;
 }
 
+inline int zBase_Set_Width_and_Height(zBase* obj, double width, double height)
+{
+    /* check for object */
+    Z_CHECK_OBJ(obj);
+    obj->z_width = width;
+    obj->z_height = height;
+    return 0;
+}
+
 /* Set width */
 inline int zBase_Set_Width(zBase* obj, double width)
 {
@@ -93,11 +102,11 @@ inline int zBase_Set_Width(zBase* obj, double width)
 inline double zBase_Get_Width(zBase* obj)
 {
     Z_CHECK_OBJ_DOUBLE(obj);
-    return obj->width;
+    return obj->z_width;
 }
 
 /* Set height */
-inline int zBase_Get_Height(zBase* obj, double height)
+inline int zBase_Set_Height(zBase* obj, double height)
 {
     Z_CHECK_OBJ(obj);
     obj->z_height = height;
