@@ -21,7 +21,7 @@ zGeneric* zTerminal_New(zTerminal* obj)
 	obj->z_int_flg = 0;
 
     /* Create base object */
-    if(zBase_New(&obj->z_sbase))
+    if(!zBase_New(&obj->z_sbase))
 	{
 	    if(obj->z_int_flg)
 		free(obj);
@@ -34,16 +34,17 @@ zGeneric* zTerminal_New(zTerminal* obj)
     obj->z_term_height = 0.0;
     obj->z_draw_func = NULL;
     obj->z_term_cnt = 1;				/* set terminal count to 1 */
-    obj->z_term_num = {'1', '\0'};			/* set terminal number to 1 */
+    obj->z_term_num[0] = '1';				/* set terminal number to 1 */
+    obj->z_term_num[1] = '\0';
 
     /* set draw function pointer of parent object */
-    obj->z_sgeneric.z_draw_func = zterminal_draw_function;
+    obj->z_sbase.z_draw_func = zterminal_draw_function;
 
     /* Set child pointer of base object */
-    obj->z_sgeneric.z_child = (void*) obj;
+    obj->z_sbase.z_child = (void*) obj;
 
     /* Return base pointer */
-    return &obj->z_sgeneric.z_sgeneric;
+    return &obj->z_sbase.z_sgeneric;
 }
 
 /* Destructor */
@@ -97,6 +98,7 @@ inline int zTerminal_Set_Projected_Height(zTerminal* obj, double height)
 {
     Z_CHECK_OBJ(obj);
     obj->z_term_height = height;
+    return 0;
 }
 
 /* Get projected height */
@@ -121,10 +123,10 @@ int zTerminal_Draw(zTerminal* obj)
 
     /* move device context to base coordinates */
     cairo_rectangle(_dev_c,
-		    ConvToPoints(_base->z_x),
-		    ConvToPoints(_base->z_y),
-		    ConvToPoints(_base->z_width),
-		    ConvTeoPoints(_base->z_height));
+		    ConvToPoints(&_base->z_x),
+		    ConvToPoints(&_base->z_y),
+		    ConvToPoints(&_base->z_width),
+		    ConvToPoints(&_base->z_height));
     
     /* cairo stroke to draw */
     cairo_stroke(_dev_c);
@@ -137,14 +139,14 @@ int zTerminal_Draw(zTerminal* obj)
 			   CAIRO_FONT_WEIGHT_BOLD);
     
     cairo_set_font_size(_dev_c,
-			ConvToPoints(Z_GRD_FONT_SZ));
+			CONV_TO_POINTS(Z_GRD_FONT_SZ));
     
     cairo_text_extents(_dev_c,
 		       obj->z_term_num,
 		       &_te);
     cairo_move_to(_dev_c,
-		  ConvToPoints(_base->z_x + _base->z_width) / 2 - _te->width / 2,
-		  ConvToPoints(_base->z_2 + _base->z_height) / 2 - _te->height / 2);
+		  CONV_TO_POINTS(_base->z_x + _base->z_width) / 2 - _te.width / 2,
+		  CONV_TO_POINTS(_base->z_y + _base->z_height) / 2 - _te.height / 2);
     cairo_show_text(_dev_c, obj->z_term_num);
 
     return 0;
@@ -158,7 +160,7 @@ static int zterminal_draw_function(zGeneric* obj)
     Z_CHECK_OBJ(obj);
     zTerminal* self = Z_TERMINAL(obj);
     /* call draw function */
-    int rt_val = zTerminal_Draw(obj);
+    int rt_val = zTerminal_Draw(Z_TERMINAL(obj));
 
     /* Check for child function pointer and call */
     if(self->z_draw_func)
