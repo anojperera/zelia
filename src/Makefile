@@ -7,7 +7,7 @@ CFLAGS3 = -Wall
 PROG = tmp
 CCC = gcc
 CCP = g++
-OBJS = main.o zDevice.o zGeneric.o zSheet.o
+OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o
 ## LIBSP = ../../g_list/bin/alist.a
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
@@ -25,6 +25,9 @@ zGeneric.o : zGeneric.c zGeneric.h
 
 zSheet.o : zSheet.c zSheet.h
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zSheet.c $(GTKCFLGS)
+
+zBase.o : zBase.c zBase.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zBase.c $(GTKCFLGS)
 
 clean :
 	rm -fv *.o
