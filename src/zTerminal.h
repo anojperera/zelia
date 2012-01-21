@@ -5,7 +5,7 @@
 #define _ZTERMINAL_H_
 
 #include <stdlib.h>
-#include "zGeneric"
+#include "zGeneric.h"
 #include "zBase.h"
 
 
