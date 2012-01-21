@@ -8,6 +8,8 @@
 
 #include "zDevice.h"
 #include "zGeneric.h"
+#include "zBase.h"
+#include "zTerminal.h"
 #include "zSheet.h"
 
 int main(int argc, char** argv)
@@ -23,7 +25,7 @@ int main(int argc, char** argv)
 
     /* create sheet */
     zGeneric* sht = zSheet_New(NULL);
-
+    zGeneric* term = zTerminal_New(NULL);
     /* check for NULL pointer */
     if(sht == NULL)
 	{
@@ -73,11 +75,17 @@ int main(int argc, char** argv)
     /* set attributes */
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
+    /* Set base coordinates */
+    zBase_Set_Base_Coords(Z_BASE(term), 100.0, 40.0);
+    zBase_Set_Width_and_Height(Z_BASE(term), 20.0, 50.0);
+
     /* create border */
-    zSheet_Create_Border(Z_SHEET(sht));
+    zGeneric_Draw(sht);
+    /* zSheet_Create_Border(Z_SHEET(sht)); */
 
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
+    zTerminal_Delete(Z_TERMINAL(term));
     zDevice_Delete(&dev);
 
     if(attrib)
