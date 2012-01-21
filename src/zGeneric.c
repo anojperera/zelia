@@ -53,6 +53,15 @@ void zGeneric_Delete(zGeneric* obj)
     if(obj->z_int_flg)
 	free(obj);
 }
+
+/* Draw function */
+int zGeneric_Draw(zGeneric* obj)
+{
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(obj->z_draw_func);
+    return obj->z_draw_func(obj);
+}
 	
 /* set device */
 inline int zGeneric_Set_Device(zGeneric* obj, zDevice* var)

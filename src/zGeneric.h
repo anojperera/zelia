@@ -48,6 +48,9 @@ extern "C" {
     /* Create generic device context */
     int zGeneric_Create_Dev_Context(zGeneric* obj);
 
+    /* Draw component */
+    int zGeneric_Draw(zGeneric* obj);
+
     /* Property Methods */
     /***************************************************************/
 
