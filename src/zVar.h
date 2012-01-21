@@ -238,7 +238,7 @@ typedef enum {
 typedef enum {
     zSAK2pt5,
     zEK4
-} zTerminalType
+} zTerminalType;
 
 
 /* convert milimeters to points */
@@ -246,6 +246,9 @@ static inline double ConvToPoints(double* mm)
 {
 	return (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * (*mm);
 }
+
+#define CONV_TO_POINTS(val) \
+    (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val
 
 /* rounds the number */
 static inline double Round(double val, unsigned int places)
