@@ -19,6 +19,8 @@ struct _zTerminal
     zTerminalType z_term_type;		/* terminal type */
     double z_term_height;		/* terminal height - projected */
     zgeneric_fptr z_draw_func;		/* draw function pointer */
+    char z_term_num[5];			/* terminal number */
+    int z_term_cnt;			/* terminal counter */
 };
 
 #ifdef __cplusplus
@@ -34,6 +36,10 @@ extern "C" {
 
     /* Property function */
     /*****************************************/
+
+    /* Set and get terminal number */
+    inline int zTerminal_Set_Terminal_Number(zTerminal* obj, int num);
+    inline int zTerminal_Get_Terminal_Number(zTerminal* obj);
 
     /* Set and get terminal type */
     inline int zTerminal_Set_Type(zTerminal* obj, zTerminalType type);

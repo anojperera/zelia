@@ -1,6 +1,7 @@
 /* Implementation of Terminal class
  * Sat Jan 21 18:06:55 GMT 2012 */
 
+#include <stdio.h>
 #include "zTerminal.h"
 
 /* Virtual draw function */
@@ -32,6 +33,8 @@ zGeneric* zTerminal_New(zTerminal* obj)
     obj->z_term_type = zSAK2pt5;
     obj->z_term_height = 0.0;
     obj->z_draw_func = NULL;
+    obj->z_term_cnt = 1;				/* set terminal count to 1 */
+    obj->z_term_num = {'1', '\0'};			/* set terminal number to 1 */
 
     /* set draw function pointer of parent object */
     obj->z_sgeneric.z_draw_func = zterminal_draw_function;
@@ -55,6 +58,23 @@ void zTerminal_Delete(zTerminal* obj)
 
     if(obj->z_int_flg)
 	free(obj);
+}
+
+/* Set terminal number */
+inline int zTerminal_Set_Terminal_Number(zTerminal* obj, int num)
+{
+    Z_CHECK_OBJ(obj);
+    sprintf(obj->z_term_num, "%i", num);
+    return 0;
+}
+
+/* Get terminal number */
+inline int zTerminal_Get_Terminal_Number(zTerminal* obj)
+{
+    if(obj == NULL)
+	return 0;
+    else
+	return obj->z_term_cnt;
 }
 
 /* Set terminal type */
@@ -101,13 +121,33 @@ int zTerminal_Draw(zTerminal* obj)
 
     /* move device context to base coordinates */
     cairo_rectangle(_dev_c,
-		    _base->z_x,
-		    _base->z_y,
-		    _base->z_width,
-		    _base->z_height);
-
+		    ConvToPoints(_base->z_x),
+		    ConvToPoints(_base->z_y),
+		    ConvToPoints(_base->z_width),
+		    ConvTeoPoints(_base->z_height));
+    
     /* cairo stroke to draw */
     cairo_stroke(_dev_c);
+    
+    /* add terminal number */
+    cairo_text_extents_t _te;
+    cairo_select_font_face(_dev_c,
+			   Z_GRD_FONT_STYLE,
+			   CAIRO_FONT_SLANT_NORMAL,
+			   CAIRO_FONT_WEIGHT_BOLD);
+    
+    cairo_set_font_size(_dev_c,
+			ConvToPoints(Z_GRD_FONT_SZ));
+    
+    cairo_text_extents(_dev_c,
+		       obj->z_term_num,
+		       &_te);
+    cairo_move_to(_dev_c,
+		  ConvToPoints(_base->z_x + _base->z_width) / 2 - _te->width / 2,
+		  ConvToPoints(_base->z_2 + _base->z_height) / 2 - _te->height / 2);
+    cairo_show_text(_dev_c, obj->z_term_num);
+
+    return 0;
 }
 
 
