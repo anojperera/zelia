@@ -28,6 +28,7 @@ zGeneric* zBase_New(zBase* obj)
     obj->z_ang = 0.0;
     obj->z_width = 0.0;
     obj->z_height = 0.0;
+    obj->z_child = NULL;
 
     obj->z_draw_func = NULL;
 
@@ -45,7 +46,7 @@ zGeneric* zBase_New(zBase* obj)
 void zBase_Delete(zBase* obj)
 {
     obj->z_draw_func = NULL;
-
+    obj->z_child = NULL;
     zGeneric_Delete(&obj->z_sgeneric);
 
     if(obj->z_int_flg)
@@ -117,8 +118,10 @@ inline double zBase_Get_Height(zBase* obj)
 static int zbase_draw_function(zGeneric* obj)
 {
     Z_CHECK_OBJ(obj);
-    zBase* base = Z_BASE(obj);
-    Z_CHECK_OBJ(base->z_draw_func);
-    return base->z_draw_func(obj);
+    zBase* self = Z_BASE(obj);
+    if(self->z_draw_func)
+    	return self->z_draw_func(obj);
+    else
+	return 0;
 }
 

@@ -187,9 +187,6 @@ int zSheet_Create_Border(zSheet* obj)
 /* private functions */
 static int zsheet_draw_oborder(zSheet* obj)
 {
-    /* check for NULL pointer */
-    if(obj == NULL);
-
 
     /* check device context */
     if(!zGeneric_Get_Device(&obj->z_sgeneric))

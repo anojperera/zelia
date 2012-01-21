@@ -14,6 +14,7 @@ struct _zBase
 {
     zGeneric z_sgeneric;			/* inherited parent object */
     unsigned int z_int_flg;			/* internal flag */
+    void* var_child;				/* child pointer */
     /* base coordinates */
     double z_x;
     double z_y;

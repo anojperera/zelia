@@ -166,6 +166,8 @@
 
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
+#define Z_BASE(obj) ((zBase*) obj->z_child)
+#define Z_TERMINAL(obj) ((zTerminal*) Z_BASE(obj)->z_child)
 
 
 /* Object checking macro */
@@ -190,51 +192,54 @@
 #define Z_ERROR_LOGO_FAILED "Unable to load logo, check path"
 
 /* output format */
-typedef enum
-{
-	zFormatPDF,
-	zFormatSVG,
-	zFormatPNG,
-	zFormatDXF
+typedef enum {
+    zFormatPDF,
+    zFormatSVG,
+    zFormatPNG,
+    zFormatDXF
 } zOutputFormat;
 
 
 /* paper sizes */
 typedef enum
-{
+    {
 	zSheetA3_Landscape,
 	zSheetA4_Portrait
-} zSheets;
+    } zSheets;
 
 /* line types */
-typedef enum
-{
-	zLTContinuous,
-	zLTCenter,
-	zLTHidden
+typedef enum {
+    zLTContinuous,
+    zLTCenter,
+    zLTHidden
 } zLineTypes;
 
 /* line weights */
-typedef enum
-{
-	zLWeight1,
-	zLWeight2,
-	zLWeight3,
-	zLWeight4,
-	zLWeight5,
-	zLWeight6,
-	zLWeight7,
-	zLWeight8
+typedef enum {
+    zLWeight1,
+    zLWeight2,
+    zLWeight3,
+    zLWeight4,
+    zLWeight5,
+    zLWeight6,
+    zLWeight7,
+    zLWeight8
 } zLineWeights;
 
-typedef enum
-{
-	zLBlack,
-	zLRed,
-	zLBlue,
-	zLYellow,
-	zLCyan
+typedef enum {
+    zLBlack,
+    zLRed,
+    zLBlue,
+    zLYellow,
+    zLCyan
 } zLineColour;
+
+/* Terminal types */
+typedef enum {
+    zSAK2pt5,
+    zEK4
+} zTerminalType
+
 
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)
