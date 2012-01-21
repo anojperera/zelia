@@ -12,20 +12,17 @@
 
 int main(int argc, char** argv)
 {
-	const int TXT_SZ = 20;
-    zDevice* dev;		/* device object */
-	
-    dev = zDevice_Create2(zFormatPDF,
-			  zSheetA3_Landscape,
-			  "test.pdf",
-			  0);
-
-    /* check for NULL pointer */
-    if(dev == NULL)
-	return 1;
+    const int TXT_SZ = 20;
+    zDevice dev;		/* device object */
+    
+    zDevice_New2(zFormatPDF,
+		 zSheetA3_Landscape,
+		 "test.pdf",
+		 0,
+		 &dev);
 
     /* create sheet */
-    zGeneric* sht = zSheet_Create();
+    zGeneric* sht = zSheet_New(NULL);
 
     /* check for NULL pointer */
     if(sht == NULL)
@@ -47,10 +44,10 @@ int main(int argc, char** argv)
     strcpy(attrib->z_title, "TEMP");
 
     attrib->z_client = (char*) malloc(sizeof(char) * TXT_SZ);
-	strcpy(attrib->z_client, "HI-PRES");
+    strcpy(attrib->z_client, "HI-PRES");
 	
     attrib->z_site = (char*) malloc(sizeof(char) * TXT_SZ);
-	strcpy(attrib->z_site, "Over load");
+    strcpy(attrib->z_site, "Over load");
 	
     attrib->z_jobnum = NULL;
     attrib->z_ordnum = NULL;
@@ -74,13 +71,13 @@ int main(int argc, char** argv)
 			"../resources/logo/wozair_logo2.png");
 
     /* set attributes */
-    zSheet_Set_Attributes(Z_SHEET(sht), &attrib);
+    zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
     /* create border */
     zSheet_Create_Border(Z_SHEET(sht));
 
     /* delete objects */
-    zSheet_Delete((zSheet**) &sht->z_gsheet_child);
+    zSheet_Delete(Z_SHEET(sht));
     zDevice_Delete(&dev);
 
     if(attrib)

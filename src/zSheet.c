@@ -26,7 +26,7 @@ static int zsheet_paint_logo(zSheet* obj);
 static char* zsheet_wozair_address();
 
 /* add drawing attributes */
-static int zsheet_add_attribs(zSheet** obj);
+static int zsheet_add_attribs(zSheet* obj);
 
 /*==================================================================*/
 /* draw function */
@@ -34,12 +34,12 @@ static int _zsheet_draw_function(zGeneric* obj);
 
 
 /* create generic sheet object */
-zGeneric* zSheet_Create(zSheet* obj)
+zGeneric* zSheet_New(zSheet* obj)
 {
     /* check for object, if not create it */
     if(obj == NULL)
 	{
-	    obj = (zGeneric*) malloc(sizeof(zGeneric));
+	    obj = (zSheet*) malloc(sizeof(zSheet));
 	    Z_CHECK_OBJ_PTR(obj);
 	    obj->z_int_flg = 1;
 	}
@@ -48,13 +48,13 @@ zGeneric* zSheet_Create(zSheet* obj)
 
 
     /* create generic object and check for function call */
-    Z_CHECK_OBJ_PTR(zGeneric_Create(&obj->z_sgeneric));
+    Z_CHECK_OBJ_PTR(zGeneric_New(&obj->z_sgeneric));
 
-    zGeneric_Set_LineWeight(obj->z_sgeneric,
+    zGeneric_Set_LineWeight(&obj->z_sgeneric,
 			    zLWeight2);
     /* set properties */
 
-    obj->-z_slogo_path = NULL;
+    obj->z_slogo_path[0] = '\0';
     obj->z_sbrd_attrib = NULL;
     obj->z_sgrid_flg = 0;
     obj->z_ssafe_flg = 0;
@@ -69,7 +69,7 @@ zGeneric* zSheet_Create(zSheet* obj)
 	}
     
     /* assign child pointer to base object */
-    obj->z_sgeneric.z_gsheet_child = (void*) obj;
+    obj->z_sgeneric.z_child = (void*) obj;
     
     return &obj->z_sgeneric;
 
@@ -82,14 +82,14 @@ void zSheet_Delete(zSheet* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* destroy parent object */
-    zGeneric_Delete(obj->z_sgeneric);
+    zGeneric_Delete(&obj->z_sgeneric);
 
     /* set border attributes pointer to NULL */
     obj->z_sbrd_attrib = NULL;
     
     /* delete object if it was internally created */
     if(obj->z_int_flg)
-	free(*obj);
+	free(obj);
 }
 
 
@@ -108,7 +108,7 @@ inline zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ_PTR(obj);
-    return *obj->z_sbrd_attrib;
+    return obj->z_sbrd_attrib;
 }
 
 /* set grid flag */
@@ -134,9 +134,6 @@ inline int zSheet_Set_LogoPath(zSheet* obj, const char* var)
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(var);
-
-    /* get length */
-    int i = strlen(var) + 1;
 
     /* copy to buffer */
     strcpy(obj->z_slogo_path, var);
@@ -165,21 +162,21 @@ int zSheet_Create_Border(zSheet* obj)
     if(obj->z_ssafe_flg)
 	return 0;
     
-    dec += zsheet_draw_oborder(&obj);
-    dec += zsheet_draw_grid(&obj);
-    dec += zsheet_draw_top_revbox(&obj);
-    dec += zsheet_draw_decal(&obj);
-    dec += zsheet_draw_matbox(&obj);
-    dec += zsheet_add_attrib_headers(&obj);
-    dec += zsheet_add_attribs(&obj);
+    dec += zsheet_draw_oborder(obj);
+    dec += zsheet_draw_grid(obj);
+    dec += zsheet_draw_top_revbox(obj);
+    dec += zsheet_draw_decal(obj);
+    dec += zsheet_draw_matbox(obj);
+    dec += zsheet_add_attrib_headers(obj);
+    dec += zsheet_add_attribs(obj);
     /* project is drawn separate as it requires center
        lines. function calls stroke internally */
-    dec += zsheet_draw_projn(&obj);
-    dec += zsheet_paint_logo(&obj);
+    dec += zsheet_draw_projn(obj);
+    dec += zsheet_paint_logo(obj);
 	
     if(dec > 0)
 	{
-	    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+	    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 	    dec = 0;
 	}	
 
@@ -199,7 +196,7 @@ static int zsheet_draw_oborder(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 
     /* draw outer border */
     const int NUM = 5;
@@ -299,7 +296,7 @@ static int zsheet_draw_grid(zSheet* obj)
 	return 0;
     
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 	
 
     /* horizontal and vertical number
@@ -506,7 +503,7 @@ static int zsheet_draw_top_revbox(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    /* zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric); */
 	
     double x, y;
     if(obj->z_sgrid_flg > 0)
@@ -548,27 +545,27 @@ static int zsheet_draw_top_revbox(zSheet* obj)
     X[6] = X[5];
     Y[6] = Y[2];
 
-    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		  ConvToPoints(&X[0]),
 		  ConvToPoints(&Y[0]));
     for(i=1; i<NUM; i++)
 	{
 	    if(i==3 || i==5)
 		{
-		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	    else
 		{
-		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION	
-    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 #endif
 	
     return i;
@@ -583,7 +580,7 @@ static int zsheet_draw_decal(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 	
     /* check device context */
     if(!dev)
@@ -749,12 +746,12 @@ static int zsheet_draw_decal(zSheet* obj)
 		case 29:
 		case 31:
 		case 34:
-		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
 		default:
-		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
@@ -762,7 +759,7 @@ static int zsheet_draw_decal(zSheet* obj)
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION
-    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 #endif
 	
     return i;
@@ -776,7 +773,7 @@ static int zsheet_draw_matbox(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 
     const int NUM = 5;
     int i = 0;
@@ -846,20 +843,20 @@ static int zsheet_draw_matbox(zSheet* obj)
 	{
 	    if(i==0 || i==3)
 		{
-		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	    else
 		{
-		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		}
 	}
 
 #ifdef Z_SHEET_STROKE_FUNCTION	
-    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 #endif
 	
     return i;
@@ -873,7 +870,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 	
     int attrib_cnt = 0;			/* attrib counter */
     
@@ -954,7 +951,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 
     /* create pango layout for dev context */
     z_pango_layout =
-	pango_cairo_create_layout(obj->z_sgeneric->z_gcairo_dev);
+	pango_cairo_create_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 
     /* check for NULL pointer */
     if(!z_pango_layout)
@@ -1217,15 +1214,15 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	       && i>2 && i<6)
 		{
 
-		    cairo_save(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_save(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 
-		    cairo_translate(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_translate(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				    ConvToPoints(&X[i]),
 				    ConvToPoints(&Y[i]));
-		    cairo_rotate(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_rotate(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				 -90 * G_PI / 180);
 
-		    cairo_translate(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_translate(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				    -1 * ConvToPoints(&X[i]),
 				    -1 * ConvToPoints(&Y[i]));
 		}
@@ -1262,18 +1259,18 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 		}
 					
 	    pango_layout_set_text(z_pango_layout, buff[i], -1);
-	    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+	    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			  ConvToPoints(&X[i]), ConvToPoints(&Y[i]));
     
-	    pango_cairo_update_layout(obj->z_sgeneric->z_gcairo_dev,
+	    pango_cairo_update_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				      z_pango_layout);
-	    pango_cairo_show_layout(obj->z_sgeneric->z_gcairo_dev,
+	    pango_cairo_show_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				    z_pango_layout);
 
 	    if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
 	       && i>2 && i<6)
 		{
-		    cairo_restore(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_restore(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 		}
 
 	    /* set drawing attribute coordinates */
@@ -1334,7 +1331,7 @@ static int zsheet_draw_projn(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 	
     const int NUM = 10;
     int i = 0;
@@ -1396,7 +1393,7 @@ static int zsheet_draw_projn(zSheet* obj)
     Y[9] = Y[8];
 
     /* save cairo context */
-    cairo_save(obj->z_sgeneric->z_gcairo_dev);
+    cairo_save(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 	
     for(i=0; i<NUM; i++)
 	{
@@ -1404,18 +1401,18 @@ static int zsheet_draw_projn(zSheet* obj)
 		{
 
 		case 0:
-		    cairo_new_sub_path(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_new_sub_path(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 					
-		    cairo_arc(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_arc(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			      ConvToPoints(&X[i]),
 			      ConvToPoints(&Y[i]),
 			      ConvToPoints(&rad1),
 			      0,
 			      M_PI*180);
 
-		    cairo_new_sub_path(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_new_sub_path(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 					
-		    cairo_arc(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_arc(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			      ConvToPoints(&X[i]),
 			      ConvToPoints(&Y[i]),
 			      ConvToPoints(&rad2),
@@ -1429,20 +1426,20 @@ static int zsheet_draw_projn(zSheet* obj)
 										
 		    if(i==6)
 			{
-			    cairo_set_dash(obj->z_sgeneric->z_gcairo_dev,
+			    cairo_set_dash(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					   dashes, NUM_DASHES, 0);
 			}
 					
-		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
 		case 5:
-		    cairo_close_path(obj->z_sgeneric->z_gcairo_dev);
-		    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+		    cairo_close_path(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
+		    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 		    break;
 		default:
-		    cairo_line_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&X[i]),
 				  ConvToPoints(&Y[i]));
 		    break;
@@ -1450,14 +1447,14 @@ static int zsheet_draw_projn(zSheet* obj)
 		}
 	}
 
-    cairo_stroke(obj->z_sgeneric->z_gcairo_dev);
+    cairo_stroke(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
     /* disable dashes */
-    cairo_set_dash(obj->z_sgeneric->z_gcairo_dev,
+    cairo_set_dash(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		   dashes,
 		   0,
 		   0);
 
-    cairo_restore(obj->z_sgeneric->z_gcairo_dev);
+    cairo_restore(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
     return i;
 }
 
@@ -1469,7 +1466,7 @@ static int zsheet_paint_logo(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
 
     /* check for logo path */
     if(obj->z_slogo_path == NULL)
@@ -1494,12 +1491,12 @@ static int zsheet_paint_logo(zSheet* obj)
 	}
 
     /* set surface */
-    cairo_set_source_surface(obj->z_sgeneric->z_gcairo_dev,
+    cairo_set_source_surface(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
     			     logo_surf,
     			     ConvToPoints(&x),
     			     ConvToPoints(&y));
 
-    cairo_paint(obj->z_sgeneric->z_gcairo_dev);
+    cairo_paint(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 
     cairo_surface_destroy(logo_surf);
 
@@ -1560,7 +1557,7 @@ static int zsheet_add_attribs(zSheet* obj)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = &obj->z_sgeneric;
+    /* zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric); */
 
     /* check for attribute null pointer */
     /* if(obj->z_sbrd_attrib == NULL || */
@@ -1617,7 +1614,7 @@ static int zsheet_add_attribs(zSheet* obj)
 
     /* create pango layout for dev context */
     z_pango_layout =
-	pango_cairo_create_layout(obj->z_sgeneric->z_gcairo_dev);
+	pango_cairo_create_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 
     /* check for NULL pointer */
     if(!z_pango_layout)
@@ -1803,14 +1800,14 @@ static int zsheet_add_attribs(zSheet* obj)
 			}
 
 
-		    cairo_move_to(obj->z_sgeneric->z_gcairo_dev,
+		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 				  ConvToPoints(&obj->z_x_attrib[i]),
 				  ConvToPoints(&obj->z_y_attrib[i]));
 
-		    pango_cairo_update_layout(obj->z_sgeneric->z_gcairo_dev,
+		    pango_cairo_update_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					      z_pango_layout);
 
-		    pango_cairo_show_layout(obj->z_sgeneric->z_gcairo_dev,
+		    pango_cairo_show_layout(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 					    z_pango_layout);
 		}
 	    

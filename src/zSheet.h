@@ -64,7 +64,7 @@ extern "C" {
     };
 
     /* constructor and destructor */
-    zGeneric* zSheet_Create(zSheet* obj);
+    zGeneric* zSheet_New(zSheet* obj);
     void zSheet_Delete(zSheet* obj);
 
     /* set and get device */

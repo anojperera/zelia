@@ -61,12 +61,12 @@ extern "C" {
 
     /* Set and get type of surface */
     inline int zDevice_Set_SurfaceType(zDevice* obj,
-				 zOutputFormat var);
+				       zOutputFormat var);
     inline zOutputFormat zDevice_Get_SurfaceType(zDevice* obj);
 
     /* Set and get page size */
     inline int zDevice_Set_PageSize(zDevice* obj,
-			      zSheets var);
+				    zSheets var);
     inline zSheets zDevice_Get_PageSize(zDevice* obj);
 
     /* Returns a pointer to page size string */
@@ -74,7 +74,7 @@ extern "C" {
 
     /* Set and get file name */
     inline int zDevice_Set_FileName(zDevice* obj,
-			      const char* var);
+				    const char* var);
     inline char* zDevice_Get_FileName(zDevice* obj);
 		
     /* Get default device context */
@@ -82,7 +82,7 @@ extern "C" {
 
     /* Set and get line colour */
     inline int zDevice_Set_LineColourIx(zDevice* obj,
-				  zLineColour var);
+					zLineColour var);
     inline zLineColour zDevice_Get_LineColourIx(zDevice* obj); 
 
 	

@@ -21,7 +21,7 @@ zGeneric* zGeneric_New(zGeneric* obj)
 	obj->z_int_flg = 0;
 
     
-    obj->z_gsheet_child = NULL;			/* set child pointer to NULL */
+    obj->z_child = NULL;			/* set child pointer to NULL */
 	
     obj->z_gdev = NULL;
     obj->z_gcairo_dev = NULL;
@@ -51,7 +51,7 @@ void zGeneric_Delete(zGeneric* obj)
     obj->z_gdev = NULL;
     
     if(obj->z_int_flg)
-	free(*obj);
+	free(obj);
 }
 	
 /* set device */
@@ -71,7 +71,7 @@ inline zDevice* zGeneric_Get_Device(zGeneric* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ_PTR(obj);
-    return *(obj->z_gdev);
+    return obj->z_gdev;
 }
 
 /* set line colour index */
@@ -189,7 +189,7 @@ inline cairo_t* zGeneric_Get_Dev_Context(zGeneric* obj)
     /* check for NULL pointer */
     Z_CHECK_OBJ_PTR(obj);
 
-    return &obj->z_gcairo_dev;
+    return obj->z_gcairo_dev;
 }
 
 inline int zGeneric_Set_Defauts(zGeneric* obj)
@@ -206,7 +206,7 @@ inline int zGeneric_Set_Defauts(zGeneric* obj)
 			 CAIRO_LINE_JOIN_MITER);
 
     /* set default line weight */
-    zgeneric_set_lineweight(&obj);
+    zgeneric_set_lineweight(obj);
     
     return 0;
 }

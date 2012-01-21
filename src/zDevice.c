@@ -4,9 +4,9 @@
 #include "zDevice.h"
 
 /* private functions */
-static inline int zdevice_rgb(zDevice** obj);
-static inline int zdevice_page_dims(zDevice** obj);
-static inline int zdevice_create_context(zDevice* obj)
+inline static int zdevice_rgb(zDevice* obj);
+inline static int zdevice_page_dims(zDevice* obj);
+inline static int zdevice_create_context(zDevice* obj);
 
 /* constructor */
 zDevice* zDevice_New(zDevice* obj)
@@ -34,8 +34,8 @@ zDevice* zDevice_New(zDevice* obj)
     obj->z_page_width = Z_A3_WIDTH;
     obj->z_page_height = Z_A3_HEIGHT;
     obj->z_format = zFormatPDF;
-    obj->z_filename[0] = NULL;
-    obj->z_page_sz_str[0] = NULL;
+    obj->z_filename[0] = '\0';
+    obj->z_page_sz_str[0] = '\0';
 
     return obj;
 }
@@ -48,7 +48,7 @@ zDevice* zDevice_New2(zOutputFormat fm,
 		      zDevice* obj)
 {
 
-    Z_CHECK_OBJ_PTR(zDevice_Create(obj));
+    Z_CHECK_OBJ_PTR(zDevice_New(obj));
 
     /* check for file name */
     Z_CHECK_OBJ_PTR(fn);
@@ -105,37 +105,37 @@ void zDevice_Delete(zDevice* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* destroy surface */
-    if((*obj)->z_surface != NULL)
+    if(obj->z_surface != NULL)
 	{
-	    cairo_surface_destroy((*obj)->z_surface);
-	    (*obj)->z_surface = NULL;
+	    cairo_surface_destroy(obj->z_surface);
+	    obj->z_surface = NULL;
 	}
 	
     /* destroy device context */
-    if((*obj)->z_device != NULL)
+    if(obj->z_device != NULL)
 	{
-	    cairo_destroy((*obj)->z_device);
-	    (*obj)->z_device = NULL;
+	    cairo_destroy(obj->z_device);
+	    obj->z_device = NULL;
 	}
 
     /* destroy file name */
-    if((*obj)->z_filename != NULL)
-	(*obj)->z_filename[0] = NULL;
+    if(obj->z_filename != NULL)
+	obj->z_filename[0] = '\0';
 
 
     /* destroy page size string */
-    if((*obj)->z_page_sz_str != NULL)
-	(*obj)->z_page_sz_str[0] = NULL;
+    if(obj->z_page_sz_str != NULL)
+	obj->z_page_sz_str[0] = '\0';
 
 
     if(obj->var_int_flg)
-	free(*obj);
+	free(obj);
 	
 }
 
 /* set surface type */
 inline int zDevice_Set_SurfaceType(zDevice* obj,
-				   zOutputFormat var);
+				   zOutputFormat var)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
@@ -216,11 +216,9 @@ inline int zDevice_Set_FileName(zDevice* obj,
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(var);
 
-    int i = strlen(obj->z_filename) + 1;
-
     /* check if file name was assigned */
-    if(obj->z_filename)
-	free(obj->z_filename);
+    /* if(obj->z_filename) */
+    /* 	free(obj->z_filename); */
 
     strcpy(obj->z_filename, var);
 
@@ -269,7 +267,7 @@ inline zLineColour zDevice_Get_LineColourIx(zDevice* obj)
 		
 /******************************************************************/
 /* private functions */
-static inline int zdevice_rgb(zDevice* obj)
+inline static int zdevice_rgb(zDevice* obj)
 {
     switch(obj->z_line_color_ix)
 	{
@@ -298,11 +296,13 @@ static inline int zdevice_rgb(zDevice* obj)
 	    obj->z_green_rgb = 0;
 	    obj->z_blue_rgb = 0;
 	    break;
-	}	
+	}
+
+    return 0;
 }
 
 /* set page size */
-static inline int zdevice_page_dims(zDevice* obj)
+inline static int zdevice_page_dims(zDevice* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
@@ -329,7 +329,7 @@ static inline int zdevice_page_dims(zDevice* obj)
 }
 
 /* create device context */
-static inline int zdevice_create_context(zDevice* obj)
+inline static int zdevice_create_context(zDevice* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
