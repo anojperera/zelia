@@ -121,6 +121,11 @@ int zTerminal_Draw(zTerminal* obj)
     /* Device context pointer */
     cairo_t* _dev_c = zGeneric_Get_Dev_Context(_genric);
 
+    /* Check all objects */
+    Z_CHECK_OBJ(_base);
+    Z_CHECK_OBJ(_genric);
+    Z_CHECK_OBJ(_dev_c);
+
     /* move device context to base coordinates */
     cairo_rectangle(_dev_c,
 		    ConvToPoints(&_base->z_x),

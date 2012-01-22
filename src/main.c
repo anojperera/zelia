@@ -76,13 +76,15 @@ int main(int argc, char** argv)
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
     /* Set base coordinates */
+    zGeneric_Set_Device(term, &dev);
+    zGeneric_Create_Dev_Context(term);
     zBase_Set_Base_Coords(Z_BASE(term), 100.0, 40.0);
     zBase_Set_Width_and_Height(Z_BASE(term), 20.0, 50.0);
 
     /* create border */
     zGeneric_Draw(sht);
-    /* zSheet_Create_Border(Z_SHEET(sht)); */
-
+    zGeneric_Draw(term);
+    
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zTerminal_Delete(Z_TERMINAL(term));
