@@ -148,9 +148,12 @@ int zTerminal_Draw(zTerminal* obj)
     cairo_text_extents(_dev_c,
 		       obj->z_term_num,
 		       &_te);
+    double x, y;
+    x = _base->z_x + (_base->z_width - _te.width) / 2 + _te.x_bearing;
+    y = _base->z_y + _base->z_height / 2;
     cairo_move_to(_dev_c,
-		  CONV_TO_POINTS(_base->z_x) + CONV_TO_POINTS(_base->z_width) / 2,
-		  CONV_TO_POINTS(_base->z_y) + CONV_TO_POINTS(_base->z_height) / 2);
+		  CONV_TO_POINTS(x),
+		  CONV_TO_POINTS(y));
     cairo_show_text(_dev_c, obj->z_term_num);
 
     return 0;
