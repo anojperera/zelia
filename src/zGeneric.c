@@ -29,7 +29,7 @@ zGeneric* zGeneric_New(zGeneric* obj)
     obj->z_gline_color_ix = zLBlack;
     obj->z_gline_weight = zLWeight4;
     obj->z_gltype = zLTContinuous;
-
+    obj->z_def_dev_ctxt_flg = 0;
     return obj;
 
 }
@@ -71,8 +71,9 @@ inline int zGeneric_Set_Device(zGeneric* obj, zDevice* var)
     Z_CHECK_OBJ(var);
 
     obj->z_gdev = var;
-    return 0;
 
+    /* Set to default context */
+    return zGeneric_Set_Default_Dev_Context(obj);
 }
 
 /* get device */
@@ -171,7 +172,10 @@ inline int zGeneric_Set_Default_Dev_Context(zGeneric* obj)
     /* check if device context was set in
        device object */
     if(obj->z_gdev->z_device)
-	obj->z_gcairo_dev = obj->z_gdev->z_device;
+	{
+	    obj->z_gcairo_dev = obj->z_gdev->z_device;
+	    obj->z_def_dev_ctxt_flg = 1;
+	}
     
     return 0;
 }
@@ -187,7 +191,13 @@ inline int zGeneric_Create_Dev_Context(zGeneric* obj)
 
     /* check if surface was created */
     Z_CHECK_OBJ(obj->z_gdev->z_surface);
-	
+
+    /* if object exists, delete */
+    if(obj->z_gcairo_dev && obj->z_def_dev_ctxt_flg)
+	cairo_destroy(obj->z_gcairo_dev);
+    else if(obj->z_gcairo_dev)
+	obj->z_gcairo_dev = NULL;
+    
     obj->z_gcairo_dev = cairo_create(obj->z_gdev->z_surface);
     return 0;
 }

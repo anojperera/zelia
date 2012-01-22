@@ -25,27 +25,31 @@ extern "C" {
     typedef int (*zgeneric_fptr) (zGeneric* obj);
     struct _zGeneric
     {
-	zDevice* z_gdev;		/* primary device */
-	void* z_child;			/* child sheet object */
+	zDevice* z_gdev;			/* primary device */
+	void* z_child;				/* child sheet object */
 		
-	cairo_t* z_gcairo_dev;		/* cairo device */
+	cairo_t* z_gcairo_dev;			/* cairo device */
+	
+	double z_gred_rgb;			/* rgb red */
+	double z_ggreen_rgb;			/* rgb green */
+	double z_gblue_rgb;			/* rgb blue */
 
-	double z_gred_rgb;		/* rgb red */
-	double z_ggreen_rgb;		/* rgb green */
-	double z_gblue_rgb;		/* rgb blue */
-
-	zLineColour z_gline_color_ix;	/* line color index */
-	zLineWeights z_gline_weight;	/* line weight */
-	zLineTypes z_gltype;		/* line type */
-	unsigned int z_int_flg;		/* internal flag */
-	zgeneric_fptr z_draw_func;	/* draw function pointer */
+	zLineColour z_gline_color_ix;		/* line color index */
+	zLineWeights z_gline_weight;		/* line weight */
+	zLineTypes z_gltype;			/* line type */
+	unsigned int z_int_flg;			/* internal flag */
+	unsigned int z_def_dev_ctxt_flg;	/* defulat device context set */
+	zgeneric_fptr z_draw_func;		/* draw function pointer */
     };
 
     /* create and delete object */
     zGeneric* zGeneric_New(zGeneric* obj);
     void zGeneric_Delete(zGeneric* obj);
 
-    /* Create generic device context */
+    /* Create generic device context.
+     * This function is used for creating a device context
+     * unique to this object.
+     * Default shall be to use the device context of zDevice */
     int zGeneric_Create_Dev_Context(zGeneric* obj);
 
     /* Draw component */
@@ -68,7 +72,9 @@ extern "C" {
 				 zLineWeights var);
     inline zLineWeights zGeneric_Get_LineWeight(zGeneric* obj);
 
-    /* Set default device context */
+    /* Set default device context.
+     * Function is used for setting the device context to
+     * zDevice */
     inline int zGeneric_Set_Default_Dev_Context(zGeneric* obj);
 
     /* set defaults */
