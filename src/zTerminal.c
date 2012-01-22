@@ -143,15 +143,14 @@ int zTerminal_Draw(zTerminal* obj)
 			   CAIRO_FONT_SLANT_NORMAL,
 			   CAIRO_FONT_WEIGHT_BOLD);
     
-    cairo_set_font_size(_dev_c,
-			CONV_TO_POINTS(Z_GRD_FONT_SZ));
+    cairo_set_font_size(_dev_c, Z_GRD_FONT_SZ);
     
     cairo_text_extents(_dev_c,
 		       obj->z_term_num,
 		       &_te);
     cairo_move_to(_dev_c,
-		  CONV_TO_POINTS(_base->z_x + _base->z_width / 2),
-		  CONV_TO_POINTS(_base->z_y + _base->z_height / 2));
+		  CONV_TO_POINTS(_base->z_x) + CONV_TO_POINTS(_base->z_width) / 2,
+		  CONV_TO_POINTS(_base->z_y) + CONV_TO_POINTS(_base->z_height) / 2);
     cairo_show_text(_dev_c, obj->z_term_num);
 
     return 0;
