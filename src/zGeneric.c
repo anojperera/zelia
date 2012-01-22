@@ -73,7 +73,7 @@ inline int zGeneric_Set_Device(zGeneric* obj, zDevice* var)
     obj->z_gdev = var;
 
     /* Set to default context */
-    return zGeneric_Set_Default_Dev_Context(obj);
+    return 0;
 }
 
 /* get device */
