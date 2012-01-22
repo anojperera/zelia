@@ -59,7 +59,7 @@ zGeneric* zSheet_New(zSheet* obj)
     obj->z_sgrid_flg = 0;
     obj->z_ssafe_flg = 0;
     obj->z_child = NULL;
-    obj->z_draw_func = _zsheet_draw_function;
+    obj->z_draw_func = NULL;
     /* initialise array coordinates */
     int i = 0;
     for(i=0; i<Z_MAX_ATTRIB; i++)
@@ -67,7 +67,9 @@ zGeneric* zSheet_New(zSheet* obj)
 	    obj->z_x_attrib[i] = 0;
 	    obj->z_y_attrib[i] = 0;
 	}
-    
+
+    /* set draw function pointer of base object */
+    obj->z_sgeneric.z_draw_func = _zsheet_draw_function;
     /* assign child pointer to base object */
     obj->z_sgeneric.z_child = (void*) obj;
     
