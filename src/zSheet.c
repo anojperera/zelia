@@ -1198,7 +1198,8 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	- x - Z_WOZ_MAIN_BRD_HEIGHT +
 	Z_WOZ_MAIN_DES_HEIGHT +
 	Z_WOZ_MAIN_CLT_HEIGHT + Z_WOZ_MAIN_PROJ_HEIGHT
-	+ Z_WOZ_MAIN_JOB_HEIGHT + Z_BORDER_TXT_TOP_ADJ1;
+	+ Z_WOZ_MAIN_JOB_HEIGHT + Z_BORDER_TXT_TOP_ADJ1
+	+ Z_BORDER_TXT_TOP_ADJ4;
 
     /* address */
     X[23] = X[22];
