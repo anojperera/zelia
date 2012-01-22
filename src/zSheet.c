@@ -1136,17 +1136,15 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	- Z_WOZ_MAIN_GEN_LEFT + Z_BORDER_TXT_LEFT_ADJ;
     Y[11] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
 	- Z_WOZ_MAIN_BRD_HEIGHT + Z_WOZ_MAIN_DES_HEIGHT
-	+ Z_WOZ_MAIN_CLT_HEIGHT - Z_BORDER_TXT_TOP_ADJ3;
+	+ Z_WOZ_MAIN_CLT_HEIGHT + Z_BORDER_TXT_TOP_ADJ4;
 
     /* drawn date */
     X[12] = X[11];
-    Y[12] = Y[11] + Z_WOZ_MAIN_CLT_HEIGHT -
-	Z_BORDER_TXT_TOP_ADJ3;
+    Y[12] = Y[11] + Z_WOZ_MAIN_CLT_HEIGHT - Z_BORDER_TXT_TOP_ADJ4;
 
     /* checked */
     X[13] = X[11];
-    Y[13] = Y[12] + Z_WOZ_MAIN_GEN_HEIGHT -
-	Z_BORDER_TXT_TOP_ADJ3;
+    Y[13] = Y[12] + Z_WOZ_MAIN_GEN_HEIGHT;
 
     /* checked date */
     X[14] = X[11];
@@ -1168,12 +1166,12 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     Y[17] = dev->z_page_height - Z_DEFAULT_BORDER_SZ
 	- Z_WOZ_MAIN_BRD_HEIGHT +
 	Z_WOZ_MAIN_DES_HEIGHT + Z_WOZ_MAIN_CLT_HEIGHT
-	+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ3;
+	+ Z_BORDER_TXT_TOP_ADJ - Z_BORDER_TXT_TOP_ADJ4;
 
     /* job number */
     X[18] = X[17];
-    Y[18] = Y[17] + Z_WOZ_MAIN_PROJ_HEIGHT -
-	Z_BORDER_TXT_TOP_ADJ3;
+    Y[18] = Y[17] + Z_WOZ_MAIN_PROJ_HEIGHT +
+	Z_BORDER_TXT_TOP_ADJ4;
 
     /* client's p.o */
     X[19] = dev->z_page_width - Z_DEFAULT_BORDER_SZ -

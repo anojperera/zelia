@@ -66,6 +66,7 @@
 #define Z_BORDER_TXT_TOP_ADJ2 5.5			/* vertical top adjustment */
 
 #define Z_BORDER_TXT_TOP_ADJ3 0.1			/* vertical top adjustment */
+#define Z_BORDER_TXT_TOP_ADJ4 1
 
 #define Z_WOZ_MAIN_TITLE_TXT_HEIGHT 8			/* title text height */
 #define Z_WOZ_MAIN_ATTRIB_VOFFSET 8			/* vertical offset */
