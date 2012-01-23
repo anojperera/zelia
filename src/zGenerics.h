@@ -22,6 +22,7 @@ struct _zGenerics
     unsigned int z_count;				/* count of objects */
     unsigned int z_expansion_flg;			/* expansion flag */
     zcollection_draw_fptr z_draw_func;			/* Draw function pointer */
+    void* z_child;					/* child object */
 };
 
 /* Following C functions are only to be called internally within the library */
@@ -36,7 +37,7 @@ extern "C" {
      * and static flag was specified */
     int zGenerics_New(zGenerics** obj,
 		      unsigned int s_flg,		/* static or dynamic option */
-		      unsigned int g_count, );		/* count of objects if static option was used */
+		      unsigned int g_count);		/* count of objects if static option was used */
 
     void zGenerics_Delete(zGenerics** obj);
 
