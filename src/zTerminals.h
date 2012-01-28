@@ -20,10 +20,15 @@ typedef struct _zTerminals zTerminals;
 struct _zTerminals
 {
     zGenerics var_parent;				/* inherited parent object */
-    unsigned int z_count;				/* count of terminals */
+    unsigned int z_int_flg;				/* internal flag */
     /* Link string to be specified in the following format;
      * 1-2, 4-8 etc. */
     char z_term_links[32];				/* 32 byte long link string. */
+    double z_x;						/* x coord */
+    double z_y;						/* y coord */
+    double z_width;					/* width */
+    double z_height;					/* height */
+    double ang;						/* angle */
 };
 
 #ifdef __cplusplus
@@ -32,6 +37,7 @@ extern "C" {
 
     /* Constructor and destructor */
     zGenerics* zTerminals_New(zTerminals* obj,
+			      zDevice* dev,		/* device object */
 			      unsigned int num_term,	/* number of terminals */
 			      double x,			/* base coordinate */
 			      double y,			/* base coordinate */
