@@ -12,7 +12,7 @@
 typedef struct _zGenerics zGenerics;
 
 /* Function pointer for drawing functions in collection */
-typedef int (*zcollection_draw_fptr)(void*);
+typedef int (*zcollection_fptr)(zGeneric*);
 
 
 struct _zGenerics
@@ -21,7 +21,9 @@ struct _zGenerics
     zGeneric** z_generics_s;				/* static collection */
     unsigned int z_count;				/* count of objects */
     unsigned int z_expansion_flg;			/* expansion flag */
-    zcollection_draw_fptr z_draw_func;			/* Draw function pointer */
+    unsigned int z_int_flg;				/* internal flag */
+    zcollection_fptr z_draw_func;			/* Draw function pointer */
+    zcollection_fptr z_destructor_func;			/* Function pointer for child destructor */
     void* z_child;					/* child object */
 };
 
@@ -35,11 +37,11 @@ extern "C" {
     /* If static option was used, object count must be greater than
      * 1. The contructor shall fail if object count is less than 1
      * and static flag was specified */
-    int zGenerics_New(zGenerics** obj,
+    int zGenerics_New(zGenerics* obj,
 		      unsigned int s_flg,		/* static or dynamic option */
 		      unsigned int g_count);		/* count of objects if static option was used */
 
-    void zGenerics_Delete(zGenerics** obj);
+    void zGenerics_Delete(zGenerics* obj);
 
     /* Get object count */
     inline unsigned int zGenerics_Get_Count(zGenerics* obj);
