@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include "../../g_list/src/alist.h"
 #include "zGeneric.h"
+#include "zDevice.h"
 
 /* Forward declaration of object */
 typedef struct _zGenerics zGenerics;
@@ -24,6 +25,7 @@ struct _zGenerics
     unsigned int z_int_flg;				/* internal flag */
     zcollection_fptr z_draw_func;			/* Draw function pointer */
     zcollection_fptr z_destructor_func;			/* Function pointer for child destructor */
+    zDevice* z_device;					/* Device object */
     void* z_child;					/* child object */
 };
 
@@ -45,6 +47,10 @@ extern "C" {
 
     /* Get object count */
     inline unsigned int zGenerics_Get_Count(zGenerics* obj);
+
+    /* Set and get device object */
+    inline int zGenerics_Set_Device(zGenerics* obj, zDevice* dev);
+    inline zDevice* zGenerics_Get_Device(zGenerics* obj);
 
     /* Clear array */
     void zGenerics_Clear(zGenerics* obj);

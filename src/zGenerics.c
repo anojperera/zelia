@@ -36,6 +36,8 @@ int zGenerics_New(zGenerics* obj,
     /* Set properties */
     obj->z_generics_d = NULL;
 
+    obj->z_device = NULL;
+
     /* if static flag and count was set create the object array
      * as static */
     if(s_flg == 0 && g_count > 0)
@@ -87,6 +89,7 @@ void zGenerics_Delete(zGenerics* obj)
 	free(obj->z_generics_s);
 
     obj->z_generics_s = NULL;
+    obj->z_device = NULL;
     
     if(obj->z_int_flg)
 	free(obj);
@@ -101,6 +104,23 @@ inline unsigned int zGenerics_Get_Count(zGenerics* obj)
 	return 0;
     else
 	return obj->z_count;
+}
+
+/* Set device */
+inline int zGenerics_Set_Device(zGenerics* obj, zDevice* dev)
+{
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(dev);
+
+    obj->z_device = dev;
+    return 0;
+}
+
+/* Get device */
+inline zDevice* zGenerics_Get_Device(zGenerics* obj)
+{
+    Z_CHECK_OBJ_PTR(obj);
+    return obj->z_device;
 }
 
 /* Clear array */
