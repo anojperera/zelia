@@ -12,19 +12,39 @@
 #define _ZTERMINALS_H_
 
 #include <stdlib.h>
+#include "zGenerics.h"
 
 /* Forward declaration of struct */
 typedef struct _zTerminals zTerminals;
 
 struct _zTerminals
 {
-    zTerminal** z_terminals;				/* Collection of terminals */
+    zGenerics var_parent;				/* inherited parent object */
     unsigned int z_count;				/* count of terminals */
     /* Link string to be specified in the following format;
      * 1-2, 4-8 etc. */
-    char z_term_links[32];				/* 32 byte long link string.
-    
-    
+    char z_term_links[32];				/* 32 byte long link string. */
 };
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+    /* Constructor and destructor */
+    zGenerics* zTerminals_New(zTerminals* obj,
+			      unsigned int num_term,	/* number of terminals */
+			      double x,			/* base coordinate */
+			      double y,			/* base coordinate */
+			      double width,		/* width */
+			      double height,		/* height */
+			      double ang,		/* orientation angle */
+			      const char* links);	/* links */
+
+    /* Destruct is a virtual interface */
+    void zTerminals_Delete(zTerminals* obj);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _ZTERMINALS_H_ */
