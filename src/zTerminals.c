@@ -193,12 +193,15 @@ static int _zterminals_parser(zTerminals* obj)
 		    /* break out of loop if max is reached */ 
 		    if(i == 2)
 			break;
-		    _tnum[i] = atoi(_val);
+		    _tnum[i] = atoi(_val) - 1;
 
 		    _val = strtok(NULL, "-");
 		    i++;
 		}
-
+	    
+	    if(ed <= 0 || st <= 0)
+		break;
+	    
 	    /* get the lower oder */
 	    st = _tnum[0] > _tnum[1]? _tnum[1] : _tnum[0];
 	    ed = _tnum[1] > _tnum[0]? _tnum[1] : _tnum[0];
@@ -219,7 +222,7 @@ static int _zterminals_parser(zTerminals* obj)
 	    cairo_stroke(zDevice_Get_Context(_dev));
 
 	    /* link connections */
-	    for(a=st; a==ed; a++)
+	    for(a=st; a<ed+1; a++)
 		{
 		    cairo_move_to(zDevice_Get_Context(_dev),
 				  CONV_TO_POINTS(obj->z_x_links[a]),
@@ -236,6 +239,5 @@ static int _zterminals_parser(zTerminals* obj)
 	    _tok = strtok(NULL, ",");
 	    j++;
 	}
-
     return 0;
 }
