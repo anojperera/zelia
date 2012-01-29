@@ -3,7 +3,7 @@
 
 #include "zVar.h"
 #include "zTerminals.h"
-n#include "zTerminal.h"
+#include "zTerminal.h"
 #include "zBase.h"
 #include "zGeneric.h"
 
@@ -72,7 +72,7 @@ zGenerics* zTerminals_New(zTerminals* obj,
 		zTerminal_New(NULL);
 
 	    /* Set terminal number */
-	    zTerminal_Set_Terminal_Number(obj->z_parent.z_generics_s[i],
+	    zTerminal_Set_Terminal_Number(Z_TERMINAL(obj->z_parent.z_generics_s[i]),
 					  i+1);
 	    
 	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
@@ -113,7 +113,7 @@ void zTerminals_Delete(zTerminals* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* call delete method of parent object */
-    zGenerics_Delete(obj->z_parent);
+    zGenerics_Delete(&obj->z_parent);
 
     free(obj->z_x_links);
     free(obj->z_y_links);
@@ -132,7 +132,7 @@ void zTerminals_Delete(zTerminals* obj)
 /* Virtual delete function */
 static int _zterminals_delete(zGeneric* obj, void* usr_data)
 {
-    zTerminal_Delete(obj);
+    zTerminal_Delete(Z_TERMINAL(obj));
     return 0;
 }
 
@@ -144,13 +144,13 @@ static int _zterminals_draw(zGeneric* obj, void* usr_data)
     
     if(obj == NULL || usr_data == NULL)
 	return 1;
-    
-    zTerminal_Draw(Z_TERMINAL(obj));
 
+    zTerminals* zts = (zTerminals*) usr_data;    
+    zTerminal_Draw(Z_TERMINAL(obj));
+    
     /* if counter is reached max, draw links if required */
-    if(d_count == (*obj)->z_parent.z_count)
+    if(d_count == zts->z_parent.z_count)
 	{
-	    zTerminals* zts = (zTerminals*) usr_data;
 	    _zterminals_parser(zts);
 	    d_count = 0;
 	}
@@ -171,7 +171,7 @@ static int _zterminals_parser(zTerminals* obj)
     zDevice* _dev;		/* Device */
     
     /* Get device */
-    zDevice* _dev = zGenerics_Get_Device(&obj.z_parent);
+    _dev = zGenerics_Get_Device(&obj->z_parent);
     
     j = 0;
     while(_tok != NULL)

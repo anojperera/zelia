@@ -6,7 +6,7 @@
 /* Virtual functions */
 static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix);		/* delete child objects */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix);			/* draw child object */
-static int _zgenerics_del_helper(zGenerics** obj);						/* delete helper */
+static int _zgenerics_del_helper(zGenerics* obj);						/* delete helper */
 
 /* Constructor */
 int zGenerics_New(zGenerics* obj,
@@ -19,15 +19,15 @@ int zGenerics_New(zGenerics* obj,
     /* check for static flag */
     if(s_flg == 0 && g_count == 0)
 	{
-	    *obj = NULL;
+	    obj = NULL;
 	    return 1;
 	}
 
     /* Create object if NULL */
-    if(*obj == NULL)
+    if(obj == NULL)
 	{
 	    obj = (zGenerics*) malloc(sizeof(zGenerics));
-	    Z_CHECK_OBJ(*obj);
+	    Z_CHECK_OBJ(obj);
 	    obj->z_int_flg = 1;
 	}
     else
@@ -47,7 +47,7 @@ int zGenerics_New(zGenerics* obj,
 
 	    /* initialise all objects in array to NULL */
 	    int i = 0;
-	    for(i; i<g_count; i++)
+	    for(i=0; i<g_count; i++)
 		obj->z_generics_s[i] = NULL;
 
 	    /* set the expansion flag to 0 - indicating not dynamically
@@ -79,12 +79,11 @@ int zGenerics_New(zGenerics* obj,
 /* Destructor */
 void zGenerics_Delete(zGenerics* obj)
 {
-    int i;
     /* check for object */
     Z_CHECK_OBJ_VOID(obj);
 
     
-    _zgenerics_del_helper(&obj);
+    _zgenerics_del_helper(obj);
     
     if(obj->z_generics_s)
 	free(obj->z_generics_s);
@@ -131,7 +130,7 @@ void zGenerics_Clear(zGenerics* obj)
 {
     /* check for object */
     Z_CHECK_OBJ_VOID(obj);
-    _zgenerics_del_helper(&obj);
+    _zgenerics_del_helper(obj);
 }
 
 /* Draw function */
@@ -145,9 +144,10 @@ int zGenerics_Draw(zGenerics* obj)
     /* check for expansion object, if dynamic, use dynamic array */
     if(obj->z_expansion_flg && obj->z_generics_d)
 	{
-	    aList_Display(&obj->z_generics_d,
+	    aList_Display2(&obj->z_generics_d,
 			  0,
-			  _zgenerics_callback_draw);
+			   _zgenerics_callback_draw,
+			   (void*) obj);
 	}
     else if(obj->z_generics_s)
 	{
@@ -166,15 +166,17 @@ int zGenerics_Draw(zGenerics* obj)
 /* Private functions */
 
 /* Delete and clear function helper */
-static int _zgenerics_del_helper(zGenerics** obj)
+static int _zgenerics_del_helper(zGenerics* obj)
 {
+    int i;
     /* check for expansion flag */
     if(obj->z_expansion_flg)
 	{
 	    /* call destructors of child objects */
-	    aList_Display(&obj->z_generics_d,
+	    aList_Display2(&obj->z_generics_d,
 			  0,
-			  _zgenerics_callback_delete);
+			   _zgenerics_callback_delete,
+			   (void*) obj);
 
 	    /* clear internal list */
 	    aList_Clear(&obj->z_generics_d);

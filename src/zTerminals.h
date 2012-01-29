@@ -19,7 +19,7 @@ typedef struct _zTerminals zTerminals;
 
 struct _zTerminals
 {
-    zGenerics var_parent;				/* inherited parent object */
+    zGenerics z_parent;					/* inherited parent object */
     unsigned int z_int_flg;				/* internal flag */
     unsigned int z_links_flg;				/* links flag */
     /* Link string to be specified in the following format;
