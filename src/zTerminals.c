@@ -89,7 +89,7 @@ zGenerics* zTerminals_New(zTerminals* obj,
 				zGenerics_Get_Device(&obj->z_parent));
 
 	    /* Set default device context */
-	    /* zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]); */
+	    zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]);
 
 	    /* add link coordinates */
 	    obj->z_x_links[i] = ang==90.0? x + height / 3 : x + (double) i * width + width / 2;
