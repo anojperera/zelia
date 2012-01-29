@@ -21,6 +21,7 @@ struct _zTerminals
 {
     zGenerics var_parent;				/* inherited parent object */
     unsigned int z_int_flg;				/* internal flag */
+    unsigned int z_links_flg;				/* links flag */
     /* Link string to be specified in the following format;
      * 1-2, 4-8 etc. */
     char z_term_links[32];				/* 32 byte long link string. */
@@ -29,6 +30,8 @@ struct _zTerminals
     double z_width;					/* width */
     double z_height;					/* height */
     double ang;						/* angle */
+    double* z_x_links;					/* link coordinates array */
+    double* z_y_links;					/* link coordinates array */
 };
 
 #ifdef __cplusplus

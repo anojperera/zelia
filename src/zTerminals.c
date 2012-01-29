@@ -3,13 +3,16 @@
 
 #include "zVar.h"
 #include "zTerminals.h"
-#include "zTerminal.h"
+n#include "zTerminal.h"
 #include "zBase.h"
 #include "zGeneric.h"
 
 /* Virtual functions */
-static int _zterminals_delete(zGenerics* obj);		/* delte function */
-static int _zterminals_draw(zGenerics* obj);		/* draw function */
+static int _zterminals_delete(zGeneric* obj, void* usr_data);		/* delte function */
+static int _zterminals_draw(zGeneric* obj, void* usr_data);		/* draw function */
+static inline int _zterminals_parser(zTerminals* obj);			/* terminals parser */
+
+static int d_count = 0;
 
 /* Constructor */
 zGenerics* zTerminals_New(zTerminals* obj,
@@ -17,10 +20,10 @@ zGenerics* zTerminals_New(zTerminals* obj,
 			  unsigned int num_term,	/* number of terminals */
 			  double x,			/* base coordinate */
 			  double y,			/* base coordinate */
-			  double width,		/* width */
+			  double width,			/* width */
 			  double height,		/* height */
-			  double ang,		/* orientation angle */
-			  const char* links)	/* links */
+			  double ang,			/* orientation angle */
+			  const char* links)		/* links */
 {
     int i;
     
@@ -54,8 +57,13 @@ zGenerics* zTerminals_New(zTerminals* obj,
     obj->z_width = width;
     obj->z_height = height;
     obj->ang = ang;
+    obj->z_links_flg = 0;
 
     strcpy(obj->z_term_links, links);
+
+    /* create coordinate array */
+    obj->z_x_links = (double*) calloc(num_term, sizeof(double));
+    obj->z_y_links = (double*) calloc(num_term, sizeof(double));
 
     /* create objects */
     for(i=0; i<num_term; i++)
@@ -76,6 +84,11 @@ zGenerics* zTerminals_New(zTerminals* obj,
 
 	    zGeneric_Set_Device(obj->z_parent.z_generics_s[i],
 				zGenerics_Get_Device(&obj->z_parent));
+
+	    /* add link coordinates */
+	    obj->z_x_links[i] = ang==90.0? x + height / 3 : x + (double) i * width + width / 2;
+	    obj->z_y_links[i] = ang==90.0? y + (double) i * width + width / 2 : y + height / 3;
+	    
 	}
 
     /* set function pointers of parent object */
@@ -85,7 +98,134 @@ zGenerics* zTerminals_New(zTerminals* obj,
     /* child pointer of base object */
     obj->z_parent.z_child = (void*) obj;
 
+    /* add user data to parent object */
+    obj->z_parent.z_usr_data = (void*) obj;
+
     /* return parent object */
     return &obj->z_parent;
     
+}
+
+/* Destructor */
+void zTerminals_Delete(zTerminals* obj)
+{
+    /* check object */
+    Z_CHECK_OBJ_VOID(obj);
+
+    /* call delete method of parent object */
+    zGenerics_Delete(obj->z_parent);
+
+    free(obj->z_x_links);
+    free(obj->z_y_links);
+    
+    obj->z_x_links = NULL;
+    obj->z_y_links = NULL;
+    
+
+    if(obj->z_int_flg)
+	free(obj);
+}
+
+/*=========================================================================*/
+/* Private functions */
+
+/* Virtual delete function */
+static int _zterminals_delete(zGeneric* obj, void* usr_data)
+{
+    zTerminal_Delete(obj);
+    return 0;
+}
+
+
+/* Virtual draw function */
+static int _zterminals_draw(zGeneric* obj, void* usr_data)
+{
+    d_count++;
+    
+    if(obj == NULL || usr_data == NULL)
+	return 1;
+    
+    zTerminal_Draw(Z_TERMINAL(obj));
+
+    /* if counter is reached max, draw links if required */
+    if(d_count == (*obj)->z_parent.z_count)
+	{
+	    zTerminals* zts = (zTerminals*) usr_data;
+	    _zterminals_parser(zts);
+	    d_count = 0;
+	}
+
+    return 0;
+}
+
+/* Terminal links parser */
+static int _zterminals_parser(zTerminals* obj)
+{
+    int i, j, a;		 /* counters */
+    
+    /* split the string into tokens */
+    char* _tok = strtok(obj->z_term_links, ",");
+    char* _val;
+    int _tnum[2];		/* Terminal number */
+    int st, ed;			/* Start and end indexes */
+    zDevice* _dev;		/* Device */
+    
+    /* Get device */
+    zDevice* _dev = zGenerics_Get_Device(&obj.z_parent);
+    
+    j = 0;
+    while(_tok != NULL)
+	{
+	    i = 0;
+	    _val = strtok(_tok, "-");
+	    while(_val != NULL)
+		{
+		    /* break out of loop if max is reached */ 
+		    if(i == 2)
+			break;
+		    _tnum[i] = atoi(_val);
+
+		    _val = strtok(NULL, "-");
+		    i++;
+		}
+
+	    /* get the lower oder */
+	    st = _tnum[0] > _tnum[1]? _tnum[1] : _tnum[0];
+	    ed = _tnum[1] > _tnum[0]? _tnum[1] : _tnum[0];
+
+	    /* check array bounds */
+	    if(st > zGenerics_Get_Count(&obj->z_parent) ||
+	       ed > zGenerics_Get_Count(&obj->z_parent))
+	       break;
+	    
+	    /* Draw link line */
+	    cairo_move_to(zDevice_Get_Context(_dev),
+			  CONV_TO_POINTS(obj->z_x_links[st]),
+			  CONV_TO_POINTS(obj->z_y_links[st]));
+	    cairo_line_to(zDevice_Get_Context(_dev),
+			  CONV_TO_POINTS(obj->z_x_links[ed]),
+			  CONV_TO_POINTS(obj->z_y_links[ed]));
+	    
+	    cairo_stroke(zDevice_Get_Context(_dev));
+
+	    /* link connections */
+	    for(a=st; a==ed; a++)
+		{
+		    cairo_move_to(zDevice_Get_Context(_dev),
+				  CONV_TO_POINTS(obj->z_x_links[a]),
+				  CONV_TO_POINTS(obj->z_y_links[a]));
+		    cairo_arc(zDevice_Get_Context(_dev),
+			      CONV_TO_POINTS(obj->z_x_links[a]),
+			      CONV_TO_POINTS(obj->z_y_links[a]),
+			      CONV_TO_POINTS(2),
+			      0.0,
+			      2 * M_PI);
+		    cairo_fill(zDevice_Get_Context(_dev));
+		}
+	    
+	    _tok = strtok(NULL, ",");
+	    j++;
+	}
+
+    return 0;
 }
