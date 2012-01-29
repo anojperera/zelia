@@ -92,8 +92,8 @@ zGenerics* zTerminals_New(zTerminals* obj,
 	    zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]);
 
 	    /* add link coordinates */
-	    obj->z_x_links[i] = ang==90.0? x + height / 3 : x + (double) i * width + width / 2;
-	    obj->z_y_links[i] = ang==90.0? y + (double) i * width + width / 2 : y + height / 3;
+	    obj->z_x_links[i] = ang==90.0? x + 3 * height / 4 : x + (double) i * width + width / 2;
+	    obj->z_y_links[i] = ang==90.0? y + (double) i * width + width / 2 : y + 3 * height / 4;
 	    
 	}
 
@@ -198,13 +198,13 @@ static int _zterminals_parser(zTerminals* obj)
 		    _val = strtok(NULL, "-");
 		    i++;
 		}
-	    
-	    if(ed <= 0 || st <= 0)
-		break;
-	    
+	    	    
 	    /* get the lower oder */
 	    st = _tnum[0] > _tnum[1]? _tnum[1] : _tnum[0];
 	    ed = _tnum[1] > _tnum[0]? _tnum[1] : _tnum[0];
+
+	    if(ed <= 0 || st <= 0)
+		break;
 
 	    /* check array bounds */
 	    if(st > zGenerics_Get_Count(&obj->z_parent) ||
