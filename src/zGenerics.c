@@ -6,7 +6,7 @@
 /* Virtual functions */
 static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix);		/* delete child objects */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix);			/* draw child object */
-static int _zgenerics_del_helper(zGenerics* obj);						/* delete helper */
+static inline int _zgenerics_del_helper(zGenerics* obj);						/* delete helper */
 
 /* Constructor */
 int zGenerics_New(zGenerics* obj,
@@ -166,7 +166,7 @@ int zGenerics_Draw(zGenerics* obj)
 /* Private functions */
 
 /* Delete and clear function helper */
-static int _zgenerics_del_helper(zGenerics* obj)
+static inline int _zgenerics_del_helper(zGenerics* obj)
 {
     int i;
     /* check for expansion flag */
