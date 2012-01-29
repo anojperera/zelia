@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 				      50.0,
 				      10.0,
 				      40.0,
-				      0.0,
+				      90.0,
 				      "1-3,5-6");
 
     /* create border */
