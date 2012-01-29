@@ -8,9 +8,11 @@
 
 #include "zDevice.h"
 #include "zGeneric.h"
+#include "zGenerics.h"
+#include "zSheet.h"
 #include "zBase.h"
 #include "zTerminal.h"
-#include "zSheet.h"
+#include "zTerminals.h"
 
 int main(int argc, char** argv)
 {
@@ -25,7 +27,6 @@ int main(int argc, char** argv)
 
     /* create sheet */
     zGeneric* sht = zSheet_New(NULL);
-    zGeneric* term = zTerminal_New(NULL);
     /* check for NULL pointer */
     if(sht == NULL)
 	{
@@ -75,20 +76,24 @@ int main(int argc, char** argv)
     /* set attributes */
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
-    /* Set base coordinates */
-    zGeneric_Set_Device(term, &dev);
-    /* zGeneric_Create_Dev_Context(term); */
-    zGeneric_Set_Default_Dev_Context(term);
-    zBase_Set_Base_Coords(Z_BASE(term), 100.0, 40.0);
-    zBase_Set_Width_and_Height(Z_BASE(term), 20.0, 50.0);
+    /* Create a array of terminals */
+    zGenerics* terms = zTerminals_New(NULL,
+				      &dev,
+				      2,
+				      50.0,
+				      50.0,
+				      10.0,
+				      40.0,
+				      0.0,
+				      NULL);
 
     /* create border */
     zGeneric_Draw(sht);
-    zGeneric_Draw(term);
+    zGenerics_Draw(terms);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
-    zTerminal_Delete(Z_TERMINAL(term));
+    zTerminals_Delete(Z_TERMINALS(terms);
     zDevice_Delete(&dev);
 
     if(attrib)

@@ -59,7 +59,10 @@ zGenerics* zTerminals_New(zTerminals* obj,
     obj->ang = ang;
     obj->z_links_flg = 0;
 
-    strcpy(obj->z_term_links, links);
+    if(links)
+	strcpy(obj->z_term_links, links);
+    else
+	obj->z_term_links[0] = '\0';
 
     /* create coordinate array */
     obj->z_x_links = (double*) calloc(num_term, sizeof(double));
@@ -84,6 +87,9 @@ zGenerics* zTerminals_New(zTerminals* obj,
 
 	    zGeneric_Set_Device(obj->z_parent.z_generics_s[i],
 				zGenerics_Get_Device(&obj->z_parent));
+
+	    /* Set default device context */
+	    /* zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]); */
 
 	    /* add link coordinates */
 	    obj->z_x_links[i] = ang==90.0? x + height / 3 : x + (double) i * width + width / 2;
@@ -162,17 +168,21 @@ static int _zterminals_draw(zGeneric* obj, void* usr_data)
 static int _zterminals_parser(zTerminals* obj)
 {
     int i, j, a;		 /* counters */
-    
-    /* split the string into tokens */
-    char* _tok = strtok(obj->z_term_links, ",");
+    char* _tok;
     char* _val;
     int _tnum[2];		/* Terminal number */
     int st, ed;			/* Start and end indexes */
     zDevice* _dev;		/* Device */
+
+    /* Check link string */
+    if(obj->z_term_links[0] == '\0')
+	return 1;
     
     /* Get device */
     _dev = zGenerics_Get_Device(&obj->z_parent);
-    
+
+    /* split the string into tokens */    
+    _tok = strtok(obj->z_term_links, ",");    
     j = 0;
     while(_tok != NULL)
 	{
