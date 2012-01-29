@@ -13,7 +13,7 @@
 typedef struct _zGenerics zGenerics;
 
 /* Function pointer for drawing functions in collection */
-typedef int (*zcollection_fptr)(zGeneric*);
+typedef int (*zcollection_fptr)(zGeneric*, void*);
 
 
 struct _zGenerics
@@ -26,6 +26,7 @@ struct _zGenerics
     zcollection_fptr z_draw_func;			/* Draw function pointer */
     zcollection_fptr z_destructor_func;			/* Function pointer for child destructor */
     zDevice* z_device;					/* Device object */
+    void* z_usr_data;					/* User data */
     void* z_child;					/* child object */
 };
 
