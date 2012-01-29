@@ -169,7 +169,7 @@
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
 #define Z_TERMINAL(obj) ((zTerminal*) Z_BASE(obj)->z_child)
-#define Z_TERMINALS(obj) (zTerminals*) obj->z_child)
+#define Z_TERMINALS(obj) ((zTerminals*) obj->z_child)
 
 
 /* Object checking macro */
