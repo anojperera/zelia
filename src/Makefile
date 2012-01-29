@@ -12,7 +12,7 @@ OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
 $(PROG) : $(OBJS)
-		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -o $(PROG) $(OBJS) $(GTKOBJS)
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -o ../bin/$(PROG) $(OBJS) $(GTKOBJS)
 
 main.o : main.c 
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c main.c $(GTKCFLGS)
