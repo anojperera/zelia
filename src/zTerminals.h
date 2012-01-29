@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include "zGenerics.h"
 
+#define ZTERMINALS_LK_SZ 32
 /* Forward declaration of struct */
 typedef struct _zTerminals zTerminals;
 
@@ -24,7 +25,7 @@ struct _zTerminals
     unsigned int z_links_flg;				/* links flag */
     /* Link string to be specified in the following format;
      * 1-2, 4-8 etc. */
-    char z_term_links[32];				/* 32 byte long link string. */
+    char z_term_links[ZTERMINALS_LK_SZ];		/* 32 byte long link string. */
     double z_x;						/* x coord */
     double z_y;						/* y coord */
     double z_width;					/* width */

@@ -79,13 +79,13 @@ int main(int argc, char** argv)
     /* Create a array of terminals */
     zGenerics* terms = zTerminals_New(NULL,
 				      &dev,
-				      2,
+				      6,
 				      50.0,
 				      50.0,
 				      10.0,
 				      40.0,
 				      0.0,
-				      NULL);
+				      "1-3,5-6");
 
     /* create border */
     zGeneric_Draw(sht);
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
-    zTerminals_Delete(Z_TERMINALS(terms);
+    zTerminals_Delete(Z_TERMINALS(terms));
     zDevice_Delete(&dev);
 
     if(attrib)

@@ -60,7 +60,11 @@ zGenerics* zTerminals_New(zTerminals* obj,
     obj->z_links_flg = 0;
 
     if(links)
-	strcpy(obj->z_term_links, links);
+	{
+	    strcpy(obj->z_term_links, links);
+	    if(strlen(obj->z_term_links) < ZTERMINALS_LK_SZ)
+		strncat(obj->z_term_links, ".", sizeof(char));
+	}
     else
 	obj->z_term_links[0] = '\0';
 
@@ -167,13 +171,14 @@ static int _zterminals_draw(zGeneric* obj, void* usr_data)
 /* Terminal links parser */
 static int _zterminals_parser(zTerminals* obj)
 {
-    int i, j, a;		 /* counters */
-    char* _tok;
+    int i, j, a, b;		 /* counters */
+    char** _tok;
     char* _val;
     int _tnum[2];		/* Terminal number */
     int st, ed;			/* Start and end indexes */
     zDevice* _dev;		/* Device */
-
+    char* _tok2;		/* second token */
+    
     /* Check link string */
     if(obj->z_term_links[0] == '\0')
 	return 1;
@@ -181,63 +186,80 @@ static int _zterminals_parser(zTerminals* obj)
     /* Get device */
     _dev = zGenerics_Get_Device(&obj->z_parent);
 
-    /* split the string into tokens */    
-    _tok = strtok(obj->z_term_links, ",");    
-    j = 0;
-    while(_tok != NULL)
-	{
-	    i = 0;
-	    _val = strtok(_tok, "-");
-	    while(_val != NULL)
-		{
-		    /* break out of loop if max is reached */ 
-		    if(i == 2)
-			break;
-		    _tnum[i] = atoi(_val) - 1;
+    /* split the string into tokens */
+    b = 0;
+    for(j=0; j < strlen(obj->z_term_links); j++)
+	if(obj->z_term_links[j] == 44 ||
+	   obj->z_term_links[j] == 46)
+	    b++;
 
-		    _val = strtok(NULL, "-");
-		    i++;
-		}
+    _tok = (char**) calloc(b, sizeof(char*));
+    _tok2 = strtok(obj->z_term_links, ",.");
+    j = 0;
+    while(_tok2 != NULL)
+	{
+	    if(j >= b)
+		break;
+	    _tok[j] = malloc(sizeof(char) * (strlen(_tok2) + 1));
+	    strcpy(_tok[j], _tok2);
+	    j++;
+	    _tok2 = strtok(NULL, ",.");
+	}
+    
+    /* split the string into tokens */    
+    for(j=0; j<b; j++)
+	{
+	    i = 0;				/* initialise counter */
+	    st = -1;				/* reset to -1 */
+	    ed = -1;				/* reset to -1 */
+	    _val = strtok(_tok[j], "-");
+	    while(_val != NULL)
+	    	{
+	    	    /* break out of loop if max is reached */
+	    	    if(i == 2)
+	    		break;
+	    	    _tnum[i] = atoi(_val) - 1;
+
+	    	    _val = strtok(NULL, "-");
+	    	    i++;
+	    	}
 	    	    
 	    /* get the lower oder */
 	    st = _tnum[0] > _tnum[1]? _tnum[1] : _tnum[0];
 	    ed = _tnum[1] > _tnum[0]? _tnum[1] : _tnum[0];
 
-	    if(ed <= 0 || st <= 0)
-		break;
+	    if(ed < 0 || st < 0)
+	    	continue;
 
 	    /* check array bounds */
 	    if(st > zGenerics_Get_Count(&obj->z_parent) ||
 	       ed > zGenerics_Get_Count(&obj->z_parent))
-	       break;
+		break;
 	    
 	    /* Draw link line */
 	    cairo_move_to(zDevice_Get_Context(_dev),
-			  CONV_TO_POINTS(obj->z_x_links[st]),
-			  CONV_TO_POINTS(obj->z_y_links[st]));
+	    		  CONV_TO_POINTS(obj->z_x_links[st]),
+	    		  CONV_TO_POINTS(obj->z_y_links[st]));
 	    cairo_line_to(zDevice_Get_Context(_dev),
-			  CONV_TO_POINTS(obj->z_x_links[ed]),
-			  CONV_TO_POINTS(obj->z_y_links[ed]));
+	    		  CONV_TO_POINTS(obj->z_x_links[ed]),
+	    		  CONV_TO_POINTS(obj->z_y_links[ed]));
 	    
 	    cairo_stroke(zDevice_Get_Context(_dev));
 
 	    /* link connections */
 	    for(a=st; a<ed+1; a++)
-		{
-		    cairo_move_to(zDevice_Get_Context(_dev),
-				  CONV_TO_POINTS(obj->z_x_links[a]),
-				  CONV_TO_POINTS(obj->z_y_links[a]));
-		    cairo_arc(zDevice_Get_Context(_dev),
-			      CONV_TO_POINTS(obj->z_x_links[a]),
-			      CONV_TO_POINTS(obj->z_y_links[a]),
-			      CONV_TO_POINTS(2),
-			      0.0,
-			      2 * M_PI);
-		    cairo_fill(zDevice_Get_Context(_dev));
-		}
-	    
-	    _tok = strtok(NULL, ",");
-	    j++;
+	    	{
+	    	    cairo_move_to(zDevice_Get_Context(_dev),
+	    			  CONV_TO_POINTS(obj->z_x_links[a]),
+	    			  CONV_TO_POINTS(obj->z_y_links[a]));
+	    	    cairo_arc(zDevice_Get_Context(_dev),
+	    		      CONV_TO_POINTS(obj->z_x_links[a]),
+	    		      CONV_TO_POINTS(obj->z_y_links[a]),
+	    		      CONV_TO_POINTS(2),
+	    		      0.0,
+	    		      2 * M_PI);
+	    	    cairo_fill(zDevice_Get_Context(_dev));
+	    	}
 	}
     return 0;
 }
