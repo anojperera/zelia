@@ -77,7 +77,8 @@ int main(int argc, char** argv)
 
     /* Set base coordinates */
     zGeneric_Set_Device(term, &dev);
-    zGeneric_Create_Dev_Context(term);
+    /* zGeneric_Create_Dev_Context(term); */
+    zGeneric_Set_Default_Dev_Context(term);
     zBase_Set_Base_Coords(Z_BASE(term), 100.0, 40.0);
     zBase_Set_Width_and_Height(Z_BASE(term), 20.0, 50.0);
 
