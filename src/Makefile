@@ -7,12 +7,14 @@ CFLAGS3 = -Wall
 PROG = tmp
 CCC = gcc
 CCP = g++
-OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o
-## LIBSP = ../../g_list/bin/alist.a
+OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o zGenerics.o \
+zTerminals.o
+LIBSP = ../../g_list/bin/alist.a
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
 $(PROG) : $(OBJS)
-		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -o ../bin/$(PROG) $(OBJS) $(GTKOBJS)
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -o ../bin/$(PROG) \
+$(OBJS) $(GTKOBJS) $(LIBSP)
 
 main.o : main.c 
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c main.c $(GTKCFLGS)
@@ -31,6 +33,12 @@ zBase.o : zBase.c zBase.h
 
 zTerminal.o : zTerminal.c zTerminal.h
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTerminal.c $(GTKCFLGS)
+
+zGenerics.o : zGenerics.c zGenerics.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zGenerics.c $(GTKCFLGS)
+
+zTerminals.o : zTerminals.c zTerminals.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTerminals.c $(GTKCFLGS)
 
 clean :
 	rm -fv *.o
