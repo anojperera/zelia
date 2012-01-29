@@ -1,6 +1,7 @@
 /* Implemenetation of zTerminal class */
 /* Sat Jan 28 20:20:10 GMT 2012 */
 
+#include <ctype.h>
 #include "zVar.h"
 #include "zTerminals.h"
 #include "zTerminal.h"
@@ -210,13 +211,13 @@ static int _zterminals_parser(zTerminals* obj)
     for(j=0; j<b; j++)
 	{
 	    i = 0;				/* initialise counter */
-	    st = -1;				/* reset to -1 */
-	    ed = -1;				/* reset to -1 */
+	    _tnum[0] = -1;			/* reset to -1 */
+	    _tnum[1] = -1;			/* reset to -1 */
 	    _val = strtok(_tok[j], "-");
 	    while(_val != NULL)
 	    	{
 	    	    /* break out of loop if max is reached */
-	    	    if(i == 2)
+	    	    if(i == 2 || !isdigit(_val[0]))
 	    		break;
 	    	    _tnum[i] = atoi(_val) - 1;
 
@@ -232,9 +233,9 @@ static int _zterminals_parser(zTerminals* obj)
 	    	continue;
 
 	    /* check array bounds */
-	    if(st > zGenerics_Get_Count(&obj->z_parent) ||
-	       ed > zGenerics_Get_Count(&obj->z_parent))
-		break;
+	    if(st >= zGenerics_Get_Count(&obj->z_parent) ||
+	       ed >= zGenerics_Get_Count(&obj->z_parent))
+		continue;
 	    
 	    /* Draw link line */
 	    cairo_move_to(zDevice_Get_Context(_dev),
