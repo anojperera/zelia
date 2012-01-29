@@ -42,7 +42,7 @@ void zGeneric_Delete(zGeneric* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* delete cairo context */
-    if(obj->z_gcairo_dev)
+    if(obj->z_gcairo_dev && obj->z_def_dev_ctxt_flg == 0)
 	{
 	    cairo_destroy(obj->z_gcairo_dev);
 	    obj->z_gcairo_dev = NULL;
