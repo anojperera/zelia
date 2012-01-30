@@ -22,6 +22,7 @@ struct _zJB
 						 * externally set */
     unsigned int z_glands_ext;			/* Flag to indicate glads collection external */
     double z_depth;				/* Depth of junction box */
+    double z_ang;				/* Orientation angle */
     zGenerics* z_terms;				/* Terminals collection */
     zGenerics* z_glands;			/* cable gland collection */
     size_t z_obj_sz;				/* object size */
@@ -40,8 +41,21 @@ extern "C" {
 
     /* Property methods */
     /***********************************************************************/
-
+    
     /* Set and get terminals collection */
+    inline int zJB_Set_Terminals(zJB* obj, zGenerics* terms);
+    inline zGenerics* zJB_Get_Terminals(zJB* obj);
+
+    /* Add terminal collection */
+    inline int zJB_Add_Terminals(zJB* obj,
+				 unsigned int num_term,			/* number of terminals */
+				 double width,				/* terminal width */
+				 double height,				/* terminal height */
+				 const char* links);			/* terminal links */
+    /* Set and get gland collection */
+    inline int zJB_Set_Glands(zJB* obj, zGenerics* glands);
+    inline zGenerics* zJB_Get_Glands(zJB* obj);
+
     
     
 #endif __cplusplus
