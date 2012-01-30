@@ -36,7 +36,7 @@ zGeneric* zTerminal_New(zTerminal* obj)
     obj->z_term_cnt = 1;				/* set terminal count to 1 */
     obj->z_term_num[0] = '1';				/* set terminal number to 1 */
     obj->z_term_num[1] = '\0';
-
+    obj->z_obj_sz = sizeof(zTerminal);
     /* set draw function pointer of parent object */
     obj->z_sbase.z_draw_func = zterminal_draw_function;
 

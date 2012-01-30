@@ -40,6 +40,7 @@ extern "C" {
 	unsigned int z_int_flg;			/* internal flag */
 	unsigned int z_def_dev_ctxt_flg;	/* defulat device context set */
 	zgeneric_fptr z_draw_func;		/* draw function pointer */
+	size_t z_obj_sz;			/* object size */
     };
 
     /* create and delete object */

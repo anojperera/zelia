@@ -21,6 +21,7 @@ struct _zTerminal
     zgeneric_fptr z_draw_func;		/* draw function pointer */
     char z_term_num[5];			/* terminal number */
     int z_term_cnt;			/* terminal counter */
+    size_t z_obj_sz;			/* object size */
 };
 
 #ifdef __cplusplus

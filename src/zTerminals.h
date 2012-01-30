@@ -33,6 +33,7 @@ struct _zTerminals
     double ang;						/* angle */
     double* z_x_links;					/* link coordinates array */
     double* z_y_links;					/* link coordinates array */
+    size_t z_obj_sz;					/* object size */
 };
 
 #ifdef __cplusplus

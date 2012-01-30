@@ -111,7 +111,8 @@ zGenerics* zTerminals_New(zTerminals* obj,
 
     /* add user data to parent object */
     obj->z_parent.z_usr_data = (void*) obj;
-
+    
+    obj->z_obj_sz = sizeof(zTerminals);
     /* return parent object */
     return &obj->z_parent;
     

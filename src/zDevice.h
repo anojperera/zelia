@@ -42,8 +42,7 @@ extern "C" {
 
 	double z_page_width;			/* page width */
 	double z_page_height;			/* page height */
-
-
+	size_t z_obj_sz;			/* object size */
     };
 
     /* constructor and destructor */

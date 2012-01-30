@@ -36,7 +36,7 @@ zDevice* zDevice_New(zDevice* obj)
     obj->z_format = zFormatPDF;
     obj->z_filename[0] = '\0';
     obj->z_page_sz_str[0] = '\0';
-
+    obj->z_obj_sz = sizeof(zDevice);
     return obj;
 }
 

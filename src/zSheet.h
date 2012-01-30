@@ -40,6 +40,7 @@ extern "C" {
 	double z_y_attrib[Z_MAX_ATTRIB];
 	zgeneric_fptr z_draw_func;		/* draw function */
 	void* z_child;				/* child pointer */
+	size_t z_obj_sz;			/* object size */
     };
 		
     struct _zBrd_Attrib

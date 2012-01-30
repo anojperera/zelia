@@ -30,6 +30,7 @@ zGeneric* zGeneric_New(zGeneric* obj)
     obj->z_gline_weight = zLWeight4;
     obj->z_gltype = zLTContinuous;
     obj->z_def_dev_ctxt_flg = 0;
+    obj->z_obj_sz = sizeof(zGeneric);
     return obj;
 
 }

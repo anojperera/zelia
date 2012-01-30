@@ -28,6 +28,7 @@ struct _zGenerics
     zDevice* z_device;					/* Device object */
     void* z_usr_data;					/* User data */
     void* z_child;					/* child object */
+    size_t z_obj_sz;					/* object size */
 };
 
 /* Following C functions are only to be called internally within the library */
