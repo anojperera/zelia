@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
     /* Constructor and Destructor */
-    zGeneric* zJB_New(zJB* obj);
+    zGeneric* zJB_New(zJB* obj, double width, double height);
     void zJB_Delete(zJB* obj);
 
     /* Draw function */
@@ -55,8 +55,6 @@ extern "C" {
     /* Set and get gland collection */
     inline int zJB_Set_Glands(zJB* obj, zGenerics* glands);
     inline zGenerics* zJB_Get_Glands(zJB* obj);
-
-    
     
 #endif __cplusplus
 }
