@@ -26,6 +26,9 @@ struct _zJB
     zGenerics* z_terms;				/* Terminals collection */
     zGenerics* z_glands;			/* cable gland collection */
     size_t z_obj_sz;				/* object size */
+    void* z_child;				/* child pointer */
+
+    zgeneric_fptr z_draw_func;			/* draw function pointer */
 };
 
 #ifdef __cplusplus
