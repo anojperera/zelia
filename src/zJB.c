@@ -40,7 +40,7 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
 
     obj->z_depth = depth;
     obj->z_ang = ang;
-    zBase_Set_Width_and_Height(obj->z_parent, width, height);
+    zBase_Set_Width_and_Height(&obj->z_parent, width, height);
 
     obj->z_terms = NULL;
     obj->z_glands = NULL;
@@ -81,4 +81,69 @@ void zJB_Delete(zJB* obj)
     if(obj->z_int_flg)
 	free(obj);
     
+}
+
+/* Draw function */
+int zJB_Draw(zJB* obj)
+{
+    zBase* _base;				/* base object pointer */
+    zGeneric* _genric;				/* generic object pointer */
+    cairo_t* _dev_c;				/* cairo context */
+    
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+
+    /* Get base and generic object */
+    _base = &obj->z_parent;
+    _genric = &obj->z_parent.z_sgeneric;
+
+    /* Device context pointer */
+    _dev_c = zGeneric_Get_Dev_Context(_genric);
+
+    /* Check all objects */
+    Z_CHECK_OBJ(_base);
+    Z_CHECK_OBJ(_genric);
+    Z_CHECK_OBJ(_dev_c);
+
+    /* move device context to the base coordinates and
+     * draw outside rectangle */
+    cairo_rectangle(_dev_c,
+		    CONV_TO_POINTS(_base->z_x),
+		    CONV_TO_POINTS(_base->z_y),
+		    CONV_TO_POINTS(_base->z_width),
+		    CONV_TO_POINTS(_base->z_height));
+
+    /* call stroke as terminals and glands may have not assigned */
+    cairo_stroke(_dev_c);
+
+    /* call draw functions of glands and terminals */
+    zGenerics_Draw(obj->z_terms);
+    zGenerics_Draw(obj->z_glands);
+
+    /* call child drawing function pointer if assigned */
+    if(obj->z_draw_func)
+	return obj->z_draw_func(_genric);
+
+    return 0;
+}
+
+/* Set external terminal collection */
+inline int zJB_Set_Terminals(zJB* obj, zGenerics* terms)
+{
+    /* check for objects */
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(terms);
+
+    obj->z_terms = terms;
+
+    /* indicate external flag was set */
+    obj->z_terms_ext = 1;
+    return 0;
+}
+
+/* Get terminals collection */
+inline zGenerics* zJB_Get_Terminals(zJB* obj)
+{
+    Z_CHECK_OBJ_PTR(obj);
+    return obj->z_terms;
 }
