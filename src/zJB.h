@@ -26,6 +26,7 @@ struct _zJB
     unsigned int z_glands_ext;			/* Flag to indicate glads collection external */
     double z_depth;				/* Depth of junction box */
     double z_ang;				/* Orientation angle */
+    double z_rad;				/* radius */
     zGenerics* z_terms;				/* Terminals collection */
     zGenerics* z_glands;			/* cable gland collection */
     size_t z_obj_sz;				/* object size */
@@ -59,6 +60,10 @@ extern "C" {
     inline int zJB_Set_Terminals(zJB* obj, zGenerics* terms);
     inline zGenerics* zJB_Get_Terminals(zJB* obj);
 
+    /* Set and get fillet radius */
+    inline int zJB_Set_Fillet_Radius(zJB* obj, double rad);
+    inline double zJB_Get_Fillet_Radius(zJB* obj);
+    
     /* Add terminal collection */
     inline int zJB_Add_Terminals(zJB* obj,
 				 unsigned int num_term,			/* number of terminals */
