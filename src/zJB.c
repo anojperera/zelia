@@ -207,3 +207,23 @@ inline int zJB_Add_Terminals(zJB* obj,
 
     return 0;
 }
+
+/* Set external cable glands collection */
+inline int zJB_Set_Glands(zJB* obj, zGenerics* glands)
+{
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(glands);
+
+    obj->z_glands = glands;
+    obj->z_glands_ext = 1;
+
+    return 0;
+}
+
+/* Get cable gland collection */
+inline zGenerics* zJB_Get_Glands(zJB* obj)
+{
+    /* Check for object */
+    Z_CHECK_OBJ_PTR(obj);
+    return obj->z_glands;
+}
