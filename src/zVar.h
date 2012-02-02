@@ -243,6 +243,14 @@ typedef enum {
 } zTerminalType;
 
 
+/* Gable Gland Sizes */
+typedef enum {
+    zM16,
+    zM20,
+    zM25
+} zGlandSize;
+
+
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)
 {
