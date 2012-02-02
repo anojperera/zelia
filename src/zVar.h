@@ -170,6 +170,7 @@
 #define Z_BASE(obj) ((zBase*) obj->z_child)
 #define Z_TERMINAL(obj) ((zTerminal*) Z_BASE(obj)->z_child)
 #define Z_TERMINALS(obj) ((zTerminals*) obj->z_child)
+#define Z_JB(obj) ((zJB*) Z_BASE(obj)->z_child)
 
 
 /* Object checking macro */
