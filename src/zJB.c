@@ -43,13 +43,14 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
 
     obj->z_depth = depth;
     obj->z_ang = ang;
+    obj->z_rad = 0.0;
     zBase_Set_Width_and_Height(&obj->z_parent, width, height);
     zBase_Set_Base_Coords(&obj->z_parent, x, y);
 
     /* Set device object if set */
     if(dev)
 	{
-	    zGeneric_Set_Device(&obj->z-parent.z_sgeneric, dev);
+	    zGeneric_Set_Device(&obj->z_parent.z_sgeneric, dev);
 	    zGeneric_Set_Default_Dev_Context(&obj->z_parent.z_sgeneric);
 	}
     obj->z_terms = NULL;
@@ -96,9 +97,14 @@ void zJB_Delete(zJB* obj)
 /* Draw function */
 int zJB_Draw(zJB* obj)
 {
+    #define COORDS = 4;
     zBase* _base;				/* base object pointer */
     zGeneric* _genric;				/* generic object pointer */
     cairo_t* _dev_c;				/* cairo context */
+    int i;
+
+    /* line coordinates */
+    double x1[COORDS], x2[COORDS], y1[COORDS], y2[COORDS];
     
     /* Check for object */
     Z_CHECK_OBJ(obj);
@@ -117,21 +123,46 @@ int zJB_Draw(zJB* obj)
 
     /* move device context to the base coordinates and
      * draw outside rectangle */
-    if(obj->z_ang == 0.0)
+    x1[0] = _base->z_x + obj->z_rad;
+    y1[0] = _base->z_y;
+    x2[0] = _base->z_x + (obj->z_ang == 0.0? _base->z_width : _base->z_height) - obj->z_rad;
+    y2[0] = _base->z_y;
+
+    x1[1] = x1[0] + obj->z_rad;
+    y1[1] = _base->z_y + obj->z_rad;
+    x2[1] = x1[1];
+    y2[1] = _base->z_y + (obj->z_ang == 0.0? _base->z_height : _base->z_width) - obj->z_rad;
+
+    x1[2] = x1[1] - obj->z_rad;
+    y1[2] = y2[1] + obj->z_rad;
+    x2[2] = x1[0];
+    y2[2] = y1[2];
+
+    x1[3] = _base->z_x;
+    y1[3] = y2[1];
+    x2[3] = x1[3];
+    y2[3] = base->z_y - obj->rad;
+    
+    /* if(obj->z_ang == 0.0) */
+    /* 	{ */
+    /* 	    cairo_rectangle(_dev_c, */
+    /* 			    CONV_TO_POINTS(_base->z_x), */
+    /* 			    CONV_TO_POINTS(_base->z_y), */
+    /* 			    CONV_TO_POINTS(_base->z_width), */
+    /* 			    CONV_TO_POINTS(_base->z_height)); */
+    /* 	} */
+    /* else */
+    /* 	{ */
+    /* 	    cairo_rectangle(_dev_c, */
+    /* 			    CONV_TO_POINTS(_base->z_x), */
+    /* 			    CONV_TO_POINTS(_base->z_y), */
+    /* 			    CONV_TO_POINTS(_base->z_height), */
+    /* 			    CONV_TO_POINTS(_base->z_width)); */
+    /* 	} */
+    for(i = 0; i < COORDS; i++)
 	{
-	    cairo_rectangle(_dev_c,
-			    CONV_TO_POINTS(_base->z_x),
-			    CONV_TO_POINTS(_base->z_y),
-			    CONV_TO_POINTS(_base->z_width),
-			    CONV_TO_POINTS(_base->z_height));
-	}
-    else
-	{
-	    cairo_rectangle(_dev_c,
-			    CONV_TO_POINTS(_base->z_x),
-			    CONV_TO_POINTS(_base->z_y),
-			    CONV_TO_POINTS(_base->z_height),
-			    CONV_TO_POINTS(_base->z_width));
+	    cairo_move_to(_dev_c, CONV_TO_POINTS(x1[i]), CONV_TO_POINTS(y1[i]));
+	    cairo_line_to(_dev_c, CONV_TO_POINTS(x2[i]), CONV_TO_POINTS(y2[i]));
 	}
 
     /* call stroke as terminals and glands may have not assigned */
@@ -167,6 +198,22 @@ inline zGenerics* zJB_Get_Terminals(zJB* obj)
 {
     Z_CHECK_OBJ_PTR(obj);
     return obj->z_terms;
+}
+
+/* Set fillet radius */
+inline int zJB_Set_Fillet_Radius(zJB* obj, double rad)
+{
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+    obj->z_rad = rad;
+    return 0;
+}
+
+/* Get fillet radius */
+inline double zJB_Get_Fillet_Radius(zJB* obj)
+{
+    Z_CHECK_OBJ(obj);
+    return obj->z_rad;
 }
 
 /* Add terminal collection*/
