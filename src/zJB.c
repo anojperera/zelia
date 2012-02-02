@@ -146,28 +146,28 @@ int zJB_Draw(zJB* obj)
     x1[3] = _base->z_x;
     y1[3] = y2[1];
     x2[3] = x1[3];
-    y2[3] = _base->z_y - obj->z_rad;
+    y2[3] = _base->z_y + obj->z_rad;
     
     /* arc coordinates */
     ax[0] = _base->z_x + obj->z_rad;
     ay[0] = _base->z_y + obj->z_rad;
-    a_ang_s[0] = M_PI / 2;
-    a_ang_e[0] = M_PI;
+    a_ang_s[0] = M_PI;
+    a_ang_e[0] = 3 * M_PI / 2;
 
     ax[1] = _base->z_x + (obj->z_ang == 0.0? _base->z_width : _base->z_height) - obj->z_rad;
     ay[1] = ay[0];
-    a_ang_s[1] = 0.0;
-    a_ang_e[1] = M_PI / 2;
+    a_ang_s[1] = 3 * M_PI / 2;
+    a_ang_e[1] = 0.0;
 
     ax[2] = ax[1];
     ay[2] = _base->z_y + (obj->z_ang == 0.0? _base->z_height : _base->z_width) - obj->z_rad;
-    a_ang_s[2] = 3 * M_PI / 2;
-    a_ang_e[2] = 0.0;
+    a_ang_s[2] = 0.0;
+    a_ang_e[2] = M_PI / 2;
 
     ax[3] = ax[0];
     ay[3] = ay[2];
-    a_ang_s[3] = M_PI;
-    a_ang_e[3] = 3 * M_PI / 2;
+    a_ang_s[3] = M_PI / 2;
+    a_ang_e[3] = M_PI;
     
     for(i = 0; i < COORDS; i++)
 	{
@@ -175,21 +175,24 @@ int zJB_Draw(zJB* obj)
 	    cairo_line_to(_dev_c, CONV_TO_POINTS(x2[i]), CONV_TO_POINTS(y2[i]));
 	}
 
+    cairo_stroke(_dev_c);
+    
     if(obj->z_rad > 0.0)
-	{
-	    for(i = 0; i < COORDS; i++)
-		{
-		    cairo_arc(_dev_c,
-			      CONV_TO_POINTS(ax[i]),
-			      CONV_TO_POINTS(ay[i]),
-			      CONV_TO_POINTS(obj->z_rad),
-			      a_ang_s[i],
-			      a_ang_e[i]);
-		}
-	}
+    	{
+    	    for(i = 0; i < COORDS; i++)
+    		{
+    		    cairo_arc(_dev_c,
+    			      CONV_TO_POINTS(ax[i]),
+    			      CONV_TO_POINTS(ay[i]),
+    			      CONV_TO_POINTS(obj->z_rad),
+    			      a_ang_s[i],
+    			      a_ang_e[i]);
+		    cairo_stroke(_dev_c);
+    		}
+    	}
 
     /* call stroke as terminals and glands may have not assigned */
-    cairo_stroke(_dev_c);
+
 
     /* call draw functions of glands and terminals */
     zGenerics_Draw(obj->z_terms);
