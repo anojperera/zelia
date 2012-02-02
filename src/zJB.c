@@ -263,8 +263,8 @@ inline int zJB_Add_Terminals(zJB* obj,
     Z_CHECK_OBJ(_base);
     Z_CHECK_OBJ(_genric);
 
-    _w = (obj->z_ang == 0.0? width : height);
-    _h = (obj->z_ang == 0.0? height : width);
+    _w = (obj->z_ang == 0.0? width * (double) num_term : height);
+    _h = (obj->z_ang == 0.0? height : width * (double) num_term);
 
     _bw = (obj->z_ang == 0.0? _base->z_width : _base->z_height);
     _bh = (obj->z_ang == 0.0? _base->z_height : _base->z_width);
