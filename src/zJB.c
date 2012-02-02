@@ -10,6 +10,8 @@ static int _zjb_draw(zGeneric* obj);
 
 /* Constructor */
 zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
+		  double x,				/* x coord */
+		  double y,				/* y coord */
 		  double width,				/* width */
 		  double height,			/* height */
 		  double depth,				/* depth */
@@ -41,7 +43,7 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
     obj->z_depth = depth;
     obj->z_ang = ang;
     zBase_Set_Width_and_Height(&obj->z_parent, width, height);
-
+    zBase_Set_Base_Coords(&obj->z_parent, x, y);
     obj->z_terms = NULL;
     obj->z_glands = NULL;
     obj->z_obj_sz = sizeof(zJB);

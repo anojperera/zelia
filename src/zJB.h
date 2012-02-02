@@ -38,7 +38,13 @@ extern "C" {
 #endif
 
     /* Constructor and Destructor */
-    zGeneric* zJB_New(zJB* obj, double width, double height, double depth, double ang);
+    zGeneric* zJB_New(zJB* obj,
+		      double x,
+		      double y,
+		      double width,
+		      double height,
+		      double depth,
+		      double ang);
     void zJB_Delete(zJB* obj);
 
     /* Draw function */
