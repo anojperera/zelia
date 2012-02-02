@@ -7,6 +7,7 @@
 #ifndef _ZJB_H_
 #define _ZJB_H_
 
+#include "zDevice.h"
 #include "zBase.h"
 #include "zGeneric.h"
 #include "zGenerics.h"
@@ -39,6 +40,7 @@ extern "C" {
 
     /* Constructor and Destructor */
     zGeneric* zJB_New(zJB* obj,
+		      zDevice* dev,
 		      double x,
 		      double y,
 		      double width,
