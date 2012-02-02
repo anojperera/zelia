@@ -107,11 +107,22 @@ int zJB_Draw(zJB* obj)
 
     /* move device context to the base coordinates and
      * draw outside rectangle */
-    cairo_rectangle(_dev_c,
-		    CONV_TO_POINTS(_base->z_x),
-		    CONV_TO_POINTS(_base->z_y),
-		    CONV_TO_POINTS(_base->z_width),
-		    CONV_TO_POINTS(_base->z_height));
+    if(obj->z_ang == 0.0)
+	{
+	    cairo_rectangle(_dev_c,
+			    CONV_TO_POINTS(_base->z_x),
+			    CONV_TO_POINTS(_base->z_y),
+			    CONV_TO_POINTS(_base->z_width),
+			    CONV_TO_POINTS(_base->z_height));
+	}
+    else
+	{
+	    cairo_rectangle(_dev_c,
+			    CONV_TO_POINTS(_base->z_x),
+			    CONV_TO_POINTS(_base->z_y),
+			    CONV_TO_POINTS(_base->z_height),
+			    CONV_TO_POINTS(_base->z_width));
+	}
 
     /* call stroke as terminals and glands may have not assigned */
     cairo_stroke(_dev_c);
@@ -146,4 +157,53 @@ inline zGenerics* zJB_Get_Terminals(zJB* obj)
 {
     Z_CHECK_OBJ_PTR(obj);
     return obj->z_terms;
+}
+
+/* Add terminal collection*/
+inline int zJB_Add_Terminals(zJB* obj,
+			     unsigned int num_term,			/* number of terminals */
+			     double width,				/* terminal width */
+			     double height,				/* terminal height */
+			     const char* links)
+{
+    double _w, _h, _bw, _bh;
+    zBase* _base;
+    zDevice* _dev;
+    zGeneric* _genric;
+    
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+
+    /* Get base object */
+    _base = &obj->z_parent;
+    _genric = &obj->z_parent.z_sgeneric;
+
+    Z_CHECK_OBJ(_base);
+    Z_CHECK_OBJ(_genric);
+
+    _w = (obj->z_ang == 0.0? width : height);
+    _h = (obj->z_ang == 0.0? height : width);
+
+    _bw = (obj->z_ang == 0.0? _base->z_width : _base->z_height);
+    _bh = (obj->z_ang == 0.0? _base->z_height : _base->z_width);
+
+    /* Create internal terminals collection */
+    obj->z_terms = zTerminals_New(NULL,				/* object pointer */
+				  zGeneric_Get_Device(_genric),
+				  _base->z_x + (_bw - _w) / 2,
+				  _base->z_y + (_bh - h) / 2,
+				  width,
+				  height,
+				  obj->z_ang,
+				  links);
+
+    /* Check for object */
+    Z_CHECK_OBJ(obj->z_terms);
+
+    /* Set flag to indicate terminal collection created interanlly
+     * so that class destructor will call terminal collections
+     * destructor method */
+    obj->z_terms_ext = 0;
+
+    return 0;
 }
