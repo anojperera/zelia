@@ -261,6 +261,9 @@ static inline double ConvToPoints(double* mm)
 #define CONV_TO_POINTS(val) \
     (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val
 
+#define CONV_TO_RADIANS(val) \
+    (M_PI * val / 180.0)
+
 /* rounds the number */
 static inline double Round(double val, unsigned int places)
 {
