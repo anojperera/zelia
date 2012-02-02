@@ -13,11 +13,14 @@
 #include "zBase.h"
 #include "zTerminal.h"
 #include "zTerminals.h"
+#include "zJB.h"
 
 int main(int argc, char** argv)
 {
     const int TXT_SZ = 20;
     zDevice dev;		/* device object */
+    zGenerics* terms;
+    zGeneric* jb;		/* JB object */
     
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
@@ -77,23 +80,45 @@ int main(int argc, char** argv)
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
     /* Create a array of terminals */
-    zGenerics* terms = zTerminals_New(NULL,
-				      &dev,
-				      6,
-				      50.0,
-				      50.0,
-				      10.0,
-				      40.0,
-				      90.0,
-				      "1-3,5-6");
+    /* terms = zTerminals_New(NULL, */
+    /* 			   &dev, */
+    /* 			   6, */
+    /* 			   50.0, */
+    /* 			   50.0, */
+    /* 			   10.0, */
+    /* 			   40.0, */
+    /* 			   90.0, */
+    /* 			   "1-3,5-6"); */
 
+    jb = zJB_New(NULL,
+		 &dev,
+		 150.0,			/* x coordinate */
+		 50.0,			/* y coordiante */
+		 100.0,			/* width */
+		 120.0,			/* height */
+		 90.0,			/* depth */
+		 0.0);			/* rotation angle */
+
+    /* set JB radius */
+    zJB_Set_Fillet_Radius(Z_JB(jb), 10.0);
+    
+    /* create terminals */
+    zJB_Add_Terminals(Z_JB(jb),
+		      6,
+		      10.0,
+		      40.0,
+		      "1-3,5-6");
+    
     /* create border */
     zGeneric_Draw(sht);
-    zGenerics_Draw(terms);
+    zGeneric_Draw(jb);
+    /* zGenerics_Draw(terms); */
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
-    zTerminals_Delete(Z_TERMINALS(terms));
+    /* zTerminals_Delete(Z_TERMINALS(terms)); */
+    zJB_Delete(Z_JB(jb));
+    
     zDevice_Delete(&dev);
 
     if(attrib)
