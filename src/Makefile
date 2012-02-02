@@ -8,7 +8,7 @@ PROG = tmp
 CCC = gcc
 CCP = g++
 OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o zGenerics.o \
-zTerminals.o
+zTerminals.o zJB.o
 LIBSP = ../../g_list/bin/alist.a
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
@@ -39,6 +39,9 @@ zGenerics.o : zGenerics.c zGenerics.h
 
 zTerminals.o : zTerminals.c zTerminals.h
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTerminals.c $(GTKCFLGS)
+
+zJB.o : zJB.c zJB.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zJB.c $(GTKCFLGS)
 
 clean :
 	rm -fv *.o
