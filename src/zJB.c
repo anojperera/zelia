@@ -1,6 +1,7 @@
 /* Implementation of junction boxes
  * Tue Jan 31 13:00:27 GMTST 2012*/
 
+#include <math.h>
 #include "zJB.h"
 #include "zTerminals.h"
 
@@ -97,14 +98,16 @@ void zJB_Delete(zJB* obj)
 /* Draw function */
 int zJB_Draw(zJB* obj)
 {
-    #define COORDS = 4;
+#define COORDS 4
     zBase* _base;				/* base object pointer */
     zGeneric* _genric;				/* generic object pointer */
     cairo_t* _dev_c;				/* cairo context */
     int i;
 
-    /* line coordinates */
+    /* line arc coordinates */
     double x1[COORDS], x2[COORDS], y1[COORDS], y2[COORDS];
+    double ax[COORDS], ay[COORDS];
+    double a_ang_s[COORDS], a_ang_e[COORDS];
     
     /* Check for object */
     Z_CHECK_OBJ(obj);
@@ -123,12 +126,14 @@ int zJB_Draw(zJB* obj)
 
     /* move device context to the base coordinates and
      * draw outside rectangle */
+    
+    /* line coordinates */
     x1[0] = _base->z_x + obj->z_rad;
     y1[0] = _base->z_y;
     x2[0] = _base->z_x + (obj->z_ang == 0.0? _base->z_width : _base->z_height) - obj->z_rad;
     y2[0] = _base->z_y;
 
-    x1[1] = x1[0] + obj->z_rad;
+    x1[1] = x2[0] + obj->z_rad;
     y1[1] = _base->z_y + obj->z_rad;
     x2[1] = x1[1];
     y2[1] = _base->z_y + (obj->z_ang == 0.0? _base->z_height : _base->z_width) - obj->z_rad;
@@ -141,28 +146,46 @@ int zJB_Draw(zJB* obj)
     x1[3] = _base->z_x;
     y1[3] = y2[1];
     x2[3] = x1[3];
-    y2[3] = base->z_y - obj->rad;
+    y2[3] = _base->z_y - obj->z_rad;
     
-    /* if(obj->z_ang == 0.0) */
-    /* 	{ */
-    /* 	    cairo_rectangle(_dev_c, */
-    /* 			    CONV_TO_POINTS(_base->z_x), */
-    /* 			    CONV_TO_POINTS(_base->z_y), */
-    /* 			    CONV_TO_POINTS(_base->z_width), */
-    /* 			    CONV_TO_POINTS(_base->z_height)); */
-    /* 	} */
-    /* else */
-    /* 	{ */
-    /* 	    cairo_rectangle(_dev_c, */
-    /* 			    CONV_TO_POINTS(_base->z_x), */
-    /* 			    CONV_TO_POINTS(_base->z_y), */
-    /* 			    CONV_TO_POINTS(_base->z_height), */
-    /* 			    CONV_TO_POINTS(_base->z_width)); */
-    /* 	} */
+    /* arc coordinates */
+    ax[0] = _base->z_x + obj->z_rad;
+    ay[0] = _base->z_y + obj->z_rad;
+    a_ang_s[0] = M_PI / 2;
+    a_ang_e[0] = M_PI;
+
+    ax[1] = _base->z_x + (obj->z_ang == 0.0? _base->z_width : _base->z_height) - obj->z_rad;
+    ay[1] = ay[0];
+    a_ang_s[1] = 0.0;
+    a_ang_e[1] = M_PI / 2;
+
+    ax[2] = ax[1];
+    ay[2] = _base->z_y + (obj->z_ang == 0.0? _base->z_height : _base->z_width) - obj->z_rad;
+    a_ang_s[2] = 3 * M_PI / 2;
+    a_ang_e[2] = 0.0;
+
+    ax[3] = ax[0];
+    ay[3] = ay[2];
+    a_ang_s[3] = M_PI;
+    a_ang_e[3] = 3 * M_PI / 2;
+    
     for(i = 0; i < COORDS; i++)
 	{
 	    cairo_move_to(_dev_c, CONV_TO_POINTS(x1[i]), CONV_TO_POINTS(y1[i]));
 	    cairo_line_to(_dev_c, CONV_TO_POINTS(x2[i]), CONV_TO_POINTS(y2[i]));
+	}
+
+    if(obj->z_rad > 0.0)
+	{
+	    for(i = 0; i < COORDS; i++)
+		{
+		    cairo_arc(_dev_c,
+			      CONV_TO_POINTS(ax[i]),
+			      CONV_TO_POINTS(ay[i]),
+			      CONV_TO_POINTS(obj->z_rad),
+			      a_ang_s[i],
+			      a_ang_e[i]);
+		}
 	}
 
     /* call stroke as terminals and glands may have not assigned */
