@@ -2,7 +2,7 @@
  * Tue Jan 31 13:00:27 GMTST 2012*/
 
 #include "zJB.h"
-
+#include "zTerminals.h"
 
 /* Virtual function */
 static int _zjb_draw(zGeneric* obj);
@@ -28,7 +28,7 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
     /* Create parent object, if failed return NULL */
     if(!zBase_New(&obj->z_parent))
 	{
-	    if(obj->z_int_flg = 1)
+	    if(obj->z_int_flg == 1)
 		free(obj);
 
 	    return NULL;
@@ -54,7 +54,7 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
     obj->z_parent.z_child = (void*) obj;
 
     /* Return parent pointer */
-    return &obj->z_parent.z_generic;
+    return &obj->z_parent.z_sgeneric;
 }
 
 /* Destructor */
@@ -63,7 +63,7 @@ void zJB_Delete(zJB* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* Call parent destructor */
-    zBase_Delete(obj->z_parent);
+    zBase_Delete(&obj->z_parent);
 
     /* Call destructor of terminal collection
      * if internally set */
@@ -168,7 +168,6 @@ inline int zJB_Add_Terminals(zJB* obj,
 {
     double _w, _h, _bw, _bh;
     zBase* _base;
-    zDevice* _dev;
     zGeneric* _genric;
     
     /* Check for object */
@@ -190,8 +189,9 @@ inline int zJB_Add_Terminals(zJB* obj,
     /* Create internal terminals collection */
     obj->z_terms = zTerminals_New(NULL,				/* object pointer */
 				  zGeneric_Get_Device(_genric),
+				  num_term,
 				  _base->z_x + (_bw - _w) / 2,
-				  _base->z_y + (_bh - h) / 2,
+				  _base->z_y + (_bh - _h) / 2,
 				  width,
 				  height,
 				  obj->z_ang,
@@ -226,4 +226,15 @@ inline zGenerics* zJB_Get_Glands(zJB* obj)
     /* Check for object */
     Z_CHECK_OBJ_PTR(obj);
     return obj->z_glands;
+}
+
+/*==========================================================================*/
+/* Private Functions */
+
+static int _zjb_draw(zGeneric* obj)
+{
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+
+    return zJB_Draw(Z_JB(obj));
 }

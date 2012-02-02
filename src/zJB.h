@@ -1,13 +1,15 @@
 /* Header file for declaraing interfaces for junction boxes.
  * inherits the base class.
  * JB classes can be associated with a collection of cable glands
- * and terminals */
+ * and terminals
  * Mon Jan 30 23:05:29 GMT 2012 */
 
 #ifndef _ZJB_H_
 #define _ZJB_H_
 
 #include "zBase.h"
+#include "zGeneric.h"
+#include "zGenerics.h"
 #include <stdlib.h>
 
 
@@ -36,7 +38,7 @@ extern "C" {
 #endif
 
     /* Constructor and Destructor */
-    zGeneric* zJB_New(zJB* obj, double width, double height);
+    zGeneric* zJB_New(zJB* obj, double width, double height, double depth, double ang);
     void zJB_Delete(zJB* obj);
 
     /* Draw function */
@@ -59,7 +61,7 @@ extern "C" {
     inline int zJB_Set_Glands(zJB* obj, zGenerics* glands);
     inline zGenerics* zJB_Get_Glands(zJB* obj);
     
-#endif __cplusplus
+#ifdef __cplusplus
 }
 #endif
 
