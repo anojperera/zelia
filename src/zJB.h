@@ -34,7 +34,6 @@ struct _zJB
     void* z_child;				/* child pointer */
 
     zgeneric_fptr z_draw_func;			/* draw function pointer */
-    size_t z_obj_sz;				/* object size */
 };
 
 #ifdef __cplusplus
