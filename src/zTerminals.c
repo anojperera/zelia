@@ -155,8 +155,8 @@ static int _zterminals_draw(zGeneric* obj, void* usr_data)
 {
     d_count++;
     
-    if(obj == NULL || usr_data == NULL)
-	return 1;
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(usr_data);
 
     zTerminals* zts = (zTerminals*) usr_data;    
     zTerminal_Draw(Z_TERMINAL(obj));
