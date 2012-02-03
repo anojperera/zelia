@@ -165,6 +165,11 @@
 #define Z_LINE_WEIGHT7 1.75
 #define Z_LINE_WEIGHT8 2.0
 
+/* Diameters */
+#define Z_M16_GLAND 16.0
+#define Z_M20_GLAND 20.0
+#define Z_M25_GLAND 25.0
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
