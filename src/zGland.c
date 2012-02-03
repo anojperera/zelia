@@ -59,7 +59,7 @@ zGeneric* zGland_New(zGland* obj,		/* optional object */
 
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
-    
+    obj->z_hex_flg = 0;
     /* Set function pointers of parent object */
     obj->z_parent.z_draw_func = _zgland_draw;
 
@@ -152,13 +152,78 @@ int zGland_Draw(zGland* obj)
     x2[5] = x1[0];
     y2[5] = y1[0];
 
-    for(i = 0; i < COORDS; i++)
+    if(obj->z_hex_flg)
 	{
-	    cairo_move_to(_dev_c, CONV_TO_POINTS(x1[i]), CONV_TO_POINTS(y1[i]));
-	    cairo_line_to(_dev_c, CONV_TO_POINTS(x2[i]), CONV_TO_POINTS(y2[i]));
+	    for(i = 0; i < COORDS; i++)
+		{
+		    cairo_move_to(_dev_c, CONV_TO_POINTS(x1[i]), CONV_TO_POINTS(y1[i]));
+		    cairo_line_to(_dev_c, CONV_TO_POINTS(x2[i]), CONV_TO_POINTS(y2[i]));
+		}
 	}
-
     cairo_stroke(_dev_c);
     
     return 0;
+}
+
+/* Set gland diameter */
+inline int zGland_Set_Gland_Dia(zGland* obj, double dia)
+{
+    /* check object */
+    Z_CHECK_OBJ(obj);
+    obj->z_dia = dia;
+    return 0;
+}
+
+/* Get gland diameter */
+inline double zGland_Get_Gland_Dia(zGland* obj)
+{
+    Z_CHECK_OBJ_DOUBLE(obj);
+    return obj->z_dia;
+}
+
+/* Set gland size as enum */
+inline int zGland_Set_Gland_Size(zGland* obj, zGlandSize sz)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_gland_size = sz;
+    return 0;
+}
+
+/* Get gland size as enum */
+inline zGlandSize zGland_Get_Gland_Size(zGland* obj)
+{
+    if(obj == NULL)
+	return zM20;
+    return obj->z_gland_size;
+}
+
+/* Set hex flag */
+inline int zGland_Set_Hex_Profile_Flag(zGland* obj, unsigned int flg)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_hex_flg = flg;
+}
+
+/* Get hex flag */
+inline unsigned int zGland_Get_Hex_Profile_Flag(zGland* obj)
+{
+    Z_CHECK_OBJ(obj);
+    return obj->z_hex_flg;
+}
+
+
+/*==========================================================================*/
+/* Private Functions */
+static int _zgland_draw(zGeneric* obj)
+{
+    int rt_val;
+    zGland* self;
+    
+    Z_CHECK_OBJ(obj);
+    rt_val = zGland_Draw(Z_GLAND(obj));
+    self = Z_GLAND(obj);
+    if(self->z_draw_func)
+	return self->z_draw_func(obj);
+    else
+	return rt_val;
 }

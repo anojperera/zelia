@@ -16,6 +16,7 @@ struct _zGland
 {
     zBase z_parent;				/* inherited parent object */
     unsigned int z_int_flg;			/* internal flag */
+    unsigned int z_hex_flg;			/* flag draw hex */
     double z_dia;				/* diameter */
     zGlandSize z_gland_size;			/* gland size */
     zgeneric_fptr z_draw_func;			/* draw function pointer */
@@ -29,6 +30,8 @@ extern "C" {
     /* Constructor and destructor */
     zGeneric* zGland_New(zGland* obj,		/* optional object */
 			 zDevice* dev,		/* optional device object */
+			 double x,
+			 double y,
 			 zGlandSize sz);	/* size parameter */
 
     void zGland_Delete(zGland* obj);
@@ -46,8 +49,13 @@ extern "C" {
 
     /* Set and get gland size */
     inline int zGland_Set_Gland_Size(zGland* obj, zGlandSize sz);
-    inline zGlandSize zGland_Set_Gland_Size(zGland* obj);
+    inline zGlandSize zGland_Get_Gland_Size(zGland* obj);
 
+    /* Set and get hex flag */
+    /* Hex flag indicates the hex profile of a gland */
+    inline int zGland_Set_Hex_Profile_Flag(zGland* obj, unsigned int flg);
+    inline unsigned int zGland_Get_Hex_Profile_Flag(zGland* obj);
+    
 
 #ifdef __cplusplus
 }
