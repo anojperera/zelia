@@ -144,7 +144,8 @@ void zTerminals_Delete(zTerminals* obj)
 /* Virtual delete function */
 static int _zterminals_delete(zGeneric* obj, void* usr_data)
 {
-    zTerminal_Delete(Z_TERMINAL(obj));
+    if(obj)
+	zTerminal_Delete(Z_TERMINAL(obj));
     return 0;
 }
 
