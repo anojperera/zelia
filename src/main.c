@@ -14,13 +14,14 @@
 #include "zTerminal.h"
 #include "zTerminals.h"
 #include "zJB.h"
+#include "zGlands.h"
 
 int main(int argc, char** argv)
 {
     const int TXT_SZ = 20;
     zDevice dev;		/* device object */
-    zGenerics* terms;
     zGeneric* jb;		/* JB object */
+    zGenerics* glands;		/* Gland */
     
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
@@ -79,16 +80,6 @@ int main(int argc, char** argv)
     /* set attributes */
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
-    /* Create a array of terminals */
-    /* terms = zTerminals_New(NULL, */
-    /* 			   &dev, */
-    /* 			   6, */
-    /* 			   50.0, */
-    /* 			   50.0, */
-    /* 			   10.0, */
-    /* 			   40.0, */
-    /* 			   90.0, */
-    /* 			   "1-3,5-6"); */
 
     jb = zJB_New(NULL,
 		 &dev,
@@ -108,16 +99,35 @@ int main(int argc, char** argv)
 		      10.0,
 		      40.0,
 		      "1-3,5-6");
+
+    /* Create a cable gland array */
+    glands = zGlands_New(NULL);
+    zGenerics_Set_Device(glands, &dev);
+    /* Add glands */
+    zGlands_Add(Z_GLANDS(glands),
+		NULL,
+		50.0,
+		50.0,
+		zM20,
+		1);
+
+    zGlands_Add(Z_GLANDS(glands),
+		NULL,
+		50.0,
+		100.0,
+		zM20,
+		1);
+
     
     /* create border */
     zGeneric_Draw(sht);
     zGeneric_Draw(jb);
-    /* zGenerics_Draw(terms); */
+    zGenerics_Draw(glands);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
-    /* zTerminals_Delete(Z_TERMINALS(terms)); */
     zJB_Delete(Z_JB(jb));
+    zGlands_Delete(Z_GLANDS(glands));
     
     zDevice_Delete(&dev);
 
