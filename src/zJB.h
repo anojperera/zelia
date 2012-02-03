@@ -7,6 +7,7 @@
 #ifndef _ZJB_H_
 #define _ZJB_H_
 
+#include <stdlib.h>
 #include "zDevice.h"
 #include "zBase.h"
 #include "zGeneric.h"
@@ -33,6 +34,7 @@ struct _zJB
     void* z_child;				/* child pointer */
 
     zgeneric_fptr z_draw_func;			/* draw function pointer */
+    size_t z_obj_sz;				/* object size */
 };
 
 #ifdef __cplusplus

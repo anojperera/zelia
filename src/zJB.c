@@ -64,6 +64,7 @@ zGeneric* zJB_New(zJB* obj,				/* optional NULL pointer */
 
     /* Set child pointer of parent object */
     obj->z_parent.z_child = (void*) obj;
+    obj->z_obj_sz = sizeof(zJB);
 
     /* Return parent pointer */
     return &obj->z_parent.z_sgeneric;
