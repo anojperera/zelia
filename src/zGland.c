@@ -77,7 +77,7 @@ void zGland_Delete(zGland* obj)
     Z_CHECK_OBJ_VOID(obj);
 
     /* Call destructor of parent object */
-    zBase_Delete(obj->z_parent);
+    zBase_Delete(&obj->z_parent);
 
     obj->z_child = NULL;
 
@@ -112,8 +112,6 @@ int zGland_Draw(zGland* obj)
 
     /* draw outer circles */
     _rad = obj->z_dia / 2;
-    cairo_move_to(_dev_c, CONV_TO_POINTS(_base->z_x), CONV_TO_POINTS(_base->z_y));
-    
     cairo_arc(_dev_c,
 	      CONV_TO_POINTS(_base->z_x),
 	      CONV_TO_POINTS(_base->z_y),
@@ -202,6 +200,7 @@ inline int zGland_Set_Hex_Profile_Flag(zGland* obj, unsigned int flg)
 {
     Z_CHECK_OBJ(obj);
     obj->z_hex_flg = flg;
+    return 0;
 }
 
 /* Get hex flag */
