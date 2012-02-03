@@ -204,11 +204,10 @@ typedef enum {
 
 
 /* paper sizes */
-typedef enum
-    {
-	zSheetA3_Landscape,
-	zSheetA4_Portrait
-    } zSheets;
+typedef enum {
+    zSheetA3_Landscape,
+    zSheetA4_Portrait
+} zSheets;
 
 /* line types */
 typedef enum {
