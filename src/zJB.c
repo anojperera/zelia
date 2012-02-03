@@ -116,12 +116,12 @@ int zJB_Draw(zJB* obj)
     _base = &obj->z_parent;
     _genric = &obj->z_parent.z_sgeneric;
 
-    /* Device context pointer */
-    _dev_c = zGeneric_Get_Dev_Context(_genric);
-
     /* Check all objects */
     Z_CHECK_OBJ(_base);
     Z_CHECK_OBJ(_genric);
+
+    /* Device context pointer */
+    _dev_c = zGeneric_Get_Dev_Context(_genric);
     Z_CHECK_OBJ(_dev_c);
 
     /* move device context to the base coordinates and
