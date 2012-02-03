@@ -177,7 +177,7 @@
 #define Z_TERMINALS(obj) ((zTerminals*) obj->z_child)
 #define Z_JB(obj) ((zJB*) Z_BASE(obj)->z_child)
 #define Z_GLAND(obj) ((zGland*) Z_BASE(obj)->z_child)
-#define Z_GLANDS(OBJ) ((zGlands*) obj->z_child)
+#define Z_GLANDS(obj) ((zGlands*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
