@@ -33,11 +33,11 @@ extern "C" {
 
     /* Add gland to collection */
     int zGlands_Add(zGlands* obj,
-		      zDevice* dev,
-		      double x,
-		      double y,
-		      zGlandSize sz,
-		      unsigned int hex_flg);
+		    zDevice* dev,
+		    double x,
+		    double y,
+		    zGlandSize sz,
+		    unsigned int hex_flg);
 
     
 #ifdef __cplusplus

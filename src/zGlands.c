@@ -1,10 +1,13 @@
 /* Implementation of glands collection.
  * Fri Feb  3 17:58:12 GMT 2012 */
 
+#include "zGland.h"
 #include "zGlands.h"
+#include "../../g_list/src/alist.h"
 
 /* Virtual functions */
-static int _zglands_draw(zGenerics* obj);
+static int _zglands_draw(zGeneric* obj, void* usr_data);
+static int _zglands_delete(zGeneric* obj, void* usr_data);
 
 /* Constructor */
 zGenerics* zGlands_New(zGlands* obj)
@@ -54,3 +57,50 @@ void zGlands_Delete(zGlands* obj)
 	free(obj);
 }
 
+/* Add gland to collection */
+int zGlands_Add(zGlands* obj,				
+		zDevice* dev,				/* device object */
+		double x,				/* x coord */
+		double y,				/* y coord */
+		zGlandSize sz,				/* gland size */
+		unsigned int hex_flg)			/* hex flag */
+{
+    zGeneric* gland;
+    
+    /* check for objects */
+    Z_CHECK_OBJ(obj);
+
+    gland = zGland_New(NULL, dev, x, y, sz);
+    if(dev == NULL)
+	zGeneric_Set_Device(gland, zGenerics_Get_Device(&obj->z_parent));
+    
+    zGland_Set_Hex_Profile_Flag(Z_GLAND(gland), hex_flg);
+
+    /* add to collection */
+    aList_Add(&obj->z_parent.z_generics_d,
+	      (void*) gland,
+	      sizeof(zGland));
+    
+    return 0;
+}
+
+
+/*=========================================================================*/
+/* Private functions */
+
+/* Virtual delete function */
+static int _zglands_delete(zGeneric* obj, void* usr_data)
+{
+    if(obj)
+	zGland_Delete(Z_GLAND(obj));
+    return 0;
+}
+
+
+/* Virtual draw function */
+static int _zglands_draw(zGeneric* obj, void* usr_data)
+{
+    Z_CHECK_OBJ(obj);
+
+    return zGland_Draw(Z_GLAND(obj));
+}
