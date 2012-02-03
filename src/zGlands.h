@@ -11,16 +11,28 @@
 #include "zDevice.h"
 #include "zGenerics.h"
 
+typedef struct _zGlands zGlands;
+
+struct _zGlands
+{
+    zGenerics z_parent;
+    unsigned int z_int_flg;
+    void* z_child;					/* Child object */
+    zcollection_fptr z_draw_func;			/* Draw function pointer */
+    size_t z_obj_sz;					/* size of object */
+};
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     /* Constructor and destructor */
-    zGenerics* zGlands_New(void);
-    void zGlands_Delete(zGenerics* obj);
+    zGenerics* zGlands_New(zGlands* obj);
+    void zGlands_Delete(zGlands* obj);
 
     /* Add gland to collection */
-    int zGlands_Add(zGenerics* obj,
+    int zGlands_Add(zGlands* obj,
 		      zDevice* dev,
 		      double x,
 		      double y,
