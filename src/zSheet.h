@@ -45,23 +45,23 @@ extern "C" {
 		
     struct _zBrd_Attrib
     {
-	char* z_dwg_num;			/* drawing number */
-	char* z_sht_num;			/* sheet number */
-	char* z_rev_num;			/* revision number */
-	char* z_scale;				/* scale */
-	char* z_title;				/* title */
-	char* z_client;				/* client name */
-	char* z_site;				/* site / project*/
-	char* z_jobnum;				/* job */
-	char* z_ordnum;				/* order number */
-	char* z_drawn;				/* drawn */
-	char* z_drawn_date;			/* drawn date */
-	char* z_chked;				/* checked */
-	char* z_chk_date;			/* checked date */
-	char* z_app;				/* approved by */
-	char* z_app_date;			/* approved date */
-	char* z_material;			/* material */
-	char* z_qty;				/* quantity */
+	char z_dwg_num[16];			/* drawing number */
+	char z_sht_num[4];			/* sheet number */
+	char z_rev_num[4];			/* revision number */
+	char z_scale[8];			/* scale */
+	char z_title[128];			/* title */
+	char z_client[128];			/* client name */
+	char z_site[128];			/* site / project*/
+	char z_jobnum[16];			/* job */
+	char z_ordnum[128];			/* order number */
+	char z_drawn[8];			/* drawn */
+	char z_drawn_date[8];			/* drawn date */
+	char z_chked[8];			/* checked */
+	char z_chk_date[8];			/* checked date */
+	char z_app[8];				/* approved by */
+	char z_app_date[8];			/* approved date */
+	char z_material[32];			/* material */
+	char z_qty[8];				/* quantity */
     };
 
     /* constructor and destructor */
