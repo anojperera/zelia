@@ -6,8 +6,8 @@
 #include "../../g_list/src/alist.h"
 
 /* Virtual functions */
-static int _zglands_draw(zGeneric* obj, void* usr_data);
-static int _zglands_delete(zGeneric* obj, void* usr_data);
+static int _zglands_draw(void* obj, void* usr_data);
+static int _zglands_delete(void* obj, void* usr_data);
 
 /* Constructor */
 zGenerics* zGlands_New(zGlands* obj)
@@ -66,22 +66,24 @@ int zGlands_Add(zGlands* obj,
 		unsigned int hex_flg)			/* hex flag */
 {
     zGland gland;
-    
+    zGeneric* zg;
     /* check for objects */
     Z_CHECK_OBJ(obj);
-
-    gland = zGland_New(&gland, dev, x, y, sz);
+    zg = zGland_New(&gland, dev, x, y, sz);
+    if(!zg)
+	return 1;
+    
     if(dev == NULL)
 	{
-	    zGeneric_Set_Device(gland, zGenerics_Get_Device(&obj->z_parent));
-	    zGeneric_Set_Default_Dev_Context(gland);
+	    zGeneric_Set_Device(zg, zGenerics_Get_Device(&obj->z_parent));
+	    zGeneric_Set_Default_Dev_Context(zg);
 	}
     
     zGland_Set_Hex_Profile_Flag(&gland, hex_flg);
 
     /* add to collection */
     aList_Add(&obj->z_parent.z_generics_d,
-	      (void*) gland,
+	      (void*) &gland,
 	      sizeof(zGland));
     
     return 0;
@@ -92,18 +94,24 @@ int zGlands_Add(zGlands* obj,
 /* Private functions */
 
 /* Virtual delete function */
-static int _zglands_delete(zGeneric* obj, void* usr_data)
+static int _zglands_delete(void* obj, void* usr_data)
 {
+    zGland* zgl;
+    
     if(obj)
-	zGland_Delete(Z_GLAND(obj));
+	{
+	    zgl = (zGland*) obj;
+	    zGland_Delete(zgl);
+	}
     return 0;
 }
 
 
 /* Virtual draw function */
-static int _zglands_draw(zGeneric* obj, void* usr_data)
+static int _zglands_draw(void* obj, void* usr_data)
 {
+    zGland* zgl;
     Z_CHECK_OBJ(obj);
-
-    return zGland_Draw(Z_GLAND(obj));
+    zgl = (zGland*) obj;
+    return zGland_Draw(zgl);
 }
