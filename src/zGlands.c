@@ -70,6 +70,10 @@ int zGlands_Add(zGlands* obj,
     /* check for objects */
     Z_CHECK_OBJ(obj);
     zg = zGland_New(&gland, dev, x, y, sz);
+
+    /* Set internal flag to true as the struct shall be copies to
+     * internal memory of alist and it needs freed */
+    gland.z_int_flg = 1;
     if(!zg)
 	return 1;
     
