@@ -13,7 +13,7 @@
 typedef struct _zGenerics zGenerics;
 
 /* Function pointer for drawing functions in collection */
-typedef int (*zcollection_fptr)(zGeneric*, void*);
+typedef int (*zcollection_fptr)(void*, void*);
 
 
 struct _zGenerics
