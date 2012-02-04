@@ -1646,7 +1646,7 @@ static int zsheet_add_attribs(zSheet* obj)
     int MATCH_ATTRIB[Z_MAX_ATTRIB];
     
     /* drawing number */
-    if(tmp_attrib->z_dwg_num != NULL)
+    if(tmp_attrib->z_dwg_num[0] != '\0')
 	buff[0] = tmp_attrib->z_dwg_num;
     else
 	buff[0] = NULL;
@@ -1655,7 +1655,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[3] = 0;
     /**************************************/
     /* sheet number */
-    if(tmp_attrib->z_sht_num != NULL)
+    if(tmp_attrib->z_sht_num[0] != '\0')
 	buff[1] = tmp_attrib->z_sht_num;
     else
 	buff[1] = NULL;
@@ -1664,7 +1664,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[4] = 1;
     /**************************************/
     /* revision number */
-    if(tmp_attrib->z_rev_num != NULL)
+    if(tmp_attrib->z_rev_num[0] != '\0')
 	buff[2] = tmp_attrib->z_rev_num;
     else
 	buff[2] = NULL;
@@ -1673,7 +1673,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[5] = 2;
     /**************************************/
     /* scale */
-    if(tmp_attrib->z_scale != NULL)
+    if(tmp_attrib->z_scale[0] != '\0')
 	buff[3] = tmp_attrib->z_scale;
     else
 	buff[3] = NULL;
@@ -1681,7 +1681,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[7] = 3;
     /**************************************/
     /* drawing title */
-    if(tmp_attrib->z_title != NULL)
+    if(tmp_attrib->z_title[0] != '\0')
 	buff[4] = tmp_attrib->z_title;
     else
 	buff[4] = NULL;
@@ -1689,7 +1689,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[6] = 4;
     /**************************************/
     /* client */
-    if(tmp_attrib->z_client != NULL)
+    if(tmp_attrib->z_client[0] != '\0')
 	buff[5] = tmp_attrib->z_client;
     else
 	buff[5] = NULL;
@@ -1697,7 +1697,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[17] = 5;
     /**************************************/
     /* site */
-    if(tmp_attrib->z_site != NULL)
+    if(tmp_attrib->z_site[0] != '\0')
 
 	buff[6] = tmp_attrib->z_site;
     else
@@ -1706,7 +1706,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[14] = 6;
     /**************************************/
     /* job number */
-    if(tmp_attrib->z_jobnum != NULL)
+    if(tmp_attrib->z_jobnum[0] != '\0')
 	buff[7] = tmp_attrib->z_jobnum;
     else
 	buff[7] = NULL;
@@ -1714,7 +1714,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[15] = 7;
     /**************************************/
     /* order number */
-    if(tmp_attrib->z_ordnum != NULL)
+    if(tmp_attrib->z_ordnum[0] != '\0')
 	buff[8] = tmp_attrib->z_ordnum;
     else
 	buff[8] = NULL;
@@ -1722,7 +1722,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[16] = 8;
     /**************************************/
     /* drawn */
-    if(tmp_attrib->z_drawn != NULL)
+    if(tmp_attrib->z_drawn[0] != '\0')
 	buff[9] = tmp_attrib->z_drawn;
     else
 	buff[9] = NULL;
@@ -1731,7 +1731,7 @@ static int zsheet_add_attribs(zSheet* obj)
     /**************************************/
   
     /* drawn date */
-    if(tmp_attrib->z_drawn_date != NULL)
+    if(tmp_attrib->z_drawn_date[0] != '\0')
 	buff[10] = tmp_attrib->z_drawn_date;
     else
 	buff[10] = NULL;
@@ -1739,7 +1739,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[9] = 10;
     /**************************************/
     /* checked by */
-    if(tmp_attrib->z_chked != NULL)
+    if(tmp_attrib->z_chked[0] != '\0')
 	buff[11] = tmp_attrib->z_chked;
     else
 	buff[11] = NULL;
@@ -1747,7 +1747,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[10] = 11;
     /**************************************/
     /* checked date */
-    if(tmp_attrib->z_chk_date != NULL)
+    if(tmp_attrib->z_chk_date[0] != '\0')
 	buff[12] = tmp_attrib->z_chk_date;
     else
 	buff[12] = NULL;
@@ -1755,7 +1755,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[11] = 12;
     /**************************************/
     /* approved by */
-    if(tmp_attrib->z_app != NULL)
+    if(tmp_attrib->z_app[0] != '\0')
 	buff[13] = tmp_attrib->z_app;
     else
 	buff[13] = NULL;
@@ -1763,7 +1763,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[12] = 13;
     /**************************************/
     /* approved date */
-    if(tmp_attrib->z_app_date != NULL)
+    if(tmp_attrib->z_app_date[0] != '\0')
 	buff[14] = tmp_attrib->z_app_date;
     else
 	buff[14] = NULL;
@@ -1771,7 +1771,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[13] = 14;
     /**************************************/
     /* materials */
-    if(tmp_attrib->z_material != NULL)
+    if(tmp_attrib->z_material[0] != '\0')
 	buff[15] = tmp_attrib->z_material;
     else
 	buff[15] = NULL;
@@ -1779,7 +1779,7 @@ static int zsheet_add_attribs(zSheet* obj)
     MATCH_ATTRIB[18] = 15;
     /**************************************/
     /* quantity */
-    if(tmp_attrib->z_qty != NULL)
+    if(tmp_attrib->z_qty[0] != '\0')
 	buff[16] = tmp_attrib->z_qty;
     else
 	buff[16] = NULL;
@@ -1829,6 +1829,9 @@ static int zsheet_add_attribs(zSheet* obj)
 
     g_object_unref(z_pango_layout);
 
+    for(i=0; i < ATTRIB_ARR; i++)
+	buff[i] = NULL;
+    
     if(buff)
 	free(buff);
 
