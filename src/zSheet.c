@@ -1554,6 +1554,13 @@ static char* zsheet_wozair_address()
     if(ch1)
 	free(ch1);
     ch1 = NULL;
+    for(i = 0; i < NUM; i++)
+	{
+	    free(arr_buff[i]);
+	    arr_buff[i] = NULL;
+	}
+    free(arr_buff);
+    arr_buff = NULL;
 
     return buff;
     
