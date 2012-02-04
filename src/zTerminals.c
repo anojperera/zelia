@@ -9,8 +9,8 @@
 #include "zGeneric.h"
 
 /* Virtual functions */
-static int _zterminals_delete(zGeneric* obj, void* usr_data);		/* delte function */
-static int _zterminals_draw(zGeneric* obj, void* usr_data);		/* draw function */
+static int _zterminals_delete(void* obj, void* usr_data);		/* delte function */
+static int _zterminals_draw(void* obj, void* usr_data);		/* draw function */
 static inline int _zterminals_parser(zTerminals* obj);			/* terminals parser */
 
 static int d_count = 0;
@@ -142,24 +142,30 @@ void zTerminals_Delete(zTerminals* obj)
 /* Private functions */
 
 /* Virtual delete function */
-static int _zterminals_delete(zGeneric* obj, void* usr_data)
+static int _zterminals_delete(void* obj, void* usr_data)
 {
+    zGeneric* zg;
+    
     if(obj)
-	zTerminal_Delete(Z_TERMINAL(obj));
+	{
+	    zg = (zGeneric*) obj;
+	    zTerminal_Delete(Z_TERMINAL(zg));
+	}
     return 0;
 }
 
 
 /* Virtual draw function */
-static int _zterminals_draw(zGeneric* obj, void* usr_data)
+static int _zterminals_draw(void* obj, void* usr_data)
 {
+    zGeneric* zg;
     d_count++;
     
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(usr_data);
-
+    zg = (zGeneric*) obj;
     zTerminals* zts = (zTerminals*) usr_data;    
-    zTerminal_Draw(Z_TERMINAL(obj));
+    zTerminal_Draw(Z_TERMINAL(zg));
     
     /* if counter is reached max, draw links if required */
     if(d_count == zts->z_parent.z_count)
