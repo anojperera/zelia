@@ -56,14 +56,13 @@ extern "C" {
 
     /* Property methods */
     /***********************************************************************/
+    /* Set and get fillet radius */
+    inline int zJB_Set_Fillet_Radius(zJB* obj, double rad);
+    inline double zJB_Get_Fillet_Radius(zJB* obj);
     
     /* Set and get terminals collection */
     inline int zJB_Set_Terminals(zJB* obj, zGenerics* terms);
     inline zGenerics* zJB_Get_Terminals(zJB* obj);
-
-    /* Set and get fillet radius */
-    inline int zJB_Set_Fillet_Radius(zJB* obj, double rad);
-    inline double zJB_Get_Fillet_Radius(zJB* obj);
     
     /* Add terminal collection */
     inline int zJB_Add_Terminals(zJB* obj,
