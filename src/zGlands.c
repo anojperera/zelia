@@ -65,19 +65,19 @@ int zGlands_Add(zGlands* obj,
 		zGlandSize sz,				/* gland size */
 		unsigned int hex_flg)			/* hex flag */
 {
-    zGeneric* gland;
+    zGland gland;
     
     /* check for objects */
     Z_CHECK_OBJ(obj);
 
-    gland = zGland_New(NULL, dev, x, y, sz);
+    gland = zGland_New(&gland, dev, x, y, sz);
     if(dev == NULL)
 	{
 	    zGeneric_Set_Device(gland, zGenerics_Get_Device(&obj->z_parent));
 	    zGeneric_Set_Default_Dev_Context(gland);
 	}
     
-    zGland_Set_Hex_Profile_Flag(Z_GLAND(gland), hex_flg);
+    zGland_Set_Hex_Profile_Flag(&gland, hex_flg);
 
     /* add to collection */
     aList_Add(&obj->z_parent.z_generics_d,
