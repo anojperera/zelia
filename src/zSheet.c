@@ -1007,10 +1007,13 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     ch = zsheet_wozair_address();
     printf("%s\n", ch);
     if(ch != NULL)
-    	zcCopy(&buff[23], ch);
+	{
+	    zcCopy(&buff[23], ch);
+	    free(ch);
+	    ch = NULL;
+	}
     else
     	zcCopy(&buff[23], "N/A");
-
     zcCopy(&buff[24], Z_BORDER_TXT_MAT_DES);
     zcCopy(&buff[25], Z_BORDER_TXT_QTY_DES);
     
