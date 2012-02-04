@@ -18,7 +18,6 @@
 
 int main(int argc, char** argv)
 {
-    const int TXT_SZ = 20;
     zDevice dev;		/* device object */
     zGeneric* jb;		/* JB object */
     zGenerics* glands;		/* Gland */
@@ -42,30 +41,25 @@ int main(int argc, char** argv)
     zBrd_Attrib* attrib = (zBrd_Attrib*)
 	malloc(sizeof(zBrd_Attrib));
 
-    attrib->z_dwg_num = NULL;
-    attrib->z_sht_num = NULL;
-    attrib->z_rev_num = NULL;
-    attrib->z_scale = NULL;
+    attrib->z_dwg_num[0] = '\0';
+    attrib->z_sht_num[0] = '\0';
+    attrib->z_rev_num[0] = '\0';
+    attrib->z_scale[0] = '\0';
 
-    attrib->z_title = (char*) malloc(sizeof(char) * TXT_SZ);
     strcpy(attrib->z_title, "TEMP");
-
-    attrib->z_client = (char*) malloc(sizeof(char) * TXT_SZ);
     strcpy(attrib->z_client, "HI-PRES");
-	
-    attrib->z_site = (char*) malloc(sizeof(char) * TXT_SZ);
     strcpy(attrib->z_site, "Over load");
 	
-    attrib->z_jobnum = NULL;
-    attrib->z_ordnum = NULL;
-    attrib->z_drawn = NULL;
-    attrib->z_drawn_date = NULL;
-    attrib->z_chked = NULL;
-    attrib->z_chk_date = NULL;
-    attrib->z_app = NULL;
-    attrib->z_app_date = NULL;
-    attrib->z_material = NULL;
-    attrib->z_qty = NULL;
+    attrib->z_jobnum[0] = '\0';
+    attrib->z_ordnum[0] = '\0';
+    attrib->z_drawn[0] = '\0';
+    attrib->z_drawn_date[0] = '\0';
+    attrib->z_chked[0] = '\0';
+    attrib->z_chk_date[0] = '\0';
+    attrib->z_app[0] = '\0';
+    attrib->z_app_date[0] = '\0';
+    attrib->z_material[0] = '\0';
+    attrib->z_qty[0] = '\0';
     /*************************************/
 
     /* set device */
@@ -74,8 +68,8 @@ int main(int argc, char** argv)
     zGeneric_Set_LineWeight(sht, zLWeight1);
     zGeneric_Set_Defauts(sht);
     zSheet_Set_GridFlag(Z_SHEET(sht), 1);
-    zSheet_Set_LogoPath(Z_SHEET(sht),
-			"../resources/logo/wozair_logo2.png");
+    /* zSheet_Set_LogoPath(Z_SHEET(sht), */
+    /* 			"../resources/logo/wozair_logo2.png"); */
 
     /* set attributes */
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
@@ -131,20 +125,8 @@ int main(int argc, char** argv)
     
     zDevice_Delete(&dev);
 
-    if(attrib->z_title)
-	free(attrib->z_title);
-    
-    if(attrib->z_client)
-	free(attrib->z_client);
-
-    if(attrib->z_site)
-	free(attrib->z_site);
-
-    attrib->z_title = NULL;
-    attrib->z_client = NULL;
-    attrib->z_site = NULL;
-
     if(attrib)
 	free(attrib);
+    attrib = NULL;
     return 0;
 }
