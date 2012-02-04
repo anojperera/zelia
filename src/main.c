@@ -21,7 +21,8 @@ int main(int argc, char** argv)
     zDevice dev;		/* device object */
     zGeneric* jb;		/* JB object */
     zGenerics* glands;		/* Gland */
-    
+    zGeneric* sht;
+    zBrd_Attrib* attrib;
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
 		 "test.pdf",
@@ -29,7 +30,7 @@ int main(int argc, char** argv)
 		 &dev);
 
     /* create sheet */
-    zGeneric* sht = zSheet_New(NULL);
+    sht = zSheet_New(NULL);
     /* check for NULL pointer */
     if(sht == NULL)
 	{
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
 	}
 
     /* create drawing attributes */
-    zBrd_Attrib* attrib = (zBrd_Attrib*)
+    attrib = (zBrd_Attrib*)
 	malloc(sizeof(zBrd_Attrib));
 
     attrib->z_dwg_num[0] = '\0';
@@ -93,6 +94,12 @@ int main(int argc, char** argv)
 		      10.0,
 		      40.0,
 		      "1-3,5-6");
+
+    zJB_Add_Glands(Z_JB(jb),
+		   30,
+		   30,
+		   zM20,
+		   1);
 
     /* Create a cable gland array */
     glands = zGlands_New(NULL);

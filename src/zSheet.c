@@ -36,6 +36,7 @@ static int _zsheet_draw_function(zGeneric* obj);
 /* create generic sheet object */
 zGeneric* zSheet_New(zSheet* obj)
 {
+    int i = 0;
     /* check for object, if not create it */
     if(obj == NULL)
 	{
@@ -61,8 +62,8 @@ zGeneric* zSheet_New(zSheet* obj)
     obj->z_child = NULL;
     obj->z_draw_func = NULL;
     obj->z_obj_sz = sizeof(zSheet);
+
     /* initialise array coordinates */
-    int i = 0;
     for(i=0; i<Z_MAX_ATTRIB; i++)
 	{
 	    obj->z_x_attrib[i] = 0;
@@ -190,19 +191,20 @@ int zSheet_Create_Border(zSheet* obj)
 /* private functions */
 static int zsheet_draw_oborder(zSheet* obj)
 {
-
+    #define ZS_DR_OB_NUM 5
+    zDevice* dev;
+    int i = 0;
+    double X[ZS_DR_OB_NUM], Y[ZS_DR_OB_NUM];
+    double X1[ZS_DR_OB_NUM+1], Y1[ZS_DR_OB_NUM+1];
+    
     /* check device context */
     if(!zGeneric_Get_Device(&obj->z_sgeneric))
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);
 
     /* draw outer border */
-    const int NUM = 5;
-    int i = 0;
-    double X[NUM], Y[NUM];
-    double X1[NUM+1], Y1[NUM+1];
 
     /* outer border coordinates */
     X[0] = Z_DEFAULT_BORDER_SZ;
@@ -247,7 +249,7 @@ static int zsheet_draw_oborder(zSheet* obj)
 		  ConvToPoints(&X[0]),
 		  ConvToPoints(&Y[0]));
 		
-    for(i=1; i<NUM; i++)
+    for(i=1; i<ZS_DR_OB_NUM; i++)
 	{
 	    cairo_line_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 			  ConvToPoints(&X[i]),
@@ -261,7 +263,7 @@ static int zsheet_draw_oborder(zSheet* obj)
 			  ConvToPoints(&X1[0]),
 			  ConvToPoints(&Y1[0]));
 		
-	    for(i=1; i<NUM+1; i++)
+	    for(i=1; i<ZS_DR_OB_NUM+1; i++)
 		{
 		    if(i==3)
 			{
@@ -288,6 +290,21 @@ static int zsheet_draw_oborder(zSheet* obj)
 /* draws grid */
 static int zsheet_draw_grid(zSheet* obj)
 {
+    #define DEV 2
+    /* pointer to under lying device */
+    zDevice* dev;
+
+    /* horizontal and vertical number
+       grid */
+    int h_num, v_num;
+    double h_pitch, v_pitch;
+    double st = 0; 	/* Z_DEFAULT_BORDER_SZ + Z_DEFAULT_GRID_SZ */
+
+    double x, x1, x2, y, y1, y2, a, ch_x, ch_y;
+    int i;
+    int char_num = 65;
+    char* grd_cord_v;
+
     /* check fo NULL pointer */
     if(obj == NULL)
 	return 0;
@@ -295,18 +312,7 @@ static int zsheet_draw_grid(zSheet* obj)
     if(!obj->z_sgrid_flg)
 	return 0;
     
-    /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
-	
-
-    /* horizontal and vertical number
-       grid */
-    int h_num, v_num;
-    double h_pitch, v_pitch;
-
-    double st = 0; 	/* Z_DEFAULT_BORDER_SZ + Z_DEFAULT_GRID_SZ */
-    const int DEV = 2;
-    
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);    
     h_num = (int) (dev->z_page_width - 2 * st) /
 	Z_DEFAULT_GRID_PITCH;
     v_num = (int) (dev->z_page_height - 2 * st) /
@@ -317,16 +323,12 @@ static int zsheet_draw_grid(zSheet* obj)
     v_pitch = (dev->z_page_height - 2 * st) /
 	(double) v_num;
 
-    double x, x1, x2, y, y1, y2, a, ch_x, ch_y;
 
     ch_y = 0;
     ch_x = 0;
-	
-    int i;
-    int char_num = 65;
-    
+	    
     /* array of pointers for the grid */
-    char* grd_cord_v = (char*) calloc(2, sizeof(char));
+    grd_cord_v = (char*) calloc(2, sizeof(char));
 
     /* set font face */
     cairo_select_font_face(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
@@ -498,6 +500,12 @@ static int zsheet_draw_grid(zSheet* obj)
 /* draw top revision box */
 static int zsheet_draw_top_revbox(zSheet* obj)
 {
+    #define ZS_DR_TOP_REV_NUM 7
+    double x, y;
+
+    double X[ZS_DR_TOP_REV_NUM], Y[ZS_DR_TOP_REV_NUM];
+    int i = 0;
+    
     /* check for NULL pointer */
     if(obj == NULL)
 	return 0;
@@ -505,7 +513,6 @@ static int zsheet_draw_top_revbox(zSheet* obj)
     /* pointer to under lying device */
     /* zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric); */
 	
-    double x, y;
     if(obj->z_sgrid_flg > 0)
 	{
 	    x = Z_DEFAULT_GRID_SZ;
@@ -516,10 +523,6 @@ static int zsheet_draw_top_revbox(zSheet* obj)
 	    x = 0;
 	    y = 0;
 	}
-
-    const int NUM = 7;
-    double X[NUM], Y[NUM];
-    int i = 0;
 
     X[0] = x + Z_DEFAULT_BORDER_SZ;
     Y[0] = y + Z_DEFAULT_BORDER_SZ +
@@ -548,7 +551,7 @@ static int zsheet_draw_top_revbox(zSheet* obj)
     cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
 		  ConvToPoints(&X[0]),
 		  ConvToPoints(&Y[0]));
-    for(i=1; i<NUM; i++)
+    for(i=1; i<ZS_DR_TOP_REV_NUM; i++)
 	{
 	    if(i==3 || i==5)
 		{
@@ -575,21 +578,22 @@ static int zsheet_draw_top_revbox(zSheet* obj)
 /* draw decal */
 static int zsheet_draw_decal(zSheet* obj)
 {
+    #define ZS_DR_DCL_NUM 36
+    zDevice* dev;
+
+    double X[ZS_DR_DCL_NUM], Y[ZS_DR_DCL_NUM];
+    int i=0;			/* counter */
+    
     /* check for NULL pointer */
     if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);
 	
     /* check device context */
     if(!dev)
 	return 0;
-
-    const int NUM = 36;
-
-    double X[NUM], Y[NUM];
-    int i=0;			/* counter */
 
     /* outer decal box coordinates */
     X[0] = dev->z_page_width - Z_WOZ_MAIN_BRD_WIDTH
@@ -725,7 +729,7 @@ static int zsheet_draw_decal(zSheet* obj)
     X[35] = X[34];
     Y[35] = Y[0];
     
-    for(i=0; i<NUM; i++)
+    for(i=0; i<ZS_DR_DCL_NUM; i++)
 	{
 	    switch(i)
 		{
@@ -768,18 +772,18 @@ static int zsheet_draw_decal(zSheet* obj)
 /* draw material and quantity box */
 static int zsheet_draw_matbox(zSheet* obj)
 {
+    #define ZS_DR_MAT_NUM 5
+    int i = 0;
+    
+    double X[ZS_DR_MAT_NUM], Y[ZS_DR_MAT_NUM];
+    double x, y;
+    zDevice* dev;
     /* check for NULL pointer */
     if(obj == NULL)
 	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
-
-    const int NUM = 5;
-    int i = 0;
-    
-    double X[NUM], Y[NUM];
-    double x, y;
+    dev  = zGeneric_Get_Device(&obj->z_sgeneric);
 	
     if(obj->z_sgrid_flg > 0)
 	{
@@ -839,7 +843,7 @@ static int zsheet_draw_matbox(zSheet* obj)
 	}
 
 	
-    for(i=0; i<NUM; i++)
+    for(i=0; i<ZS_DR_MAT_NUM; i++)
 	{
 	    if(i==0 || i==3)
 		{
@@ -865,12 +869,9 @@ static int zsheet_draw_matbox(zSheet* obj)
 /* add drawing header details */
 static int zsheet_add_attrib_headers(zSheet* obj)
 {
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return 0;
 
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
+    zDevice* dev;
 	
     int attrib_cnt = 0;			/* attrib counter */
     
@@ -883,6 +884,18 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	
     PangoLayout* z_pango_layout;	/* main pango layout */
 
+    #define ZS_ATTR_NUM 26
+    int i = 0;			/* counter */
+    double X[ZS_ATTR_NUM], Y[ZS_ATTR_NUM];
+    char** buff;
+    char* ch;
+    double x, y, adj;
+    
+    /* check for NULL pointer */
+    if(obj == NULL)
+	return 0;
+    
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);
     /************************************************************/
     /* create new description */
     z_desp_g = pango_font_description_new();
@@ -966,12 +979,9 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 	    return 0;
 	}
 
-    const int NUM = 26;
-    int i = 0;			/* counter */
-    double X[NUM], Y[NUM];
 
     /* char buffer to hold attribute headers */
-    char** buff = (char**) calloc(NUM, sizeof(char*));
+    buff = (char**) calloc(ZS_ATTR_NUM, sizeof(char*));
 
     zcCopy(&buff[0], Z_BORDER_TXT_DRG_NUMBER);
     zcCopy(&buff[1], Z_BORDER_TXT_SHT_NUMBER);
@@ -995,7 +1005,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     zcCopy(&buff[19], Z_BORDER_TXT_CLIENTORDER_DES);
     zcCopy(&buff[20], Z_BORDER_TXT_CLIENT_DES);
 
-    char* ch = zDevice_Get_PageSizeStr(dev);
+    ch = zDevice_Get_PageSizeStr(dev);
     if(ch != NULL)
 	zcCopy(&buff[21], ch);
     else
@@ -1017,9 +1027,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     zcCopy(&buff[24], Z_BORDER_TXT_MAT_DES);
     zcCopy(&buff[25], Z_BORDER_TXT_QTY_DES);
     
-    /***********************************************/
-    double x, y, adj;
-	
+    /***********************************************/	
     if(obj->z_sgrid_flg > 0)
 	{
 	    x = Z_DEFAULT_GRID_SZ;
@@ -1210,7 +1218,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     Y[23] = Y[22] + Z_BORDER_TXT_TOP_ADJ2 +
 	Z_BORDER_TXT_TOP_ADJ3;
 
-    for(i=0; i<NUM; i++)
+    for(i=0; i<ZS_ATTR_NUM; i++)
 	{
 	    if(zDevice_Get_PageSize(dev) == zSheetA4_Portrait
 	       && i>2 && i<6)
@@ -1325,7 +1333,7 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     z_desp_a = NULL;
     z_desp_m = NULL;
     z_pango_layout = NULL;
-    for(i = 0; i < NUM; i++)
+    for(i = 0; i < ZS_ATTR_NUM; i++)
 	{
 	    if(buff[i])
 		free(buff[i]);
@@ -1340,26 +1348,30 @@ static int zsheet_add_attrib_headers(zSheet* obj)
 /* draw projection */
 static int zsheet_draw_projn(zSheet* obj)
 {
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return 0;
-
+    #define ZS_DR_PROJ_NUM 10
+    #define ZS_DR_PROJ_NUM_DASHES 3
+    
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
-	
-    const int NUM = 10;
+    zDevice* dev;
     int i = 0;
-    double X[NUM], Y[NUM];
+    double X[ZS_DR_PROJ_NUM], Y[ZS_DR_PROJ_NUM];
     double rad1, rad2;
 
     double dash_on = Z_BORDER_PROJN_DASH_ON;
     double dash_off = Z_BORDER_PROJN_DASH_OFF;
 
-    const int NUM_DASHES = 3;
-    double dashes[] = {ConvToPoints(&dash_on),
-		       ConvToPoints(&dash_off),
-		       ConvToPoints(&dash_on)};
-	
+    double dashes[ZS_DR_PROJ_NUM_DASHES];
+    
+    dashes[0] = ConvToPoints(&dash_on);
+    dashes[1] = ConvToPoints(&dash_off);
+    dashes[2] = ConvToPoints(&dash_on);
+    
+    /* check for NULL pointer */
+    if(obj == NULL)
+	return 0;
+    
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);
+    
     rad1 = Z_BORDER_PROJN_DIA_MAJ / 2;
     rad2 = Z_BORDER_PROJN_DIA_MIN / 2;
 	
@@ -1409,7 +1421,7 @@ static int zsheet_draw_projn(zSheet* obj)
     /* save cairo context */
     cairo_save(zGeneric_Get_Dev_Context(&obj->z_sgeneric));
 	
-    for(i=0; i<NUM; i++)
+    for(i=0; i<ZS_DR_PROJ_NUM; i++)
 	{
 	    switch(i)
 		{
@@ -1441,7 +1453,7 @@ static int zsheet_draw_projn(zSheet* obj)
 		    if(i==6)
 			{
 			    cairo_set_dash(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
-					   dashes, NUM_DASHES, 0);
+					   dashes, ZS_DR_PROJ_NUM_DASHES, 0);
 			}
 					
 		    cairo_move_to(zGeneric_Get_Dev_Context(&obj->z_sgeneric),
@@ -1475,20 +1487,23 @@ static int zsheet_draw_projn(zSheet* obj)
 /* add logo */
 static int zsheet_paint_logo(zSheet* obj)
 {
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return 0;
-
     /* pointer to under lying device */
-    zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric);
-
-    /* check for logo path */
-    if(obj->z_slogo_path == NULL)
-	return 0;
-
+    zDevice* dev;
+    
     /* create logo context */
     cairo_surface_t* logo_surf = NULL;
     double x, y;
+    
+    /* check for NULL pointer */
+    if(obj == NULL)
+	return 0;
+    
+    /* check for logo path */
+    if(obj->z_slogo_path == NULL)
+	return 0;
+    
+    dev = zGeneric_Get_Device(&obj->z_sgeneric);
+
     x = dev->z_page_width - Z_DEFAULT_BORDER_SZ
 	- Z_WOZ_MAIN_PROJ_LEFT - Z_WOZ_MAIN_LOGO_WIDTH;
     y = dev->z_page_height - Z_DEFAULT_BORDER_SZ
@@ -1528,7 +1543,7 @@ static char* zsheet_wozair_address()
     char* ch1;
     char** arr_buff;			/* array to hold address */
     int i;
-    
+    int len;
     i = strlen(Z_BORDER_TXT_WOZ_COPY) + 1;
     ch1 = (char*) malloc(sizeof(char) * i);
     strcpy(ch1, Z_BORDER_TXT_WOZ_COPY);
@@ -1545,7 +1560,7 @@ static char* zsheet_wozair_address()
     zcCopy(&arr_buff[7], Z_BORDER_TXT_WOZ_EML);
     zcCopy(&arr_buff[8], ch1);
     /* obtain total length of buffer */
-    int len = zBuffLen(NUM, arr_buff);
+    len = zBuffLen(NUM, arr_buff);
 
     if(!len)
 	{
@@ -1576,29 +1591,28 @@ static char* zsheet_wozair_address()
 /* add drawing attributes */
 static int zsheet_add_attribs(zSheet* obj)
 {
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return 0;
+    #define ZS_ADD_ATTRIB_ARR 17
+    /* temporary buffer to assign
+       attributes */
+    char* buff[ZS_ADD_ATTRIB_ARR];
 
-    /* pointer to under lying device */
-    /* zDevice* dev = zGeneric_Get_Device(&obj->z_sgeneric); */
-
-    /* check for attribute null pointer */
-    /* if(obj->z_sbrd_attrib == NULL || */
-    /*    *obj->z_sbrd_attrib == NULL) */
-    /* 	{ */
-    /* 	    return 0; */
-    /* 	} */
-
+    int i = Z_MAX_ATTRIB;
+    int MATCH_ATTRIB[Z_MAX_ATTRIB];
+    
     /* obtain pointer to attribute struct */
-    zBrd_Attrib* tmp_attrib = obj->z_sbrd_attrib;
+    zBrd_Attrib* tmp_attrib;
 
     PangoFontDescription* z_desp_g;	/* font description generic */
     PangoFontDescription* z_desp_s;	/* font description special */
     PangoFontDescription* z_desp_t;	/* font description title */
 
     PangoLayout* z_pango_layout;	/* main pango layout */
+
+    /* check for NULL pointer */
+    if(obj == NULL)
+	return 0;
     
+    tmp_attrib = obj->z_sbrd_attrib;    
     /* create new description */
     z_desp_g = pango_font_description_new();
     z_desp_s = pango_font_description_new();
@@ -1649,14 +1663,6 @@ static int zsheet_add_attribs(zSheet* obj)
 	    printf("%s\n", Z_ERROR_PANGO_LAYOUT);
 	    return 0;
 	}
-
-    const int ATTRIB_ARR = 17;
-    /* temporary buffer to assign
-       attributes */
-    char* buff[ATTRIB_ARR];
-
-    int i = Z_MAX_ATTRIB;
-    int MATCH_ATTRIB[Z_MAX_ATTRIB];
     
     /* drawing number */
     if(tmp_attrib->z_dwg_num[0] != '\0')
@@ -1842,7 +1848,7 @@ static int zsheet_add_attribs(zSheet* obj)
 
     g_object_unref(z_pango_layout);
 
-    for(i=0; i < ATTRIB_ARR; i++)
+    for(i=0; i < ZS_ADD_ATTRIB_ARR; i++)
 	buff[i] = NULL;
     
     return i;

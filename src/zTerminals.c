@@ -159,12 +159,13 @@ static int _zterminals_delete(void* obj, void* usr_data)
 static int _zterminals_draw(void* obj, void* usr_data)
 {
     zGeneric* zg;
+    zTerminals* zts;
     d_count++;
     
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(usr_data);
     zg = (zGeneric*) obj;
-    zTerminals* zts = (zTerminals*) usr_data;    
+    zts = (zTerminals*) usr_data;    
     zTerminal_Draw(Z_TERMINAL(zg));
     
     /* if counter is reached max, draw links if required */

@@ -3,7 +3,7 @@
 
 CFLAGS1 = -g
 CFLAGS2 = -O0
-CFLAGS3 = -Wall
+CFLAGS3 = -Wall -pedantic
 PROG = tmp
 CCC = gcc
 CCP = g++

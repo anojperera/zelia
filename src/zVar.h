@@ -291,10 +291,11 @@ static inline double Round(double val, unsigned int places)
 /* copy string to buffer */
 static inline int zcCopy(char** buff, const char* val)
 {
+    size_t sz;
     if(val)
 	{
 	    /* obtain string length */
-	    size_t sz = strlen(val);
+	    sz = strlen(val);
 
 	    /* return 0 */
 	    if(!sz)
@@ -314,12 +315,11 @@ static inline int zcCopy(char** buff, const char* val)
 /* size of buffer */
 static inline int zBuffLen(int arr_sz, char** buff)
 {
-
+    int i;
     int len = 0;
     if(!arr_sz && !buff)
 	return 0;
 
-    int i;
     for(i=0; i<arr_sz; i++)
 	{
 	    len += strlen(buff[i]) + 1;
@@ -332,10 +332,10 @@ static inline int zBuffLen(int arr_sz, char** buff)
 static inline int zCopyToBuff(char** ch, char** buff
 			      , int arr_sz)
 {
+    int i;    
     if(!ch && !buff && arr_sz == 0)
 	return 0;
 
-    int i;
     for(i=0; i<arr_sz; i++)
 	{
 	    if(i==0)

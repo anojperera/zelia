@@ -126,8 +126,9 @@ inline double zBase_Get_Height(zBase* obj)
 /* Draw function */
 static int zbase_draw_function(zGeneric* obj)
 {
+    zBase* self;
     Z_CHECK_OBJ(obj);
-    zBase* self = Z_BASE(obj);
+    self = Z_BASE(obj);
     if(self->z_draw_func)
     	return self->z_draw_func(obj);
     else

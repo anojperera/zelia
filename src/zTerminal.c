@@ -111,15 +111,21 @@ inline double zTerminal_Get_Projected_Height(zTerminal* obj)
 /* Draw function */
 int zTerminal_Draw(zTerminal* obj)
 {
+    zBase* _base;
+    zGeneric* _genric;
+    cairo_t* _dev_c;
+    double x, y;
+    cairo_text_extents_t _te;
+    
     /* Check for object */
     Z_CHECK_OBJ(obj);
 
     /* Get base and generic object */
-    zBase* _base = &obj->z_sbase;
-    zGeneric* _genric = &obj->z_sbase.z_sgeneric;
+    _base = &obj->z_sbase;
+    _genric = &obj->z_sbase.z_sgeneric;
 
     /* Device context pointer */
-    cairo_t* _dev_c = zGeneric_Get_Dev_Context(_genric);
+    _dev_c = zGeneric_Get_Dev_Context(_genric);
 
     /* Check all objects */
     Z_CHECK_OBJ(_base);
@@ -137,7 +143,6 @@ int zTerminal_Draw(zTerminal* obj)
     cairo_stroke(_dev_c);
     
     /* add terminal number */
-    cairo_text_extents_t _te;
     cairo_select_font_face(_dev_c,
 			   Z_GRD_FONT_STYLE,
 			   CAIRO_FONT_SLANT_NORMAL,
@@ -148,7 +153,6 @@ int zTerminal_Draw(zTerminal* obj)
     cairo_text_extents(_dev_c,
 		       obj->z_term_num,
 		       &_te);
-    double x, y;
     x = _base->z_x + (_base->z_width - _te.width) / 2 + _te.x_bearing;
     y = _base->z_y + _base->z_height / 2;
     cairo_move_to(_dev_c,
@@ -164,10 +168,13 @@ int zTerminal_Draw(zTerminal* obj)
 /* Virtual function implementation */
 static int zterminal_draw_function(zGeneric* obj)
 {
+    zTerminal* self;
+    int rt_val;
+    
     Z_CHECK_OBJ(obj);
-    zTerminal* self = Z_TERMINAL(obj);
+    self = Z_TERMINAL(obj);
     /* call draw function */
-    int rt_val = zTerminal_Draw(Z_TERMINAL(obj));
+    rt_val = zTerminal_Draw(Z_TERMINAL(obj));
 
     /* Check for child function pointer and call */
     if(self->z_draw_func)

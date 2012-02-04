@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include "zJB.h"
+#include "zGlands.h"
 #include "zTerminals.h"
 
 /* Virtual function */
@@ -83,9 +84,11 @@ void zJB_Delete(zJB* obj)
     if(obj->z_terms_ext == 0)
 	zTerminals_Delete(Z_TERMINALS(obj->z_terms));
 
-    /* Destroy glands here */
-
-
+    /* Call destructor of glands collection
+     * if internally set */
+    if(obj->z_glands_ext == 0)
+	zGlands_Delete(Z_GLANDS(obj->z_glands));
+    
     obj->z_terms = NULL;
     obj->z_glands = NULL;
     obj->z_draw_func = NULL;
@@ -213,6 +216,9 @@ inline int zJB_Set_Terminals(zJB* obj, zGenerics* terms)
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(terms);
 
+    if(obj->z_terms_ext == 0)
+	return 1;
+    
     obj->z_terms = terms;
 
     /* indicate external flag was set */
@@ -298,6 +304,9 @@ inline int zJB_Set_Glands(zJB* obj, zGenerics* glands)
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(glands);
 
+    if(obj->z_glands == 0)
+	return 1;
+    
     obj->z_glands = glands;
     obj->z_glands_ext = 1;
 
@@ -311,6 +320,36 @@ inline zGenerics* zJB_Get_Glands(zJB* obj)
     Z_CHECK_OBJ_PTR(obj);
     return obj->z_glands;
 }
+
+/* Adds a gland into the internal collection */
+inline int zJB_Add_Glands(zJB* obj,
+			  double x,					/* relative coordinate */
+			  double y,					/* relative coordinate */
+			  zGlandSize sz,				/* gland size */
+			  unsigned int hex_flg)			/* hex flag */
+{
+    zDevice* _dev;
+    zBase* _base;
+    /* check for object */
+    Z_CHECK_OBJ(obj);
+
+    /* if the glands collection is not initialised, create */
+    if(obj->z_glands == NULL) 
+	obj->z_glands = zGlands_New(NULL);
+
+    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
+    _base = &obj->z_parent;
+
+    obj->z_glands_ext = 0;
+    /* Adds a gland into the collection */
+    return zGlands_Add(Z_GLANDS(obj->z_glands),
+		       _dev,
+		       _base->z_x + x,
+		       _base->z_y + y,
+		       sz,
+		       hex_flg);
+}
+
 
 /*==========================================================================*/
 /* Private Functions */

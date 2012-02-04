@@ -13,6 +13,7 @@ int zGenerics_New(zGenerics* obj,
 		  unsigned int s_flg,
 		  unsigned int g_count)
 {
+    int i = 0;
     /* Check for object */
     Z_CHECK_OBJ(obj);
 
@@ -46,7 +47,6 @@ int zGenerics_New(zGenerics* obj,
 		calloc(g_count, sizeof(zGeneric*));
 
 	    /* initialise all objects in array to NULL */
-	    int i = 0;
 	    for(i=0; i<g_count; i++)
 		obj->z_generics_s[i] = NULL;
 
@@ -200,12 +200,12 @@ static inline int _zgenerics_del_helper(zGenerics* obj)
 /* Delete callback function */
 static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix)
 {
-
+    zGenerics* zg;
     /* indicate failure if objects were NULL */
     if(usr_obj == NULL || obj == NULL)
 	return 1;
 
-    zGenerics* zg = (zGenerics*) usr_obj;
+    zg = (zGenerics*) usr_obj;
 
     /* Call delete function pointer of child pointer */
     return zg->z_destructor_func(obj, zg->z_usr_data);
@@ -214,11 +214,12 @@ static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix)
 /* Draw callback function */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix)
 {
+    zGenerics* zg;
     /* indicate failure if objects were NULL */
     if(usr_obj == NULL || obj == NULL)
 	return 1;
 
-    zGenerics* zg = (zGenerics*) usr_obj;
+    zg = (zGenerics*) usr_obj;
 
     /* Call draw function pointer of child pointer */
     return zg->z_draw_func(obj, zg->z_usr_data);

@@ -73,6 +73,14 @@ extern "C" {
     /* Set and get gland collection */
     inline int zJB_Set_Glands(zJB* obj, zGenerics* glands);
     inline zGenerics* zJB_Get_Glands(zJB* obj);
+
+    /* Adds a gland into the internal collection.
+     * coordinates are relative to the JB */
+    inline int zJB_Add_Glands(zJB* obj,
+			      double x,					/* relative coordinate */
+			      double y,					/* relative coordinate */
+			      zGlandSize sz,				/* gland size */
+			      unsigned int hex_flg);			/* hex flag */
     
 #ifdef __cplusplus
 }
