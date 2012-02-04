@@ -1518,16 +1518,15 @@ static char* zsheet_wozair_address()
 {
     const int NUM = 9;
     char* buff;
-
-    /* array to hold address */
-    char** arr_buff = (char**)
-	calloc(NUM, sizeof(char*));
-
-    int i = strlen(Z_BORDER_TXT_WOZ_COPY) + 1;
-
-    char* ch1 = (char*) malloc(sizeof(char) * i);
-
+    char* ch1;
+    char** arr_buff;			/* array to hold address */
+    int i;
+    
+    i = strlen(Z_BORDER_TXT_WOZ_COPY) + 1;
+    ch1 = (char*) malloc(sizeof(char) * i);
     strcpy(ch1, Z_BORDER_TXT_WOZ_COPY);
+
+    arr_buff = (char**) calloc(NUM, sizeof(char*));
     
     zcCopy(&arr_buff[0], Z_BORDER_TXT_WOZ_ADRS1);
     zcCopy(&arr_buff[1], Z_BORDER_TXT_WOZ_ADRS2);
@@ -1559,9 +1558,10 @@ static char* zsheet_wozair_address()
 	    free(arr_buff[i]);
 	    arr_buff[i] = NULL;
 	}
+
     free(arr_buff);
     arr_buff = NULL;
-
+    
     return buff;
     
 }
@@ -1646,8 +1646,7 @@ static int zsheet_add_attribs(zSheet* obj)
     const int ATTRIB_ARR = 17;
     /* temporary buffer to assign
        attributes */
-    char** buff = (char**) calloc(ATTRIB_ARR,
-				  sizeof(char*));
+    char* buff[ATTRIB_ARR];
 
     int i = Z_MAX_ATTRIB;
     int MATCH_ATTRIB[Z_MAX_ATTRIB];
@@ -1839,9 +1838,6 @@ static int zsheet_add_attribs(zSheet* obj)
     for(i=0; i < ATTRIB_ARR; i++)
 	buff[i] = NULL;
     
-    if(buff)
-	free(buff);
-
     return i;
 }
 
