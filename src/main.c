@@ -1,6 +1,6 @@
 /* main test file
    Sun Oct 17 13:07:08 BST 2010 */
-
+#include <mcheck.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -130,6 +130,19 @@ int main(int argc, char** argv)
     zGlands_Delete(Z_GLANDS(glands));
     
     zDevice_Delete(&dev);
+
+    if(attrib->z_title)
+	free(attrib->z_title);
+    
+    if(attrib->z_client)
+	free(attrib->z_client);
+
+    if(attrib->z_site)
+	free(attrib->z_site);
+
+    attrib->z_title = NULL;
+    attrib->z_client = NULL;
+    attrib->z_site = NULL;
 
     if(attrib)
 	free(attrib);
