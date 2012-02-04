@@ -1315,7 +1315,12 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     pango_font_description_free(z_desp_m);
 	
     g_object_unref(z_pango_layout);
-
+    for(i = 0; i < NUM; i++)
+	{
+	    if(buff[i])
+		free(buff[i]);
+	    buff[i] = NULL;
+	}
     if(buff)
 	free(buff);
     
@@ -1543,6 +1548,9 @@ static char* zsheet_wozair_address()
 
     /* copy array to buffer */
     zCopyToBuff(&buff, arr_buff, NUM);
+    if(ch1)
+	free(ch1);
+    ch1 = NULL;
 
     return buff;
     

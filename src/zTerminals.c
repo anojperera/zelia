@@ -203,7 +203,7 @@ static int _zterminals_parser(zTerminals* obj)
 	{
 	    if(j >= b)
 		break;
-	    _tok[j] = malloc(sizeof(char) * (strlen(_tok2) + 1));
+	    _tok[j] = (char*) malloc(sizeof(char) * (strlen(_tok2) + 1));
 	    strcpy(_tok[j], _tok2);
 	    j++;
 	    _tok2 = strtok(NULL, ",.");
@@ -264,5 +264,15 @@ static int _zterminals_parser(zTerminals* obj)
 	    	    cairo_fill(zDevice_Get_Context(_dev));
 	    	}
 	}
+    
+    for(j = 0; j < b; j++)
+	{
+	    if(_tok[j])
+		free(_tok[j]);
+	    _tok[j] = NULL;
+	}
+    if(_tok)
+	free(_tok);
+    _tok = NULL;
     return 0;
 }

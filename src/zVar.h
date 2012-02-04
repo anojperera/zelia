@@ -291,71 +291,71 @@ static inline double Round(double val, unsigned int places)
 /* copy string to buffer */
 static inline int zcCopy(char** buff, const char* val)
 {
-	if(val)
+    if(val)
 	{
-		/* obtain string length */
-		int sz = strlen(val);
+	    /* obtain string length */
+	    size_t sz = strlen(val);
 
-		/* return 0 */
-		if(!sz)
-			return 0;
+	    /* return 0 */
+	    if(!sz)
+		return 0;
 			
-		/* create buffer */
-		*buff = (char*) malloc(sz+1);
-		if(*buff != NULL)
-			strcpy(*buff, val);
+	    /* create buffer */
+	    *buff = (char*) malloc(sizeof(char) * (sz+1));
+	    if(*buff != NULL)
+		strcpy(*buff, val);
 
-		return sz;
+	    return sz;
 	}
 
-	return 0;
+    return 0;
 }
 
 /* size of buffer */
 static inline int zBuffLen(int arr_sz, char** buff)
 {
 
-	int len = 0;
-	if(!arr_sz && !buff)
-		return 0;
+    int len = 0;
+    if(!arr_sz && !buff)
+	return 0;
 
-	int i;
-	for(i=0; i<arr_sz; i++)
+    int i;
+    for(i=0; i<arr_sz; i++)
 	{
-		len += strlen(buff[i]) + 1;
+	    len += strlen(buff[i]) + 1;
 	}
 	
-	return len;
+    return len;
 }
 
 /* copy to buffer */
 static inline int zCopyToBuff(char** ch, char** buff
-					, int arr_sz)
+			      , int arr_sz)
 {
-	if(!ch && !buff && arr_sz == 0)
-		return 0;
+    if(!ch && !buff && arr_sz == 0)
+	return 0;
 
-	int i;
-	for(i=0; i<arr_sz; i++)
+    int i;
+    for(i=0; i<arr_sz; i++)
 	{
-		if(i==0)
+	    if(i==0)
 		{
-			if(buff[i] != NULL)
-				strcpy(*ch, buff[i]);
-			else
-				strcpy(*ch, "0");
+		    if(buff[i] != NULL)
+			strcpy(*ch, buff[i]);
+		    else
+			strcpy(*ch, "0");
 		}
-		else
+	    else
 		{
-			strcat(*ch, "\n");
+		    strcat(*ch, "\n");
 
-			if(buff[i] != NULL)
-				strcat(*ch, buff[i]);
-			else
-				strcpy(*ch, "0");
+		    if(buff[i] != NULL)
+			strcat(*ch, buff[i]);
+		    else
+			strcpy(*ch, "0");
 		}
 	}
 
-	return strlen(*ch);
+    return strlen(*ch);
 }
 #endif /* __ZVAR__ */
