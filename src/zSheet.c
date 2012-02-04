@@ -1318,6 +1318,13 @@ static int zsheet_add_attrib_headers(zSheet* obj)
     pango_font_description_free(z_desp_m);
 	
     g_object_unref(z_pango_layout);
+    z_desp_g = NULL;
+    z_desp_s = NULL;
+    z_desp_c = NULL;
+    z_desp_w = NULL;
+    z_desp_a = NULL;
+    z_desp_m = NULL;
+    z_pango_layout = NULL;
     for(i = 0; i < NUM; i++)
 	{
 	    if(buff[i])
