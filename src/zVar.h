@@ -256,6 +256,12 @@ typedef enum {
     zM25
 } zGlandSize;
 
+/* Arrow head types */
+typedef enum {
+    zArrow1,
+    zArrow2,
+    zArrow3
+} zArrowTypes;
 
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)
