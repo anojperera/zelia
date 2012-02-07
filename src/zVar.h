@@ -170,6 +170,14 @@
 #define Z_M20_GLAND 20.0
 #define Z_M25_GLAND 25.0
 
+/* Arrow angles */
+#define Z_ARROW_ANG1 45.0
+#define Z_ARROW_ANG2 30.0
+
+#define Z_ARROW_HEIGHT1 3.0
+#define Z_ARROW_HEIGHT2 5.0
+#define Z_ARROW_HEIGHT3 8.0
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
@@ -178,6 +186,7 @@
 #define Z_JB(obj) ((zJB*) Z_BASE(obj)->z_child)
 #define Z_GLAND(obj) ((zGland*) Z_BASE(obj)->z_child)
 #define Z_GLANDS(obj) ((zGlands*) obj->z_child)
+#define Z_ARROW(obj) ((zArrow*) Z_BASE(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
