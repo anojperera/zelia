@@ -15,6 +15,7 @@
 #include "zJB.h"
 #include "zGlands.h"
 #include "zArrow.h"
+#include "zLeader.h"
 
 int main(int argc, char** argv)
 {
@@ -22,7 +23,7 @@ int main(int argc, char** argv)
     zGeneric* jb;		/* JB object */
     zGenerics* glands;		/* Gland */
     zGeneric* sht;
-    zGeneric* arrow;		/* Arrow */
+    zGeneric* leader;		/* leader */
     zBrd_Attrib* attrib;
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
@@ -120,26 +121,28 @@ int main(int argc, char** argv)
 		zM20,
 		1);
 
-    /* Arrow head */
-    arrow = zArrow_New(NULL);
-    zArrow_Set_Angle(Z_ARROW(arrow), 0.0);
-    zArrow_Set_Arrow_Type(Z_ARROW(arrow), zArrow3);
-    zArrow_Set_Fill_Flag(Z_ARROW(arrow), 1);
-    zBase_Set_Base_Coords(Z_BASE(arrow), 50.0, 150.0);
-    zGeneric_Set_Device(arrow, &dev);
-    zGeneric_Set_Default_Dev_Context(arrow);
+    /* Leader */
+    leader = zLeader_New(NULL,			/* object pointer */
+			 &dev,			/* device object */
+			 50.0,			/* x */
+			 150.0,			/* y */
+			 40.0,			/* length 1 */
+			 20.0,			/* length 2 */
+			 30.0,			/* angle */
+			 NULL);			/* description */
+    zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
     
     /* create border */
     zGeneric_Draw(sht);
     zGeneric_Draw(jb);
     zGenerics_Draw(glands);
-    zGeneric_Draw(arrow);
+    zGeneric_Draw(leader);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zJB_Delete(Z_JB(jb));
     zGlands_Delete(Z_GLANDS(glands));
-    zArrow_Delete(Z_ARROW(arrow));
+    zLeader_Delete(Z_LEADER(leader));
     
     zDevice_Delete(&dev);
 
