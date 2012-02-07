@@ -92,7 +92,7 @@ int zArrow_Draw(zArrow* obj)
 		    CONV_TO_POINTS(_base->z_x),
 		    CONV_TO_POINTS(_base->z_y));
 
-    if(obj->z_ang > 0)
+    if(_base->z_ang > 0)
 	{
 	    cairo_rotate(_dev_c,
 			 CONV_TO_RADIANS(_base->z_ang));
@@ -143,7 +143,7 @@ int zArrow_Draw(zArrow* obj)
     else
 	cairo_stroke(_dev_c);
 
-    if(obj->z_ang > 0)
+    if(_base->z_ang > 0)
 	cairo_rotate(_dev_c, 0.0);
     
     cairo_translate(_dev_c,
