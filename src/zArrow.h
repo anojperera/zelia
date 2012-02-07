@@ -20,6 +20,7 @@ struct _zArrow
     double z_ang;				/* orientation angle */
     unsigned int z_fill_flg;			/* flag to indicate fill arrow */
     zgeneric_fptr z_draw_func;			/* draw function pointer */
+    void* z_child;				/* child pointer */
     size_t z_obj_sz;				/* object size */
 };
 
@@ -28,9 +29,7 @@ extern "C" {
 #endif
 
     /* Constructor and Destructor */
-    zGeneric* zArrow_New(zArrow* obj,		/* optional object pointer */
-			 double ort_ang,	/* orientation angle */
-			 double fill_flg);	/* fill flag */
+    zGeneric* zArrow_New(zArrow* obj);
     void zArrow_Delete(zArrow* obj);
 
     /* Draw function */
@@ -46,6 +45,10 @@ extern "C" {
     /* Set and get fill flag */
     inline int zArrow_Set_Fill_Flag(zArrow* obj, unsigned int flg);
     inline unsigned int zArrow_Get_Fill_Flag(zArrow* obj);
+
+    /* Set and get arrow head type */
+    inline int zArrow_Set_Arrow_Type(zArrow* obj, zArrowTypes type);
+    inline zArrowTypes zArrow_Get_Arrow_Type(zArrow* obj);
 
 #ifdef __cplusplus
 }
