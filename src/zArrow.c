@@ -32,7 +32,6 @@ zGeneric* zArrow_New(zArrow* obj)
     /* Set variables */
     obj->z_arrow_type = zArrow1;
     obj->z_fill_flg = 1;				/* fill arrow head */
-    obj->z_ang = 0.0;					/* angle */
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
     /* set draw function pointer of base object */
@@ -94,7 +93,7 @@ int zArrow_Draw(zArrow* obj)
 		    CONV_TO_POINTS(_base->z_y));
     
     cairo_rotate(_dev_c,
-		 CONV_TO_RADIANS(obj->z_ang));
+		 CONV_TO_RADIANS(_base->z_ang));
     
     switch(obj->z_arrow_type)
 	{
@@ -150,21 +149,6 @@ int zArrow_Draw(zArrow* obj)
     cairo_restore(_dev_c);
     
     return 0;
-}
-
-/* Set angle */
-inline int zArrow_Set_Angle(zArrow* obj, double ang)
-{
-    Z_CHECK_OBJ(obj);
-    obj->z_ang = ang;
-    return 0;
-}
-
-/* Get angle */
-inline double zArrow_Get_Angle(zArrow* obj)
-{
-    Z_CHECK_OBJ_DOUBLE(obj);
-    return obj->z_ang;
 }
 
 /* Set fill arrow head */

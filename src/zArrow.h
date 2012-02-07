@@ -17,7 +17,6 @@ struct _zArrow
     zBase z_parent;				/* inherited parent object */
     unsigned int z_int_flg;			/* internal flag */
     zArrowTypes z_arrow_type;			/* arrow head type */
-    double z_ang;				/* orientation angle */
     unsigned int z_fill_flg;			/* flag to indicate fill arrow */
     zgeneric_fptr z_draw_func;			/* draw function pointer */
     void* z_child;				/* child pointer */
@@ -37,10 +36,6 @@ extern "C" {
 
     /*************************************************************/
     /* Property methods */
-
-    /* Set and get orientation angle */
-    inline int zArrow_Set_Angle(zArrow* obj, double ang);
-    inline double zArrow_Get_Angle(zArrow* obj);
 
     /* Set and get fill flag */
     inline int zArrow_Set_Fill_Flag(zArrow* obj, unsigned int flg);
