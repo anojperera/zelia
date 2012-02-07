@@ -356,8 +356,14 @@ inline int zJB_Add_Glands(zJB* obj,
 
 static int _zjb_draw(zGeneric* obj)
 {
+    int rt_val;
+    zJB* z_jb;
     /* Check for object */
     Z_CHECK_OBJ(obj);
-
-    return zJB_Draw(Z_JB(obj));
+    z_jb = Z_JB(obj);
+    rt_val = zJB_Draw(Z_JB(obj));
+    if(z_jb->z_draw_func)
+	return z_jb->z_draw_func(obj);
+    else
+	return rt_val;
 }
