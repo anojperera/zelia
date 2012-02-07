@@ -91,9 +91,12 @@ int zArrow_Draw(zArrow* obj)
     cairo_translate(_dev_c,
 		    CONV_TO_POINTS(_base->z_x),
 		    CONV_TO_POINTS(_base->z_y));
-    
-    cairo_rotate(_dev_c,
-		 CONV_TO_RADIANS(_base->z_ang));
+
+    if(obj->z_ang > 0)
+	{
+	    cairo_rotate(_dev_c,
+			 CONV_TO_RADIANS(_base->z_ang));
+	}
     
     switch(obj->z_arrow_type)
 	{
@@ -140,7 +143,8 @@ int zArrow_Draw(zArrow* obj)
     else
 	cairo_stroke(_dev_c);
 
-    cairo_rotate(_dev_c, 0.0);
+    if(obj->z_ang > 0)
+	cairo_rotate(_dev_c, 0.0);
     
     cairo_translate(_dev_c,
 		    -1 * CONV_TO_POINTS(_base->z_x),
