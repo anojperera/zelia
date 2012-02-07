@@ -187,6 +187,7 @@
 #define Z_GLAND(obj) ((zGland*) Z_BASE(obj)->z_child)
 #define Z_GLANDS(obj) ((zGlands*) obj->z_child)
 #define Z_ARROW(obj) ((zArrow*) Z_BASE(obj)->z_child)
+#define Z_LEADER(obj) ((zLeader*) Z_ARROW(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
