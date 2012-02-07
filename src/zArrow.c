@@ -40,7 +40,7 @@ zGeneric* zArrow_New(zArrow* obj)
 
     /* set child pointer of base object */
     obj->z_parent.z_child = (void*) obj;
-    return &obj->z_parent;
+    return &obj->z_parent.z_sgeneric;
 }
 
 
@@ -62,12 +62,11 @@ void zArrow_Delete(zArrow* obj)
 /* Draw function */
 int zArrow_Draw(zArrow* obj)
 {
-    #define ZARROW_ARR 3
+    #define ZARROW_ARR 6
     zBase* _base;
     zGeneric* _genric;
     cairo_t* _dev_c;
-    int rt_val;
-    double x1[ZARROW_ARR], y1[ZARROW_ARR], x2[ZARROW_ARR], y2[ZARROW_ARR], h, ang;
+    double x[ZARROW_ARR], y[ZARROW_ARR], h, ang;
     int i;
     
     /* check for object */
@@ -95,7 +94,7 @@ int zArrow_Draw(zArrow* obj)
 		    CONV_TO_POINTS(_base->z_y));
     
     cairo_rotate(_dev_c,
-		 CONV_TO_POINTS(obj->z_ang));
+		 CONV_TO_RADIANS(obj->z_ang));
     
     switch(obj->z_arrow_type)
 	{
@@ -112,29 +111,29 @@ int zArrow_Draw(zArrow* obj)
 	    h = Z_ARROW_HEIGHT1;
 	}
 
-    x1[0] = 0.0;
-    y1[0] = 0.0;
-    x2[0] = -1 * h * tan(CONV_TO_RADIANS(ang));
-    y2[0] = -1 * h;P
+    x[0] = 0.0;
+    y[0] = 0.0;
+    x[1] = -1 * h * tan(CONV_TO_RADIANS(ang));
+    y[1] = -1 * h;
 
-    x1[1] = x2[0];
-    y1[1] = y2[0];
-    x2[1] = h * tan(CONV_TO_RADIANS(ang));
-    y2[1] = y1[1];
+    x[2] = x[1];
+    y[2] = y[1];
+    x[3] = h * tan(CONV_TO_RADIANS(ang));
+    y[3] = y[2];
 
-    x1[2] = x2[1];
-    y1[2] = y2[1];
-    x2[2] = 0;
-    y2[2] = 0;
+    x[4] = x[3];
+    y[4] = y[3];
+    x[5] = 0;
+    y[5] = 0;
 
     cairo_move_to(_dev_c,
-		  CONV_TO_POINTS(x1[0]),
-		  CONV_TO_POINTS(y1[0]));
+		  CONV_TO_POINTS(x[0]),
+		  CONV_TO_POINTS(y[0]));
     for(i = 1; i < ZARROW_ARR; i++)
 	{
 	    cairo_line_to(_dev_c,
-			  CONV_TO_POINTS(x1[i]),
-			  CONV_TO_POINTS(y1[i]));
+			  CONV_TO_POINTS(x[i]),
+			  CONV_TO_POINTS(y[i]));
 	}
 
     if(obj->z_fill_flg)
@@ -207,7 +206,7 @@ inline zArrowTypes zArrow_Get_Arrow_Type(zArrow* obj)
 static int _zarrow_draw_function(zGeneric* obj)
 {
     int rt_val;
-    zArrow za;
+    zArrow* za;
     Z_CHECK_OBJ(obj);
     za = Z_ARROW(obj);
     rt_val = zArrow_Draw(Z_ARROW(obj));
