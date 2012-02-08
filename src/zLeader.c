@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <math.h>
+#include <pango/pangocairo.h>
 #include "zLeader.h"
 
 /* Virtual draw function */
@@ -86,13 +87,13 @@ void zLeader_Delete(zLeader* obj)
 /* Draw method */
 int zLeader_Draw(zLeader* obj)
 {
-    #define ZLEADER_ARR 3
+#define ZLEADER_ARR 3
     zBase* _base;
     zGeneric* _generic;
     cairo_t* _dev_c;
     double x[ZLEADER_ARR], y[ZLEADER_ARR], ang;
-    /* PangoLayout* layout;				/\* pango layout *\/ */
-    /* PangoFontDescription* desc;				/\* font description *\/ */
+    PangoLayout* _layout;				/* pango layout */
+    PangoFontDescription* _desc;				/* font description */
 
     /* check for object */
     Z_CHECK_OBJ(obj);
@@ -147,16 +148,38 @@ int zLeader_Draw(zLeader* obj)
 
     cairo_stroke(_dev_c);
 
-    /* rotate and translate back */
-    if(_base->z_ang > 0.0)
-	cairo_rotate(_dev_c, 0.0);
-    
-    cairo_translate(_dev_c,
-		    -1 * CONV_TO_POINTS(_base->z_x),
-		    -1 * CONV_TO_POINTS(_base->z_y));
+
+    /* Add description if set */
+    while(obj->z_content[0] != '\0')
+	{
+	    cairo_translate(_dev_c,
+			    CONV_TO_POINTS(x[1]),
+			    CONV_TO_POINTS(y[1]));
+
+	    cairo_rotate(_dev_c,
+			 CONV_TO_RADIANS(ang));
+
+	    /* create pango layout */
+	    _layout = pango_cairo_create_layout(_dev_c);
+	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
+	    pango_font_description_set_style(_desc, PANGO_STYLE_NORMAL);
+	    pango_font_description_set_size(_desc, PANGO_SCALE*Z_GRD_FONT_SZ);
+	    pango_font_description_set_weight(_desc, PANGO_WEIGHT_LIGHT);
+
+	    pango_layout_set_font_description(_layout, _desc);
+	    pango_cairo_show_layout(_dev_c, _layout);
+
+	    pango_font_description_free(_desc);
+
+	    /* free layout object */
+	    g_object_unref(_layout);
+
+	    _desc = NULL;
+	    _layout = NULL;
+	    break;
+	}
 
     cairo_restore(_dev_c);
-
     return 0;
     
 }
