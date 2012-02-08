@@ -131,6 +131,7 @@ int main(int argc, char** argv)
 			 30.0,			/* angle */
 			 NULL);			/* description */
     zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
+    zLeader_Set_Description(Z_LEADER(leader), "TEST");
     
     /* create border */
     zGeneric_Draw(sht);
