@@ -93,7 +93,7 @@ int zLeader_Draw(zLeader* obj)
     cairo_t* _dev_c;
     double x[ZLEADER_ARR], y[ZLEADER_ARR], ang;
     PangoLayout* _layout;				/* pango layout */
-    PangoFontDescription* _desc;				/* font description */
+    PangoFontDescription* _desc;			/* font description */
 
     /* check for object */
     Z_CHECK_OBJ(obj);
@@ -124,6 +124,11 @@ int zLeader_Draw(zLeader* obj)
 	    cairo_rotate(_dev_c,
 			 CONV_TO_RADIANS(_base->z_ang));
 	}
+
+    cairo_translate(_dev_c,
+		    0.0,
+		    -1 * CONV_TO_POINTS(1));
+    
     ang = 90.0 - _base->z_ang;
     x[0] = 0.0;
     y[0] = 0.0;
@@ -148,16 +153,9 @@ int zLeader_Draw(zLeader* obj)
 
     cairo_stroke(_dev_c);
 
-
     /* Add description if set */
     while(obj->z_content[0] != '\0')
 	{
-	    cairo_translate(_dev_c,
-			    CONV_TO_POINTS(x[1]),
-			    CONV_TO_POINTS(y[1]));
-
-	    cairo_rotate(_dev_c,
-			 CONV_TO_RADIANS(ang));
 
 	    /* create pango layout */
 	    _layout = pango_cairo_create_layout(_dev_c);
@@ -167,6 +165,16 @@ int zLeader_Draw(zLeader* obj)
 	    pango_font_description_set_weight(_desc, PANGO_WEIGHT_LIGHT);
 
 	    pango_layout_set_font_description(_layout, _desc);
+	    pango_layout_set_text(_layout, obj->z_content, -1);
+
+	    
+	    cairo_translate(_dev_c,
+	    		    CONV_TO_POINTS(x[1]),
+	    		    CONV_TO_POINTS(y[1]) - 2.5 * Z_GRD_FONT_SZ);
+
+	    cairo_rotate(_dev_c, -1 * CONV_TO_RADIANS(_base->z_ang));
+	    
+	    pango_cairo_update_layout(_dev_c, _layout);
 	    pango_cairo_show_layout(_dev_c, _layout);
 
 	    pango_font_description_free(_desc);

@@ -128,7 +128,7 @@ int main(int argc, char** argv)
 			 150.0,			/* y */
 			 40.0,			/* length 1 */
 			 20.0,			/* length 2 */
-			 30.0,			/* angle */
+			 80.0,			/* angle */
 			 NULL);			/* description */
     zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
     zLeader_Set_Description(Z_LEADER(leader), "TEST");
