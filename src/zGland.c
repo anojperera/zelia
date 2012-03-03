@@ -27,7 +27,8 @@ zGeneric* zGland_New(zGland* obj,		/* optional object */
     /* Create base object */
     if(!zBase_New(&obj->z_parent))
 	{
-	    free(obj);
+	    if(obj->z_int_flg)
+		free(obj);
 	    obj = NULL;
 	    return NULL;
 	}
