@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include "zGenerics.h"
+#include "zDevice.h"
 #include "zTCell.h"
 
 /* Forward declaration of struct. */
@@ -19,6 +20,7 @@ struct _zTRow
 {
     zGenerics z_parent;				/* Inherited parent object */
     unsigned int z_int_flg;			/* Internal flag */
+    unsigned int z_row_ix;			/* Row index */
     void* z_child;				/* Child pointer */
     zcollection_fptr z_draw_func;		/* Draw function pointer */
     double z_width;				/* Column width */
@@ -31,10 +33,14 @@ extern "C" {
 #endif
 
     /* Constructor and destructor */
-    zGenerics* zTRow_New(zTRow* obj,		/* Optional argument */
-			 unsigned int num_col,	/* Number of columns */
-			 double col_width,	/* Column width */
-			 double row_height);	/* Row height */
+    zGenerics* zTRow_New(zTRow* obj,		/* optional argument */
+			 zDevice* dev,		/* device object */
+			 unsigned int row_ix,	/* row index */
+			 unsigned int num_col,	/* number of columns */
+			 double x,		/* origin x */
+			 double y,		/* origin y */
+			 double col_width,	/* column width */
+			 double row_height);	/* row height */
     void zTRow_Delete(zTRow* obj);
 
     /* Add content to the cell specified by column
