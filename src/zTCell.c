@@ -107,30 +107,33 @@ int zTCell_Draw(zTCell* obj)
 	    cairo_restore(_dev_c);
 	}
 
-    /* Translate to coordinates */
-    _x = _base->z_x + _base->z_width * 0.8;
-    _y = _base->z_y + _base->z_height * 0.6;
+    if(obj->z_content[0] != '\0')
+	{
+	    /* Translate to coordinates */
+	    _x = _base->z_x + _base->z_width * 0.8;
+	    _y = _base->z_y + _base->z_height * 0.6;
     
-    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
+	    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
 
-    /* Create pango layout */
-    _layout = pango_cairo_create_layout(_dev_c);
+	    /* Create pango layout */
+	    _layout = pango_cairo_create_layout(_dev_c);
     
-    /* Add text to layout */
-    pango_layout_set_text(_layout, obj->z_content, -1);
+	    /* Add text to layout */
+	    pango_layout_set_text(_layout, obj->z_content, -1);
     
-    /* Create font description and add to layout */
-    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
-    pango_layout_set_font_description(_layout, _desc);
-    pango_font_description_free(_desc);
+	    /* Create font description and add to layout */
+	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
+	    pango_layout_set_font_description(_layout, _desc);
+	    pango_font_description_free(_desc);
 
-    pango_cairo_show_layout(_dev_c, _layout);
+	    pango_cairo_show_layout(_dev_c, _layout);
 
+	    /* Free layout object */
+	    g_object_unref(_layout);
+	}
+    
     /* Restore cairo context */
     cairo_restore(_dev_c);
-
-    /* Free layout object */
-    g_object_unref(_layout);
     
     _dev_c = NULL;
     _base = NULL;
