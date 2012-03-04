@@ -1,7 +1,7 @@
-/* Implementation of zTRow class */
+/* Implementation of zTCells class */
 /* Sun Mar  4 12:57:34 GMT 2012 */
 
-#include "zTRow.h"
+#include "zTCells.h"
 #include "zVar.h"
 
 /* Virtual functions */
@@ -9,7 +9,7 @@ static int _ztrow_delete(void* obj, void* usr_data);		/* delete function */
 static int _ztrow_draw(void* obj, void* user_data);		/* draw function */
 
 /* Constructor */
-zGenerics* zTRow_New(zTRow* obj,		/* Optional argument */
+zGenerics* zTCells_New(zTCells* obj,		/* Optional argument */
 		     zDevice* dev,		/* Device object */
 		     unsigned int row_ix,	/* row index */
 		     unsigned int num_col,	/* Number of columns */
@@ -23,7 +23,7 @@ zGenerics* zTRow_New(zTRow* obj,		/* Optional argument */
     /* check for object */
     if(obj == NULL)
 	{
-	    obj = (zTRow*) malloc(sizeof(zTRow));
+	    obj = (zTCells*) malloc(sizeof(zTCells));
 	    Z_CHECK_OBJ_PTR(obj);
 	    obj->z_int_flg = 1;
 	}
@@ -85,13 +85,13 @@ zGenerics* zTRow_New(zTRow* obj,		/* Optional argument */
     /* Set child poitner of parent */
     obj->z_parent.z_child = (void*) obj;
 
-    obj->z_obj_sz = sizeof(zTRow);
+    obj->z_obj_sz = sizeof(zTCells);
     
     return &obj->z_parent;
 }
 
 /* Destructor */
-void zTRow_Delete(zTRow* obj)
+void zTCells_Delete(zTCells* obj)
 {
     /* check object */
     Z_CHECK_OBJ_VOID(obj);
@@ -107,7 +107,7 @@ void zTRow_Delete(zTRow* obj)
 }
 
 /* Add content to the cell */
-inline int zTRow_Add_Content(zTRow* obj,
+inline int zTCells_Add_Content(zTCells* obj,
 			     unsigned int ix,	/* Column index */
 			     const char* content);	/* Content */
 {
@@ -125,7 +125,7 @@ inline int zTRow_Add_Content(zTRow* obj,
 }
 
 /* Get cell specified by the index */
-inline zTCell* zTRow_Get_Cell(zTRow* obj,
+inline zTCell* zTCells_Get_Cell(zTCells* obj,
 			      unsigned int ix)
 {
     Z_CHECK_OBJ_PTR(obj);
@@ -143,7 +143,6 @@ inline zTCell* zTRow_Get_Cell(zTRow* obj,
 static int _ztrow_delete(void* obj, void* usr_data)
 {
     zGeneric* zg;
-    zTRow* zr;
     if(obj)
 	{
 	    zg = (zGeneric*) obj;
@@ -158,7 +157,6 @@ static int _ztrow_delete(void* obj, void* usr_data)
 static int _ztrow_draw(void* obj, void* user_data)
 {
     zGeneric* zg;
-    zTRow* zr;
     
     int rt_val;
     /* check for object */
