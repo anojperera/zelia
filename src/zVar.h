@@ -189,7 +189,7 @@
 #define Z_ARROW(obj) ((zArrow*) Z_BASE(obj)->z_child)
 #define Z_LEADER(obj) ((zLeader*) Z_ARROW(obj)->z_child)
 #define Z_TCELL(obj) ((zTCell*) Z_BASE(obj)->z_child)
-#define Z_TROW(obj) ((zTRow*) obj->z_child)
+#define Z_TCELLS(obj) ((zTCells*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
