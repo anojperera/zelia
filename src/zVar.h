@@ -189,6 +189,7 @@
 #define Z_ARROW(obj) ((zArrow*) Z_BASE(obj)->z_child)
 #define Z_LEADER(obj) ((zLeader*) Z_ARROW(obj)->z_child)
 #define Z_TCELL(obj) ((zTCell*) Z_BASE(obj)->z_child)
+#define Z_TROW(obj) ((zTRow*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
@@ -206,6 +207,17 @@
 #define Z_CHECK_OBJ_VOID(obj) \
     if(!obj) \
 	return
+
+/* constructor helper */
+#define Z_CONSTRUCTOR_HELPER(obj, type) \
+    if(obj == NULL) \
+	{ \
+    obj = (type*) malloc(sizeof(type)); \
+    Z_CHECK_OBJ(obj); \
+    obj->z_int_flg = 1; \
+	} \
+    else \
+	obj->z_int_flg = 0;
 
 /* error messages */
 #define Z_ERROR_PANGO_LAYOUT "Unable to create pango layout"
