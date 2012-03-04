@@ -87,8 +87,8 @@ int zTCell_Draw(zTCell* obj)
     Z_CHECK_OBJ(_dev_c);
 
     /* Check width and height */
-    if(obj->_z_cell_width <= 0.0 &&
-       obj->_z_cell_height <= 0.0)
+    if(_base->z_width <= 0.0 &&
+       _base->z_height <= 0.0)
 	return 1;
 
     /* Save context */
@@ -101,15 +101,15 @@ int zTCell_Draw(zTCell* obj)
 	    cairo_rectangle(_dev_c,
 			    CONV_TO_POINTS(_base->z_x),
 			    CONV_TO_POINTS(_base->z_y),
-			    CONV_TO_POINTS(obj->_z_cell_width),
-			    CONV_TO_POINTS(obj->_z_cell_height));
+			    CONV_TO_POINTS(_base->z_width),
+			    CONV_TO_POINTS(_base->z_height));
 	    cairo_stroke(_dev_c);
 	    cairo_restore(_dev_c);
 	}
 
     /* Translate to coordinates */
-    _x = _base->z_x + obj->_z_cell_width * 0.8;
-    _y = _base->z_y + obj->_z_cell_height * 0.6;
+    _x = _base->z_x + _base->z_width * 0.8;
+    _y = _base->z_y + _base->z_height * 0.6;
     
     cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
 

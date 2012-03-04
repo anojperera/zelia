@@ -23,8 +23,6 @@ struct _zTCell
     unsigned int _z_row_ix;		/* Internal row index */
     unsigned int _z_col_ix;		/* Internal column index */
     unsigned int z_line_flg;		/* Line flag */
-    double _z_cell_width;		/* Internal column width */
-    double _z_cell_height;		/* Internal column height */
     void* z_child;			/* Child pointer */
     zgeneric_fptr z_draw_func;		/* Draw function pointer */
     size_t z_obj_sz;			/* Object size */
