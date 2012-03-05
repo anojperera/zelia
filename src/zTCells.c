@@ -71,6 +71,9 @@ zGenerics* zTCells_New(zTCells* obj,		/* Optional argument */
 				       col_width,
 				       row_height);
 
+	    /* Set default device context */
+	    zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]);
+	    
 	    /* Set line flag */
 	    zTCell_Set_Line_Flg(_tcell, 1);
 	}
@@ -141,7 +144,6 @@ static int _ztrow_draw(void* obj, void* user_data)
 {
     zGeneric* zg;
     
-    int rt_val;
     /* check for object */
     Z_CHECK_OBJ(obj);
 
