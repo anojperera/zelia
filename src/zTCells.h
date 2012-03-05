@@ -33,7 +33,7 @@ extern "C" {
 #endif
 
     /* Constructor and destructor */
-    zGenerics* zTCells_New(zTCells* obj,		/* optional argument */
+    zGenerics* zTCells_New(zTCells* obj,	/* optional argument */
 			 zDevice* dev,		/* device object */
 			 unsigned int row_ix,	/* row index */
 			 unsigned int num_col,	/* number of columns */
@@ -43,16 +43,6 @@ extern "C" {
 			 double row_height);	/* row height */
     void zTCells_Delete(zTCells* obj);
 
-    /* Add content to the cell specified by column
-     * index */
-    inline int zTCells_Add_Content(zTCells* obj,
-				 unsigned int ix,	/* Column index */
-				 const char* content);	/* Content */
-
-    /* Returns the cell specified by the column index,
-     * Returns NULL on failure */
-    inline zTCell* zTCells_Get_Cell(zTCells* obj,
-				  unsigned int ix);
 #ifdef __cplusplus
 }
 #endif

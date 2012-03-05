@@ -106,23 +106,6 @@ void zTCells_Delete(zTCells* obj)
 	free(obj);
 }
 
-/* Add content to the cell */
-inline int zTCells_Add_Content(zTCells* obj,
-			     unsigned int ix,	/* Column index */
-			     const char* content);	/* Content */
-{
-    zTCell* _tcell;		/* cell */
-    
-    /* check object */
-    Z_CHECK_OBJ(obj);
-
-    /* check index is over bound */
-    if(ix > obj->z_parent.z_count)
-	return 1;
-
-    return zTCell_Set_Content(Z_TCELL(obj->z_parent.z_generics_s[ix]),
-			      content);
-}
 
 /* Get cell specified by the index */
 inline zTCell* zTCells_Get_Cell(zTCells* obj,
