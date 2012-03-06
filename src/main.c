@@ -16,11 +16,13 @@
 #include "zGlands.h"
 #include "zArrow.h"
 #include "zLeader.h"
+#include "zTCell.h"
 
 int main(int argc, char** argv)
 {
     zDevice dev;		/* device object */
     zGeneric* jb;		/* JB object */
+    zGeneric* cell;		/* Cell */
     zGenerics* glands;		/* Gland */
     zGeneric* sht;
     zGeneric* leader;		/* leader */
@@ -132,18 +134,29 @@ int main(int argc, char** argv)
 			 NULL);			/* description */
     zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
     zLeader_Set_Description(Z_LEADER(leader), "TEST");
+
+    /* create cell */
+    cell = zTCell_New(NULL);
+    zBase_Set_Base_Coords(Z_BASE(cell), 180, 40);
+    zBase_Set_Width_and_Height(Z_BASE(cell), 50, 10);
+    zGeneric_Set_Device(cell, &dev);
+    zGeneric_Set_Defauts(cell);
+    
+    zTCell_Set_Content(Z_TCELL(cell), "DAMPER");
     
     /* create border */
     zGeneric_Draw(sht);
     zGeneric_Draw(jb);
     zGenerics_Draw(glands);
     zGeneric_Draw(leader);
+    zGeneric_Draw(cell);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zJB_Delete(Z_JB(jb));
     zGlands_Delete(Z_GLANDS(glands));
     zLeader_Delete(Z_LEADER(leader));
+    zTCell_Delete(Z_TCELL(cell));
     
     zDevice_Delete(&dev);
 

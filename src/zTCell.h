@@ -8,6 +8,8 @@
 
 #include <stdlib.h>
 #include "zBase.h"
+#include <cairo/cairo.h>
+#include <pango/pangocairo.h>
 
 /* Content buffer size */
 #define Z_TCELL_BUFF 256
@@ -48,10 +50,6 @@ extern "C" {
     /* Get row and column index */
     inline unsigned int zTCell_Get_Row_Ix(zTCell* obj);
     inline unsigned int zTCell_Get_Col_Ix(zTCell* obj);
-
-    /* Get cell width and height */
-    inline double zTCell_Get_Width(zTCell* obj);
-    inline double zTCell_Get_Height(zTCell* obj);
 
     /* Set and get line flag */
     inline int zTCell_Set_Line_Flg(zTCell* obj, unsigned int flg);

@@ -31,8 +31,6 @@ zGeneric* zTCell_New(zTCell* obj)
     /* Set properties */
     obj->_z_row_ix = 0;
     obj->_z_col_ix = 0;
-    obj->_z_cell_width = 0.0;
-    obj->_z_cell_height = 0.0;
     obj->z_child = NULL;
     obj->z_draw_func = NULL;
     obj->z_content[0] = '\0';
@@ -93,7 +91,7 @@ int zTCell_Draw(zTCell* obj)
 	return 1;
 
     /* Save context */
-    cario_save(_dev_c);
+    cairo_save(_dev_c);
 
     /* Draw rectangle */
     if(obj->z_line_flg)
@@ -175,20 +173,6 @@ inline unsigned int zTCell_Get_Col_Ix(zTCell* obj)
     return obj->_z_col_ix;
 }
 
-/* Get cell width */
-inline double zTCell_Get_Width(zTCell* obj)
-{
-    Z_CHECK_OBJ_DOUBLE(obj);
-    return obj->_z_cell_width;
-}
-
-/* Get cell height */
-inline double zTCell_Get_Height(zTCell* obj)
-{
-    Z_CHECK_OBJ_DOUBLE(obj);
-    return obj->_z_cell_height;
-}
-
 /* Set line flag */
 inline int zTCell_Set_Line_Flg(zTCell* obj, unsigned int flg)
 {
@@ -204,4 +188,15 @@ inline unsigned int zTCell_Get_Line_Flg(zTCell* obj)
 	return 0;
     else
 	return obj->z_line_flg;
+}
+
+
+/* Private functions */
+/*******************************************************************************************************/
+
+/* Virtual draw function */
+static int _ztcell_draw(zGeneric* obj)
+{
+    Z_CHECK_OBJ(obj);
+    return zTCell_Draw(Z_TCELL(obj));
 }
