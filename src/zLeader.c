@@ -153,17 +153,10 @@ int zLeader_Draw(zLeader* obj)
 
     cairo_stroke(_dev_c);
 
-    cairo_restore(_dev_c);
-
     /* Add description if set */
-    if(obj->z_content[0] != '\0')
+    while(obj->z_content[0] != '\0')
 	{
-	    cairo_save(_dev_c);
-	    cairo_translate(_dev_c,
-			    CONV_TO_POINTS(x[1]),
-			    CONV_TO_POINTS(y[1]));
-	    cairo_rotate(_dev_c,
-			 CONV_TO_RADIANS(ang));
+
 	    /* create pango layout */
 	    _layout = pango_cairo_create_layout(_dev_c);
 	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
@@ -191,9 +184,10 @@ int zLeader_Draw(zLeader* obj)
 
 	    _desc = NULL;
 	    _layout = NULL;
-	    cairo_restore(_dev_c);
+	    break;
 	}
 
+    cairo_restore(_dev_c);
     return 0;
     
 }
