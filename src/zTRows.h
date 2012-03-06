@@ -29,6 +29,7 @@ extern "C" {
     zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
 			  zDevice* dev,			/* device object */
 			  unsigned int num_rows,	/* number of rows */
+			  unsigned int num_cols,	/* number of columns */
 			  double x,			/* origin x */
 			  double y,			/* origin y */
 			  double width,			/* width */

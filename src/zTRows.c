@@ -9,12 +9,13 @@ static int _ztrows_draw(void* obj, void* usr_data);	/* draw function */
 
 /* Constructor */
 zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
-			  zDevice* dev,			/* device object */
-			  unsigned int num_rows,	/* number of rows */
-			  double x,			/* origin x */
-			  double y,			/* origin y */
-			  double width,			/* width */
-			  double height)		/* height */
+		      zDevice* dev,			/* device object */
+		      unsigned int num_rows,		/* number of rows */
+		      unsigned int num_cols,		/* number of columns */
+		      double x,				/* origin x */
+		      double y,				/* origin y */
+		      double width,			/* width */
+		      double height)			/* height */
 {
     int i;
     zTRow* _trow;
@@ -46,7 +47,7 @@ zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
     zGenerics_Set_Device(&obj->z_parent, dev);
 
     /* create object array */
-    for(i=0; i<num_col; i++)
+    for(i=0; i<num_rows; i++)
 	{
 	    /* create object */
 	    obj->z_parent.z_generics_s[i] =
@@ -59,7 +60,8 @@ zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
 	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
 				  x,
 				  y + (double) height);
-	    
+	    zTRow_Set_Num_Cols(Z_TROW(obj->z_parent.z_generics_s[i]),
+			       num_cols);
 	    /* Default device context is set by TCells */
 	}
 
