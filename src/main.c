@@ -137,19 +137,19 @@ int main(int argc, char** argv)
 
     /* create cell */
     cell = zTCell_New(NULL);
-    zBase_Set_Base_Coords(Z_BASE(cell), 180, 40);
-    zBase_Set_Width_and_Height(Z_BASE(cell), 50, 10);
+    zBase_Set_Base_Coords(Z_BASE(cell), 40, 100);
+    zBase_Set_Width_and_Height(Z_BASE(cell), 30, 10);
     zGeneric_Set_Device(cell, &dev);
-    zGeneric_Set_Defauts(cell);
+    zGeneric_Set_Default_Dev_Context(cell);
     
     zTCell_Set_Content(Z_TCELL(cell), "DAMPER");
     
     /* create border */
     zGeneric_Draw(sht);
+    zGeneric_Draw(cell);
     zGeneric_Draw(jb);
     zGenerics_Draw(glands);
     zGeneric_Draw(leader);
-    zGeneric_Draw(cell);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));

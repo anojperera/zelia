@@ -63,6 +63,8 @@ void zTCell_Delete(zTCell* obj)
 /* Draw function */
 int zTCell_Draw(zTCell* obj)
 {
+    #define ZTCELL_TEXT_LEFT 2.4
+    #define ZTCELL_TEXT_TOP 1.5
     cairo_t* _dev_c;
     zBase* _base;
     zGeneric* _genric;
@@ -98,38 +100,38 @@ int zTCell_Draw(zTCell* obj)
 	{
 	    cairo_save(_dev_c);
 	    cairo_rectangle(_dev_c,
-			    CONV_TO_POINTS(_base->z_x),
-			    CONV_TO_POINTS(_base->z_y),
-			    CONV_TO_POINTS(_base->z_width),
-			    CONV_TO_POINTS(_base->z_height));
+	    		    CONV_TO_POINTS(_base->z_x),
+	    		    CONV_TO_POINTS(_base->z_y),
+	    		    CONV_TO_POINTS(_base->z_width),
+	    		    CONV_TO_POINTS(_base->z_height));
 	    cairo_stroke(_dev_c);
 	    cairo_restore(_dev_c);
 	}
 
     if(obj->z_content[0] != '\0')
-	{
-	    /* Translate to coordinates */
-	    _x = _base->z_x + _base->z_width * 0.8;
-	    _y = _base->z_y + _base->z_height * 0.6;
+    	{
+    	    /* Translate to coordinates */
+    	    _x = _base->z_x + ZTCELL_TEXT_LEFT;
+    	    _y = _base->z_y + ZTCELL_TEXT_TOP;
     
-	    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
+    	    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
 
-	    /* Create pango layout */
-	    _layout = pango_cairo_create_layout(_dev_c);
+    	    /* Create pango layout */
+    	    _layout = pango_cairo_create_layout(_dev_c);
     
-	    /* Add text to layout */
-	    pango_layout_set_text(_layout, obj->z_content, -1);
+    	    /* Add text to layout */
+    	    pango_layout_set_text(_layout, obj->z_content, -1);
     
-	    /* Create font description and add to layout */
-	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
-	    pango_layout_set_font_description(_layout, _desc);
-	    pango_font_description_free(_desc);
+    	    /* Create font description and add to layout */
+    	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
+    	    pango_layout_set_font_description(_layout, _desc);
+    	    pango_font_description_free(_desc);
 
-	    pango_cairo_show_layout(_dev_c, _layout);
+    	    pango_cairo_show_layout(_dev_c, _layout);
 
-	    /* Free layout object */
-	    g_object_unref(_layout);
-	}
+    	    /* Free layout object */
+    	    g_object_unref(_layout);
+    	}
     
     /* Restore cairo context */
     cairo_restore(_dev_c);
