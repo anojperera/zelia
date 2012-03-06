@@ -92,7 +92,7 @@ int zTRow_Draw(zTRow* obj)
 			obj->z_num_cols,
 			_base->z_x,
 			_base->z_y,
-			_base->z_width,
+			_base->z_width / (double) obj->z_num_cols,
 			_base->z_height);
 	    obj->z_arr_flg = 1;
 	}
@@ -124,7 +124,7 @@ inline int zTRow_Add_Content(zTRow* obj,
 			obj->z_num_cols,
 			_base->z_x,
 			_base->z_y,
-			_base->z_width,
+			_base->z_width / (double) obj->z_num_cols,
 			_base->z_height);
 	    obj->z_arr_flg = 1;
 	}
