@@ -2,6 +2,7 @@
 /* Sat Mar  3 13:16:04 GMT 2012 */
 
 #include "zTCell.h"
+#include <string.h>
 
 /* Virtual functions */
 static int _ztcell_draw(zGeneric* obj);
