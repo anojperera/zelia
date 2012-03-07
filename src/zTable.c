@@ -96,7 +96,7 @@ inline int zTable_Set_Rows_and_Cols(zTable* obj,
     obj->z_num_cols = num_cols;
 
     /* Check if array was created */
-    if(obj->z_arr_flg)
+    if(obj->z_arr_flg == 0)
 	{
 	    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
 	    
