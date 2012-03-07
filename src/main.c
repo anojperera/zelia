@@ -137,18 +137,18 @@ int main(int argc, char** argv)
     zLeader_Set_Description(Z_LEADER(leader), "TEST");
 
     table = zTable_New(NULL);
-    zBase_Set_Base_Coords(Z_BASE(table), 40.0, 120.0);
-    zBase_Set_Width_and_Height(Z_BASE(table), 160.0, 90.0);
     zGeneric_Set_Device(table, &dev);
     zGeneric_Set_Default_Dev_Context(table);
+    zBase_Set_Base_Coords(Z_BASE(table), 40.0, 120.0);
+    zBase_Set_Width_and_Height(Z_BASE(table), 160.0, 90.0);
     zTable_Set_Rows_and_Cols(Z_TABLE(table), 3, 4);
 
     /* create border */
     zGeneric_Draw(sht);
+    zGeneric_Draw(table);
     zGeneric_Draw(jb);
     zGenerics_Draw(glands);
     zGeneric_Draw(leader);
-    zGeneric_Draw(table);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
