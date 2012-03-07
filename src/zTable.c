@@ -137,27 +137,20 @@ inline int zTable_Set_Content(zTable* obj,
 			      unsigned int col_ix,
 			      const char* content)
 {
-    zTCell* _tcell;
     zTRow* _trow;
     /* object check */
     Z_CHECK_OBJ(obj);
 
     /* check collection bounds */
-    if(row_ix > obj->z_num_rows ||
-       col_ix > obj->z_num_cols ||
+    if(row_ix >= obj->z_num_rows ||
+       col_ix >= obj->z_num_cols ||
        obj->z_arr_flg == 0)
 	return 1;
 
     /* get row specified by the index */
     _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
     Z_CHECK_OBJ(_trow);
-
-    _tcell = zTRow_Get_Cell(_trow, col_ix);
-    Z_CHECK_OBJ(_tcell);
-
-    /* Set content */
-    zTCell_Set_Content(_tcell, content);
-    return 0;
+    return zTRow_Add_Content(_trow, col_ix, content);
 }
 
 /* Get content */

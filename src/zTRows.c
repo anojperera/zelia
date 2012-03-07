@@ -30,7 +30,7 @@ zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
 	    obj->z_int_flg = 1;
 	}
     else
-	obj->z_int_flg = 1;
+	obj->z_int_flg = 0;
 
     /* create parent */
     if(zGenerics_New(&obj->z_parent,
@@ -97,10 +97,10 @@ void zTRows_Delete(zTRows* obj)
 zTRow* zTRows_Get_Row(zTRows* obj, unsigned int ix)
 {
     Z_CHECK_OBJ_PTR(obj);
-    if(ix > obj->z_parent.z_count)
+    if(ix >= obj->z_parent.z_count)
 	return NULL;
 
-    return Z_TROW(&obj->z_parent.z_generics_s[ix]);
+    return Z_TROW(obj->z_parent.z_generics_s[ix]);
 }
 
 /* Private methods */

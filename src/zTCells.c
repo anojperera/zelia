@@ -120,7 +120,7 @@ inline zTCell* zTCells_Get_Cell(zTCells* obj,
 {
     Z_CHECK_OBJ_PTR(obj);
 
-    if(ix > obj->z_parent.z_count)
+    if(ix >= obj->z_parent.z_count)
 	return NULL;
 
     return Z_TCELL(obj->z_parent.z_generics_s[ix]);
