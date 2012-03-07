@@ -144,7 +144,8 @@ inline int zTable_Set_Content(zTable* obj,
 
     /* check collection bounds */
     if(row_ix > obj->z_num_rows ||
-       col_ix > obj->z_num_cols)
+       col_ix > obj->z_num_cols ||
+       obj->z_arr_flg == 0)
 	return 1;
 
     /* get row specified by the index */
