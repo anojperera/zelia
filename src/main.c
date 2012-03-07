@@ -16,16 +16,17 @@
 #include "zGlands.h"
 #include "zArrow.h"
 #include "zLeader.h"
-#include "zTCell.h"
+#include "zTable.h"
 
 int main(int argc, char** argv)
 {
     zDevice dev;		/* device object */
     zGeneric* jb;		/* JB object */
-    zGeneric* cell;		/* Cell */
     zGenerics* glands;		/* Gland */
     zGeneric* sht;
     zGeneric* leader;		/* leader */
+    zGeneric* table;		/* table */
+    
     zBrd_Attrib* attrib;
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
@@ -82,8 +83,8 @@ int main(int argc, char** argv)
 
     jb = zJB_New(NULL,
 		 &dev,
-		 150.0,			/* x coordinate */
-		 50.0,			/* y coordiante */
+		 250.0,			/* x coordinate */
+		 40.0,			/* y coordiante */
 		 100.0,			/* width */
 		 120.0,			/* height */
 		 90.0,			/* depth */
@@ -135,29 +136,26 @@ int main(int argc, char** argv)
     zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
     zLeader_Set_Description(Z_LEADER(leader), "TEST");
 
-    /* create cell */
-    cell = zTCell_New(NULL);
-    zBase_Set_Base_Coords(Z_BASE(cell), 40, 100);
-    zBase_Set_Width_and_Height(Z_BASE(cell), 30, 10);
-    zGeneric_Set_Device(cell, &dev);
-    zGeneric_Set_Default_Dev_Context(cell);
-    
-    zTCell_Set_Content(Z_TCELL(cell), "DAMPER");
-    
+    table = zTable_New(NULL);
+    zBase_Set_Base_Coords(Z_BASE(table), 40.0, 120.0);
+    zBase_Set_Width_and_Height(Z_BASE(table), 160.0, 90.0);
+    zGeneric_Set_Device(table, &dev);
+    zGeneric_Set_Default_Dev_Context(table);
+    zTable_Set_Rows_and_Cols(Z_TABLE(table), 3, 4);
+
     /* create border */
     zGeneric_Draw(sht);
-    zGeneric_Draw(cell);
     zGeneric_Draw(jb);
     zGenerics_Draw(glands);
     zGeneric_Draw(leader);
+    zGeneric_Draw(table);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zJB_Delete(Z_JB(jb));
     zGlands_Delete(Z_GLANDS(glands));
     zLeader_Delete(Z_LEADER(leader));
-    zTCell_Delete(Z_TCELL(cell));
-    
+    zTable_Delete(Z_TABLE(table));
     zDevice_Delete(&dev);
 
     if(attrib)

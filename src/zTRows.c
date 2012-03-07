@@ -18,7 +18,6 @@ zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
 		      double height)			/* height */
 {
     int i;
-    zTRow* _trow;
     
     if(num_rows == 0)
 	return NULL;
@@ -59,9 +58,11 @@ zGenerics* zTRows_New(zTRows* obj,			/* optional argument */
 				       height);
 	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
 				  x,
-				  y + (double) height);
+				  y + (double) i * height);
 	    zTRow_Set_Num_Cols(Z_TROW(obj->z_parent.z_generics_s[i]),
 			       num_cols);
+	    zGeneric_Set_Device(obj->z_parent.z_generics_s[i],
+				dev);
 	    /* Default device context is set by TCells */
 	}
 

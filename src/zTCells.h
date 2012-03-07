@@ -2,11 +2,11 @@
  * table. zTCells inherites zGenerics collection class and is dependant on
  * zTCell. zTCells uses a static array in zGenerics collection class therefore
  * once the number of columns are specified it cannot be changed.
- * zTCells shall is associated with zTRow
+ * zTCells shall is associated with zTRow */
 /* Sun Mar  4 12:46:38 GMT 2012 */
 
-#ifndef _ZTROW_H_
-#define _ZTROW_H_
+#ifndef _ZTCELLS_H_
+#define _ZTCELLS_H_
 
 #include <stdlib.h>
 #include "zGenerics.h"
@@ -47,4 +47,4 @@ extern "C" {
 }
 #endif
 
-#endif /* _ZTROW_H_ */
+#endif /* _ZTCELLS_H_ */

@@ -104,6 +104,8 @@ inline int zTable_Set_Rows_and_Cols(zTable* obj,
 		       _dev,							/* device object */
 		       obj->z_num_rows,						/* number of rows */
 		       obj->z_num_cols,						/* number of columns */
+		       obj->z_parent.z_x,					/* origin x */
+		       obj->z_parent.z_y,					/* origin y */
 		       zBase_Get_Width(&obj->z_parent),				/* row width */
 		       zBase_Get_Height(&obj->z_parent) / (double) num_rows);	/* row height */
 	    obj->z_arr_flg = 1;
@@ -171,7 +173,7 @@ inline const char* zTable_Get_Content(zTable* obj,
     /* check collection bounds */
     if(row_ix > obj->z_num_rows ||
        col_ix > obj->z_num_cols)
-	return 1;
+	return NULL;
 
     /* get row specified by the index */
     _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
@@ -210,7 +212,7 @@ inline const zTCell* zTable_Get_Cell(zTable* obj,
     
     if(row_ix > obj->z_num_rows ||
        col_ix > obj->z_num_cols)
-	return 1;
+	return NULL;
     _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
     Z_CHECK_OBJ_PTR(_trow);
     return zTRow_Get_Cell(_trow, col_ix);

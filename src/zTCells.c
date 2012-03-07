@@ -62,15 +62,19 @@ zGenerics* zTCells_New(zTCells* obj,		/* Optional argument */
 	    _tcell->_z_col_ix = (unsigned int) i;
 
 	    /* Set base coordinates */
-	    zBase_Set_Base_Coords(obj->z_parent.z_generics_s[i],
-				  x + (double) i * width,
+	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
+				  x + (double) i * col_width,
 				  y);
 	    
 	    /* Set width and height of cell */
-	    zBase_Set_Width_and_Height(obj->z_parent.z_generics_s[i],
+	    zBase_Set_Width_and_Height(Z_BASE(obj->z_parent.z_generics_s[i]),
 				       col_width,
 				       row_height);
 
+	    /* Set default device context */
+	    zGeneric_Set_Device(obj->z_parent.z_generics_s[i],
+				zGenerics_Get_Device(&obj->z_parent));
+	    
 	    /* Set default device context */
 	    zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]);
 	    

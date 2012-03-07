@@ -8,7 +8,8 @@ PROG = tmp
 CCC = gcc
 CCP = g++
 OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o zGenerics.o \
-zTerminals.o zJB.o zGland.o zGlands.o zArrow.o zLeader.o zTCell.o
+zTerminals.o zJB.o zGland.o zGlands.o zArrow.o zLeader.o zTCell.o zTCells.o \
+zTRow.o zTRows.o zTable.o
 LIBSP = ../../g_list/bin/alist.a
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
@@ -57,6 +58,18 @@ zLeader.o : zLeader.c zLeader.h
 
 zTCell.o : zTCell.c zTCell.h
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTCell.c $(GTKCFLGS)
+
+zTCells.o : zTCells.c zTCells.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTCells.c $(GTKCFLGS)
+
+zTRow.o : zTRow.c zTRow.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTRow.c $(GTKCFLGS)
+
+zTRows.o : zTRows.c zTRows.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTRows.c $(GTKCFLGS)
+
+zTable.o : zTable.c zTable.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zTable.c $(GTKCFLGS)
 
 clean :
 	rm -fv *.o

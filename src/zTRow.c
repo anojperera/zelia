@@ -104,10 +104,10 @@ int zTRow_Draw(zTRow* obj)
 /* Add content to the cell */
 inline int zTRow_Add_Content(zTRow* obj,
 			     unsigned int ix,		/* Column index */
-			     const char* content);	/* Content */
+			     const char* content)	/* Content */
 {
     zGenerics* _zg;
-    
+    zDevice* _dev;
     /* check object */
     Z_CHECK_OBJ(obj);
 
@@ -118,14 +118,15 @@ inline int zTRow_Add_Content(zTRow* obj,
     /* check if tcell collection was created or not */
     if(obj->z_arr_flg == 0)
 	{
+	    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
 	    zTCells_New(&obj->z_tcells,
 			_dev,
 			obj->z_ix,
 			obj->z_num_cols,
-			_base->z_x,
-			_base->z_y,
-			_base->z_width / (double) obj->z_num_cols,
-			_base->z_height);
+			obj->z_parent.z_x,
+			obj->z_parent.z_y,
+			obj->z_parent.z_width / (double) obj->z_num_cols,
+			obj->z_parent.z_height);
 	    obj->z_arr_flg = 1;
 	}
 
@@ -133,6 +134,9 @@ inline int zTRow_Add_Content(zTRow* obj,
     return zTCell_Set_Content(Z_TCELL(_zg->z_generics_s[ix]),
 			      content);
 }
+
+/* Property methods */
+/*********************************************************************/
 
 /* Get Cell */
 inline zTCell* zTRow_Get_Cell(zTRow* obj,
@@ -146,12 +150,9 @@ inline zTCell* zTRow_Get_Cell(zTRow* obj,
     if(ix > obj->z_num_cols || obj->z_arr_flg == 0)
 	return NULL;
 
-    _zg = &obj->z_tcells->z_parent;
+    _zg = &obj->z_tcells.z_parent;
     return Z_TCELL(_zg->z_generics_s[ix]);
 }
-
-/* Property methods */
-/*********************************************************************/
 
 /* Set number of columns */
 inline int zTRow_Set_Num_Cols(zTRow* obj, unsigned int num_cols)
@@ -168,4 +169,14 @@ inline unsigned int zTRow_Get_Num_Cols(zTRow* obj)
 	return 0;
     else
 	return obj->z_num_cols;
+}
+
+/* Private methods */
+/**********************************************************************/
+
+/* Virtual draw method */
+static int _ztrow_draw(zGeneric* obj)
+{
+    Z_CHECK_OBJ(obj);
+    return zTRow_Draw(Z_TROW(obj));
 }
