@@ -67,7 +67,7 @@ int zTCell_Draw(zTCell* obj)
     #define ZTCELL_TEXT_TOP 1.5
     cairo_t* _dev_c;
     zBase* _base;
-    zGeneric* _genric;
+    zGeneric* _generic;
     PangoLayout* _layout;
     PangoFontDescription* _desc;
     double _x, _y;
@@ -77,14 +77,14 @@ int zTCell_Draw(zTCell* obj)
 
     /* Get base and generic object */
     _base = &obj->z_parent;
-    _genric = &obj->z_parent.z_sgeneric;
+    _generic = &obj->z_parent.z_sgeneric;
 
     /* Check object */
     Z_CHECK_OBJ(_base);
-    Z_CHECK_OBJ(_genric);
+    Z_CHECK_OBJ(_generic);
 
     /* Get cairo device context */
-    _dev_c = zGeneric_Get_Dev_Context(_genric);
+    _dev_c = zGeneric_Get_Dev_Context(_generic);
     Z_CHECK_OBJ(_dev_c);
 
     /* Check width and height */
@@ -138,7 +138,7 @@ int zTCell_Draw(zTCell* obj)
     
     _dev_c = NULL;
     _base = NULL;
-    _genric = NULL;
+    _generic = NULL;
     _layout = NULL;
     _desc = NULL;
 
