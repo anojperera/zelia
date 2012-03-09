@@ -30,6 +30,7 @@ zGeneric* zTable_New(zTable* obj)
     obj->z_int_flg = 0;
     obj->z_num_rows = 0;
     obj->z_num_cols = 0;
+    obj->z_col_widths = NULL;
     obj->z_child = NULL;
     obj->z_draw_func = NULL;
     obj->z_obj_sz = sizeof(zTable);
@@ -89,7 +90,7 @@ inline int zTable_Set_Rows_and_Cols(zTable* obj,
 				    unsigned int num_rows,
 				    unsigned int num_cols)
 {
-    
+    int i;
     zDevice* _dev;
     Z_CHECK_OBJ(obj);
     obj->z_num_rows = num_rows;
@@ -98,6 +99,12 @@ inline int zTable_Set_Rows_and_Cols(zTable* obj,
     /* Check if array was created */
     if(obj->z_arr_flg == 0)
 	{
+	    /* create an array of pointers to hold column width and
+	     * initialise to 0.0 */
+	    obj->z_col_widths = (double*) calloc(num_cols, sizeof(double));
+	    for(i = 0; i < num_cols; i++)
+		obj->z_col_widths[i] = 0.0;
+	    
 	    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
 	    
 	    zTRows_New(&obj->z_rows,						/* row object */
@@ -212,6 +219,66 @@ inline const zTCell* zTable_Get_Cell(zTable* obj,
     return zTRow_Get_Cell(_trow, col_ix);
 }
 
+/* Set column width */
+inline int zTable_Set_Column_Width(zTable* obj,
+				       unsigned int col_ix,
+				       double width)
+{   zTRow* _trow;
+    zTCell* _tcell;
+    int i, a;
+    /* Check for object */
+    Z_CHECK_OBJ(obj);
+
+    /* check if column width array was created */
+    Z_CHECK_OBJ(obj->z_col_widths);
+
+    /* check array bounds */
+    if(col_ix >= obj->z_num_cols)
+	return 1;
+
+    obj->z_col_widths[col_ix] = width;
+
+    /* check if array created */
+    if(obj->z_arr_flg == 0)
+	return 1;
+
+    /* iterate through rows collection and set the width */
+    for(i=0; i<obj->z_num_rows; i++)
+	{
+	    _trow = zTRows_Get_Row(&obj->z_rows, (unsigned int) i);
+	    _tcell = zTRow_Get_Cell(_trow, col_ix);
+
+	    /* set width */
+	    zBase_Set_Width(&_tcell->z_parent, width);
+	    for(a=col_ix+1; a<obj->z_num_cols; a++)
+		{
+		    _tcell = zTRow_Get_Cell(_trow, i);
+		    if(_tcell == NULL)
+			break;
+		    _tcell->z_parent.z_x += width - _tcell->z_parent.z_width;
+		}
+	}
+
+    return 0;
+}
+
+/* Get column width */
+inline double zTable_Get_Column_Width(zTable* obj,
+				      unsigned int col_ix)
+{
+    /* check object */
+    Z_CHECK_OBJ_DOUBLE(obj);
+    
+    /* check if column width array was created */
+    Z_CHECK_OBJ_DOUBLE(obj->z_col_widths);
+
+    /* check array bounds */
+    if(col_ix >= obj->z_num_cols)
+	return 0.0;
+
+    return obj->z_col_widths[col_ix];
+    
+}
 /* Private functions */
 /*************************************************************************************************************/
 

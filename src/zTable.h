@@ -23,6 +23,7 @@ struct _zTable
     unsigned int z_arr_flg;				/* Flag to indicate array created */
     unsigned int z_num_rows;				/* Number of rows */
     unsigned int z_num_cols;				/* Number of colums */
+    double* z_col_widths;				/* Column width array */
     void* z_child;					/* Child pointer */
     zgeneric_fptr z_draw_func;				/* Draw function */
     size_t z_obj_sz;					/* Object size */
@@ -65,6 +66,13 @@ extern "C" {
     inline const zTCell* zTable_Get_Cell(zTable* obj,
 					 unsigned int row_ix,
 					 unsigned int col_ix);
+
+    /* Set and get column width */
+    inline int zTable_Set_Column_Width(zTable* obj,
+				       unsigned int col_ix,
+				       double width);
+    inline double zTable_Get_Column_Width(zTable* obj,
+					  unsigned int col_ix);
 #ifdef __cplusplus
 }
 #endif
