@@ -139,9 +139,10 @@ int main(int argc, char** argv)
     zGeneric_Set_Device(table, &dev);
 
     zBase_Set_Base_Coords(Z_BASE(table), 40.0, 120.0);
-    zBase_Set_Width_and_Height(Z_BASE(table), 160.0, 50.0);
-    zTable_Set_Rows_and_Cols(Z_TABLE(table), 5, 4);
-    zTable_Set_Content(Z_TABLE(table), 4, 1, "DAMPERS");
+    zBase_Set_Width_and_Height(Z_BASE(table), 60.0, 10.0);
+    zTable_Set_Rows_and_Cols(Z_TABLE(table), 1, 2);
+    zTable_Set_Column_Width(Z_TABLE(table), 1, 60.0);
+    zTable_Set_Content(Z_TABLE(table), 0, 1, "DAMPERS");
 
     /* create border */
     zGeneric_Draw(sht);
