@@ -143,13 +143,27 @@ inline zTCell* zTRow_Get_Cell(zTRow* obj,
 			      unsigned int ix)
 {
     zGenerics* _zg;
+    zDevice* _dev;
     
     Z_CHECK_OBJ_PTR(obj);
 
     /* check array bounds */
-    if(ix > obj->z_num_cols || obj->z_arr_flg == 0)
+    if(ix > obj->z_num_cols)
 	return NULL;
-
+    
+    if(obj->z_arr_flg == 0)
+	{
+	    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
+	    zTCells_New(&obj->z_tcells,
+			_dev,
+			obj->z_ix,
+			obj->z_num_cols,
+			obj->z_parent.z_x,
+			obj->z_parent.z_y,
+			obj->z_parent.z_width / (double) obj->z_num_cols,
+			obj->z_parent.z_height);
+	    obj->z_arr_flg = 1;
+	}
     _zg = &obj->z_tcells.z_parent;
     return Z_TCELL(_zg->z_generics_s[ix]);
 }
