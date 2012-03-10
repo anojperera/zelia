@@ -2,22 +2,14 @@
 /* Tue Mar  6 12:44:15 GMTST 2012 */
 
 #include "zTable.h"
-
+#include "zVar.h"
 /* Virtual function */
 static int _ztable_draw(zGeneric* obj);
 
 /* Constructor */
 zGeneric* zTable_New(zTable* obj)
 {
-    if(obj == NULL)
-	{
-	    obj = (zTable*) malloc(sizeof(zTable));
-	    Z_CHECK_OBJ_PTR(obj);
-	    obj->z_int_flg = 1;
-	}
-    else
-	obj->z_int_flg = 0;
-
+    Z_CONSTRUCTOR_HELPER(obj, zTable);
     /* create parent object */
     if(!zBase_New(&obj->z_parent))
 	{
