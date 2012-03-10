@@ -6,7 +6,7 @@
 
 /* Virtual functions */
 static int _ztrow_delete(void* obj, void* usr_data);		/* delete function */
-static int _ztrow_draw(void* obj, void* user_data);		/* draw function */
+static int _ztrow_draw(void* obj, void* usr_data);		/* draw function */
 
 /* Constructor */
 zGenerics* zTCells_New(zTCells* obj,		/* Optional argument */
@@ -144,7 +144,7 @@ static int _ztrow_delete(void* obj, void* usr_data)
 
 
 /* Virtual draw function */
-static int _ztrow_draw(void* obj, void* user_data)
+static int _ztrow_draw(void* obj, void* usr_data)
 {
     zGeneric* zg;
     
