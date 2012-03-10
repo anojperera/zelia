@@ -8,8 +8,6 @@
 
 #include <stdlib.h>
 #include "zBase.h"
-#include <cairo/cairo.h>
-#include <pango/pangocairo.h>
 
 /* Content buffer size */
 #define Z_TCELL_BUFF 256

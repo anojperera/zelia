@@ -3,6 +3,8 @@
 
 #include "zTCell.h"
 #include <string.h>
+#include <cairo/cairo.h>
+#include <pango/pangocairo.h>
 
 /* Virtual functions */
 static int _ztcell_draw(zGeneric* obj);
