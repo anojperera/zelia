@@ -17,15 +17,15 @@
 #include "zArrow.h"
 #include "zLeader.h"
 #include "zTable.h"
+#include "zNote.h"
+#include "zNotes.h"
 
 int main(int argc, char** argv)
 {
     zDevice dev;		/* device object */
-    zGeneric* jb;		/* JB object */
-    zGenerics* glands;		/* Gland */
     zGeneric* sht;
-    zGeneric* leader;		/* leader */
     zGeneric* table;		/* table */
+    zGenerics* notes;		/* note */
     
     zBrd_Attrib* attrib;
     zDevice_New2(zFormatPDF,
@@ -81,60 +81,6 @@ int main(int argc, char** argv)
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
 
-    jb = zJB_New(NULL,
-		 &dev,
-		 250.0,			/* x coordinate */
-		 40.0,			/* y coordiante */
-		 100.0,			/* width */
-		 120.0,			/* height */
-		 90.0,			/* depth */
-		 0.0);			/* rotation angle */
-
-    /* set JB radius */
-    zJB_Set_Fillet_Radius(Z_JB(jb), 10.0);
-    
-    /* create terminals */
-    zJB_Add_Terminals(Z_JB(jb),
-		      6,
-		      10.0,
-		      40.0,
-		      "1-3,5-6");
-
-    zJB_Add_Glands(Z_JB(jb),
-		   30,
-		   30,
-		   zM20,
-		   1);
-
-    /* Create a cable gland array */
-    glands = zGlands_New(NULL);
-    zGenerics_Set_Device(glands, &dev);
-    /* Add glands */
-    zGlands_Add(Z_GLANDS(glands),
-		NULL,
-		50.0,
-		50.0,
-		zM20,
-		1);
-
-    zGlands_Add(Z_GLANDS(glands),
-		NULL,
-		50.0,
-		100.0,
-		zM20,
-		1);
-
-    /* Leader */
-    leader = zLeader_New(NULL,			/* object pointer */
-			 &dev,			/* device object */
-			 50.0,			/* x */
-			 150.0,			/* y */
-			 40.0,			/* length 1 */
-			 20.0,			/* length 2 */
-			 80.0,			/* angle */
-			 NULL);			/* description */
-    zArrow_Set_Arrow_Type(Z_ARROW(leader), zArrow3);
-    zLeader_Set_Description(Z_LEADER(leader), "TEST");
     table = zTable_New(NULL);
     zGeneric_Set_Device(table, &dev);
 
@@ -142,21 +88,24 @@ int main(int argc, char** argv)
     zBase_Set_Width_and_Height(Z_BASE(table), 160.0, 30.0);
     zTable_Set_Rows_and_Cols(Z_TABLE(table), 3, 4);
     zTable_Set_Column_Width(Z_TABLE(table), 0, 60.0);
+    zTable_Set_Column_Width(Z_TABLE(table), 2, 60.0);
     zTable_Set_Content(Z_TABLE(table), 0, 1, "DAMPERS");
 
+    notes = zNotes_New(NULL, &dev, 40.0, 40.0, 200.0);
+    zNotes_Set_Title(Z_NOTES(notes), "DAMPER OPERATION");
+    zNotes_Add(Z_NOTES(notes), "FRAMES ARE CONTINUOUSLY WELDED CONSTRUCTION.");
+    zNotes_Add(Z_NOTES(notes), "DAMPER BLADES TO BE HOT DIP GALVANISED.");
+    zNotes_Add(Z_NOTES(notes), "BLADES ARE WELDED TO SHAFTS.");
+    
     /* create border */
     zGeneric_Draw(sht);
     zGeneric_Draw(table);
-    zGeneric_Draw(jb);
-    zGenerics_Draw(glands);
-    zGeneric_Draw(leader);
+    zGenerics_Draw(notes);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
-    zJB_Delete(Z_JB(jb));
-    zGlands_Delete(Z_GLANDS(glands));
-    zLeader_Delete(Z_LEADER(leader));
     zTable_Delete(Z_TABLE(table));
+    zNotes_Delete(Z_NOTES(notes));
     zDevice_Delete(&dev);
 
     if(attrib)
