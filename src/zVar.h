@@ -198,6 +198,7 @@
 #define Z_TROWS(obj) ((zTRows*) obj->z_child)
 #define Z_TABLE(obj) ((zTable*) Z_BASE(obj)->z_child)
 #define Z_NOTE(obj) ((zNote*) Z_BASE(obj)->z_child)
+#define Z_NOTES(obj) ((zNotes*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
