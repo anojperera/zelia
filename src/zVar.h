@@ -179,7 +179,8 @@
 #define Z_ARROW_HEIGHT3 8.0
 
 /* Note default indent */
-#define Z_NOTE_INDENT 3.0
+#define Z_NOTE_INDENT 10.0
+#define Z_NOTE_LINE_HEIGHT 8.0
 
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
@@ -306,7 +307,7 @@ static inline double ConvToPoints(double* mm)
     (M_PI * val / 180.0)
 
 #define CONV_TO_PANGO(val) \
-    ((Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val) / PANGO_SCALE
+    (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val * PANGO_SCALE
 
 /* rounds the number */
 static inline double Round(double val, unsigned int places)
