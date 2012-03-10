@@ -252,7 +252,7 @@ inline int zTable_Set_Column_Width(zTable* obj,
 	    zBase_Set_Width(&_tcell->z_parent, width);
 	    for(a=col_ix+1; a<obj->z_num_cols; a++)
 		{
-		    _tcell = zTRow_Get_Cell(_trow, i);
+		    _tcell = zTRow_Get_Cell(_trow, a);
 		    if(_tcell == NULL)
 			break;
 		    _tcell->z_parent.z_x += width - _tcell->z_parent.z_width;
