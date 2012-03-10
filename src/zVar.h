@@ -178,6 +178,9 @@
 #define Z_ARROW_HEIGHT2 5.0
 #define Z_ARROW_HEIGHT3 8.0
 
+/* Note default indent */
+#define Z_NOTE_INDENT 3.0
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
@@ -193,6 +196,7 @@
 #define Z_TROW(obj) ((zTRow*) Z_BASE(obj)->z_child)
 #define Z_TROWS(obj) ((zTRows*) obj->z_child)
 #define Z_TABLE(obj) ((zTable*) Z_BASE(obj)->z_child)
+#define Z_NOTE(obj) ((zNote*) Z_BASE(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
@@ -212,15 +216,15 @@
 	return
 
 /* constructor helper */
-#define Z_CONSTRUCTOR_HELPER(obj, type) \
+#define Z_CONSTRUCTOR_HELPER(obj, ztype) \
     if(obj == NULL) \
 	{ \
-    obj = (type*) malloc(sizeof(type)); \
-    Z_CHECK_OBJ(obj); \
+    obj = (ztype*) malloc(sizeof(ztype)); \
+    Z_CHECK_OBJ_PTR(obj); \
     obj->z_int_flg = 1; \
 	} \
     else \
-	obj->z_int_flg = 0;
+	obj->z_int_flg = 0
 
 /* error messages */
 #define Z_ERROR_PANGO_LAYOUT "Unable to create pango layout"
