@@ -20,7 +20,7 @@ struct _zNote
     unsigned int z_int_flg;		/* Internal flag */
     int z_ix;				/* Note index */
     char z_note[Z_NOTE_BUFF];		/* Note content buffer */
-    char* _z_fnote;			/* Note and index */
+    char* z_fnote;			/* Note and index */
     double z_indent;			/* Indent */
     size_t z_note_sz;			/* Note length */
     size_t z_obj_sz;			/* Object size */
@@ -30,7 +30,7 @@ struct _zNote
 
 #ifdef __cplusplus
 extern "C" {
-#endif __cplusplus
+#endif
 
     /* Constructor and destructor */
     zGeneric* zNote_New(zNote* obj);
@@ -49,12 +49,8 @@ extern "C" {
     inline const char* zNote_Get_Note_With_Ix(zNote* obj);
 
     /* Set and get indent */
-    inline int zNote_Set_Indent(zNote* obj, double idnent);
+    inline int zNote_Set_Indent(zNote* obj, double indent);
     inline double zNote_Get_Indent(zNote* obj);
-
-    /* Set and get box width */
-    inline int zNote_Set_Box_Width(zNote* obj, double width);
-    inline double zNote_Get_Box_Width(zNote* obj);
     
 #ifdef __cplusplus
 }

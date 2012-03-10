@@ -30,7 +30,6 @@ zGeneric* zNote_New(zNote* obj)
     obj->z_note[0] = '\0';
     obj->z_fnote = NULL;
     obj->z_indent = Z_NOTE_INDENT;	/* default note index */
-    obj->z_box_width = 0.0;
     obj->z_note_sz = 0;
     obj->z_obj_sz = sizeof(zNote);
     obj->z_draw_func = NULL;
@@ -69,7 +68,6 @@ int zNote_Draw(zNote* obj)
     char* _ix_buff;				/* index buffer */
     PangoLayout* _layout;			/* pango layout */
     PangoFontDescription* _desc;    		/* pango font description */
-    double _x;					/* offset x */
     double _box_width;
 
     /* check for object */
@@ -83,7 +81,7 @@ int zNote_Draw(zNote* obj)
     Z_CHECK_OBJ(_dev_c);
 
     /* check if content was assigned */
-    if(obj->z_content[0] == '\0' || obj->z_ix <= 0)
+    if(obj->z_note[0] == '\0' || obj->z_ix <= 0)
 	return 1;
 
     /* get index into a buffer */
@@ -113,20 +111,19 @@ int zNote_Draw(zNote* obj)
     pango_cairo_show_layout(_dev_c, _layout);
 
     /* offset cairo context for the text */
-    _x = obj->z_parent.z_x + obj->z_indent;
     cairo_translate(_dev_c,
-		    CONV_TO_POINTS(_x),
-		    CONV_TO_POINTS(obj->z_parent.z_y));
+		    CONV_TO_POINTS(obj->z_indent),
+		    0.0);
     /* update pango layout */
     pango_cairo_update_layout(_dev_c, _layout);
 
     /* if width was set, tell pango to wrap */
-    _box_width = obj->z_box_width - obj->z_indent;
-    if(obj->z_box_width > 0.0)
+    _box_width = obj->z_parent.z_width - obj->z_indent;
+    if(obj->z_parent.z_width > 0.0)
 	pango_layout_set_width(_layout, CONV_TO_PANGO(_box_width));
     
     /* update text */
-    pango_layout_set_text(_layout, obj->z_content, -1);
+    pango_layout_set_text(_layout, obj->z_note, -1);
 
     /* show layout */
     pango_cairo_show_layout(_dev_c, _layout);
@@ -158,7 +155,7 @@ inline int zNote_Set_Content(zNote* obj, const char* content, int ix)
 	}
     /* if length exceeds buffer size, return fail */
     if(obj->z_note_sz < Z_NOTE_BUFF)
-	strcpy(obj->z_content, content);
+	strcpy(obj->z_note, content);
     else
 	return 1;
     
@@ -188,7 +185,7 @@ inline int zNote_Get_Ix(zNote* obj)
 inline const char* zNote_Get_Note_With_Ix(zNote* obj)
 {
     size_t _t;
-    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ_PTR(obj);
     if(obj->z_note[0] == '\0' || obj->z_ix <= 0)
 	return NULL;
 
@@ -207,7 +204,7 @@ inline const char* zNote_Get_Note_With_Ix(zNote* obj)
 }
 
 /* Set indent */
-inline int zNote_Set_Indent(zNote* obj, double idnent)
+inline int zNote_Set_Indent(zNote* obj, double indent)
 {
     Z_CHECK_OBJ(obj);
     obj->z_indent = indent;
@@ -219,21 +216,6 @@ inline double zNote_Get_Indent(zNote* obj)
 {
     Z_CHECK_OBJ_DOUBLE(obj);
     return obj->z_indent;
-}
-
-/* Set box width */
-inline int zNote_Set_Box_Width(zNote* obj, double width)
-{
-    Z_CHECK_OBJ(obj);
-    obj->z_box_width = width;
-    return 0;
-}
-
-/* Get box width */
-inline double zNote_Get_Box_Width(zNote* obj)
-{
-    Z_CHECK_OBJ_DOUBLE(obj);
-    return obj->z_box_width;
 }
 
 /* Virtual method */
