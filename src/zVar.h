@@ -181,7 +181,7 @@
 /* Note default indent */
 #define Z_NOTE_INDENT 10.0
 #define Z_NOTE_LINE_HEIGHT 8.0
-
+#define Z_NOTE_FONT_STYLE "Century Gothic 10"
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)

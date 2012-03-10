@@ -103,7 +103,7 @@ int zNote_Draw(zNote* obj)
     pango_layout_set_text(_layout, _ix_buff, -1);
 
     /* create font description and add to layout */
-    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
+    _desc = pango_font_description_from_string(Z_NOTE_FONT_STYLE);
     pango_layout_set_font_description(_layout, _desc);
     pango_font_description_free(_desc);
 
@@ -130,9 +130,16 @@ int zNote_Draw(zNote* obj)
 
     /* free layout object */
     g_object_unref(_layout);
-
+    free(_ix_buff);
+    
     /* restore cairo context */
     cairo_restore(_dev_c);
+
+    _generic = NULL;
+    _dev_c = NULL;
+    _ix_buff = NULL;
+    _layout = NULL;
+    _desc = NULL;
     return 0;
 }
 
