@@ -43,7 +43,7 @@ zGenerics* zGlands_New(zGlands* obj)
     /* return parent object */
     return &obj->z_parent;
 }
-
+p
 /* Destructor */
 void zGlands_Delete(zGlands* obj)
 {
@@ -71,7 +71,7 @@ int zGlands_Add(zGlands* obj,
     Z_CHECK_OBJ(obj);
     zg = zGland_New(&gland, dev, x, y, sz);
 
-    /* Set internal flag to true as the struct shall be copies to
+    /* Set internal flag to true as the struct shall be copied to
      * internal memory of alist and it needs freed */
     gland.z_int_flg = 1;
     if(!zg)
