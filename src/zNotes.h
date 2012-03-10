@@ -44,7 +44,7 @@ extern "C" {
     void zNotes_Delete(zNotes* obj);
 
     /* Add note */
-    int zNotes_Add(zNotes* obj, zDevice* dev, const char* note);
+    int zNotes_Add(zNotes* obj, const char* note);
 
     /***********************************************/    
     /* Property methods */

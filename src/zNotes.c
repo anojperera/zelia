@@ -33,7 +33,8 @@ zGenerics* zNotes_New(zNotes* obj,		/* optional argument */
 		free(obj);
 	    return NULL;
 	}
-
+    zGenerics_Set_Device(&obj->z_parent, dev);
+    
     /* Set properties */
     obj->_z_height = 0.0;
     obj->z_width = width;
@@ -77,7 +78,7 @@ void zNotes_Delete(zNotes* obj)
 }
 
 /* Add Notes */
-int zNotes_Add(zNotes* obj, zDevice* dev, const char* note)
+int zNotes_Add(zNotes* obj, const char* note)
 {
     zNote _note;
     zGeneric* _zg;
@@ -85,7 +86,6 @@ int zNotes_Add(zNotes* obj, zDevice* dev, const char* note)
     /* Check object and arguments */
     Z_CHECK_OBJ(obj);
     Z_CHECK_OBJ(note);
-    Z_CHECK_OBJ(dev);
 
     /* Check if title of the notes were set if
      * not return it */
@@ -254,22 +254,32 @@ static int _znotes_draw_helper(zNotes* obj)
     pango_font_description_free(_desc);
 
     /* Create attribute list */
-    _attr_list = pango_attr_list_new();
-    _attr = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
-    pango_attr_list_insert(_attr_list, _attr);
+    if(obj->z_uline_flg)
+	{
+	    _attr_list = pango_attr_list_new();
+	    _attr = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
+	    pango_attr_list_insert(_attr_list, _attr);
 
-    /* set list to layout */
-    pango_layout_set_attributes(_layout, _attr_list);
-
+	    /* set list to layout */
+	    pango_layout_set_attributes(_layout, _attr_list);
+	}
     pango_cairo_show_layout(_dev_c, _layout);
     
-    pango_attribute_destroy(_attr);
-    pango_attr_list_unref(_attr_list);
+    /* pango_attribute_destroy(_attr); */
+    if(obj->z_uline_flg)
+	pango_attr_list_unref(_attr_list);
 
     g_object_unref(_layout);
     
     /* restore cairo context */
     cairo_restore(_dev_c);
+
+    _device = NULL;
+    _dev_c = NULL;
+    _layout = NULL;
+    _desc = NULL;
+    _attr_list = NULL;
+    _attr = NULL;
     
     return 0;
 }
