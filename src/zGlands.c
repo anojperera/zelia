@@ -43,7 +43,7 @@ zGenerics* zGlands_New(zGlands* obj)
     /* return parent object */
     return &obj->z_parent;
 }
-p
+
 /* Destructor */
 void zGlands_Delete(zGlands* obj)
 {
