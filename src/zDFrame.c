@@ -107,6 +107,22 @@ inline unsigned int zDFrame_Get_Fillet_Flg(zDFrame* obj)
     return obj->z_fillet_flg;
 }
 
+/* Set frame return lip width */
+inline int zDFrame_Set_Return_Lip_Flg(zDFrame* obj, double width)
+{
+    /* Check object */
+    Z_CHECK_OBJ(obj);
+    obj->z_rtlip_width = width;
+    return 0;
+}
+
+/* Get return lip width */
+inline doible zDFrame_Get_Return_Lip_Flg(zDFrame* obj)
+{
+    Z_CHECK_OBJ_DOUBLE(obj);
+    return obj->z_rtlip_width;
+}
+
 /****************************************************************************/
 /* Private draw functions */
 
