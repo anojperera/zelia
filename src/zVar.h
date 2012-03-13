@@ -165,6 +165,15 @@
 #define Z_LINE_WEIGHT7 1.75
 #define Z_LINE_WEIGHT8 2.0
 
+/* line type dimensions */
+#define Z_LT_HIDDEN_ON 3.0
+#define Z_LT_HIDDEN_OFF 3.0
+
+#define Z_LT_CENTRE_ON 3.0
+#define Z_LT_CENTRE_OFF 3.0
+#define Z_LT_CENTRE_LONG 5.0
+
+
 /* Diameters */
 #define Z_M16_GLAND 16.0
 #define Z_M20_GLAND 20.0
@@ -200,6 +209,7 @@
 #define Z_NOTE(obj) ((zNote*) Z_BASE(obj)->z_child)
 #define Z_NOTES(obj) ((zNotes*) obj->z_child)
 #define Z_DFRAME(obj) ((zDFrame*) Z_BASE(obj)->z_child)
+#define Z_DSIDE_FRAME(obj) ((zDSideFrm*) Z_DFRAME(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
