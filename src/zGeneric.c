@@ -234,9 +234,43 @@ inline int zGeneric_Set_Defauts(zGeneric* obj)
 /* set line type */
 inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
 {
+    double _array[4];
+    
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
     obj->z_gltype = var;
+    Z_CHECK_OBJ(obj->z_gcairo_dev);
+    
+    switch(obj->z_gltype)
+	{
+	case zLTHidden:
+	    _array[0] = Z_LT_HIDDEN_ON;
+	    _array[1] = Z_LT_HIDDEN_OFF;
+	    cairo_set_dash(obj->z_gcairo_dev,
+			   _array,
+			   2,
+			   0.0);
+	    break;
+	case zLTCenter:
+	    _array[0] = Z_LT_CENTRE_ON;
+	    _array[1] = Z_LT_CENTRE_OFF;
+	    _array[2] = Z_LT_CENTRE_LONG;
+	    _array[3] = Z_LT_CENTRE_OFF;
+	    cairo_set_dash(obj->z_gcairo_dev,
+			   _array,
+			   4,
+			   0.0);	    
+	    break;
+	case zLTContinuous:
+	case default:
+	    _array[0] = 0.0;
+	    cairo_set_dash(obj->z_gcairo_dev,
+			   _array,
+			   0,
+			   0.0);
+	    break;
+	}
+	    
     return 0;
 }
 
