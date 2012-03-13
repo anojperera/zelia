@@ -21,7 +21,8 @@ struct _zBase
     double z_ang;				/* orientation angle */
     double z_width;				/* with */
     double z_height;				/* height */
-
+    double z_thk;				/* thickness of material */
+    unsigned int z_prj_flg;			/* projected flag */
     zgeneric_fptr z_draw_func;			/* draw function */
 };
 
@@ -50,8 +51,13 @@ extern "C" {
 
     inline int zBase_Set_Height(zBase* obj, double height);
     inline double zBase_Get_Height(zBase* obj);
-    
 
+    inline int zBase_Set_Thickness(zBase* obj, double thk);
+    inline double zBase_Get_Thickness(zBase* obj);
+
+    inline int zBase_Set_Projected_Flag(zBase* obj, unsigned int flg);
+    inline unsigned int zBase_Get_Projected_Flag(zBase* obj);
+    
 #ifdef __cplusplus
 }
 #endif

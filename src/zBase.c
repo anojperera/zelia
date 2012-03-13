@@ -28,6 +28,8 @@ zGeneric* zBase_New(zBase* obj)
     obj->z_ang = 0.0;
     obj->z_width = 0.0;
     obj->z_height = 0.0;
+    obj->z_thk = 0.0;
+    obj->z_prj_flg = 0;
     obj->z_child = NULL;
 
     obj->z_draw_func = NULL;
@@ -118,6 +120,38 @@ inline double zBase_Get_Height(zBase* obj)
 {
     Z_CHECK_OBJ_DOUBLE(obj);
     return obj->z_height;
+}
+
+/* Set projected flag */
+inline int zBase_Set_Projected_Flag(zBase* obj, unsigned int flg)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_prj_flg = flg;
+    return 0;
+}
+
+/* Get projected flag */
+inline unsigned int zBase_Get_Projected_Flag(zBase* obj)
+{
+    if(obj == NULL)
+	return 0;
+    else
+	return obj->z_prj_flg;
+}
+
+/* Set material thickness */
+inline int zBase_Set_Thickness(zBase* obj, double thk)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_thk = thk;
+    return 0;
+}
+
+/* Get material thickness */
+inline double zBase_Get_Thickness(zBase* obj)
+{
+    Z_CHECK_OBJ_DOUBLE(obj);
+    return obj->z_thk;
 }
 
 /*==================================================================*/
