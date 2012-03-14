@@ -187,10 +187,18 @@
 #define Z_ARROW_HEIGHT2 5.0
 #define Z_ARROW_HEIGHT3 8.0
 
+/* Table font style */
+#define Z_TABLE_FONT_STYLE "Century Gothic 10"
+
 /* Note default indent */
 #define Z_NOTE_INDENT 10.0
 #define Z_NOTE_LINE_HEIGHT 8.0
 #define Z_NOTE_FONT_STYLE "Century Gothic 10"
+
+/* Mullion default return lip width */
+#define Z_MULLION_RETURN_LIP 25.0
+#define Z_MULLION_COVERPLATE_GAP 5.0
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
@@ -211,6 +219,7 @@
 #define Z_DFRAME(obj) ((zDFrame*) Z_BASE(obj)->z_child)
 #define Z_DSIDE_FRAME(obj) ((zDSideFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DTB_FRAME(obj) ((zDTBFrm*) Z_DFRAME(obj)->z_child)
+#define Z_DML_FRAME(obj) ((zDMLFrm*) Z_DFRAME(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
