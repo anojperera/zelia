@@ -19,12 +19,17 @@
 #include "zTable.h"
 #include "zNote.h"
 #include "zNotes.h"
+#include "zDFrame.h"
+#include "zDSideFrm.h"
+#include "zDTBFrm.h"
 
 int main(int argc, char** argv)
 {
     zDevice dev;		/* device object */
     zGeneric* sht;
     zGeneric* table;		/* table */
+    zGeneric* dfrm;		/* drive frame */
+    zGeneric* tbfrm;		/* top frame */
     zGenerics* notes;		/* note */
     
     zBrd_Attrib* attrib;
@@ -80,7 +85,6 @@ int main(int argc, char** argv)
     /* set attributes */
     zSheet_Set_Attributes(Z_SHEET(sht), attrib);
 
-
     table = zTable_New(NULL);
     zGeneric_Set_Device(table, &dev);
 
@@ -96,16 +100,34 @@ int main(int argc, char** argv)
     zNotes_Add(Z_NOTES(notes), "FRAMES ARE CONTINUOUSLY WELDED CONSTRUCTION.");
     zNotes_Add(Z_NOTES(notes), "DAMPER BLADES TO BE HOT DIP GALVANISED.");
     zNotes_Add(Z_NOTES(notes), "BLADES ARE WELDED TO SHAFTS.");
-    
+
+    dfrm = zDSideFrm_New(NULL);
+    zGeneric_Set_Device(dfrm, &dev);
+    zGeneric_Set_Default_Dev_Context(dfrm);
+    zBase_Set_Base_Coords(Z_BASE(dfrm), 260.0, 40.0);
+    zBase_Set_Width_and_Height(Z_BASE(dfrm), 10.0, 100.0);
+    zBase_Set_Thickness(Z_BASE(dfrm), 2.0);
+    zDFrame_Set_Return_Lip_Flg(Z_DFRAME(dfrm), 1);
+
+    tbfrm = zDTBFrm_New(NULL);
+    zGeneric_Set_Device(tbfrm, &dev);
+    zGeneric_Set_Default_Dev_Context(tbfrm);
+    zBase_Set_Base_Coords(Z_BASE(tbfrm), 270.0, 40.0);
+    zBase_Set_Width_and_Height(Z_BASE(tbfrm), 100.0, 10.0);
+
     /* create border */
     zGeneric_Draw(sht);
+    zGeneric_Draw(dfrm);
     zGeneric_Draw(table);
+    zGeneric_Draw(tbfrm);
     zGenerics_Draw(notes);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zTable_Delete(Z_TABLE(table));
     zNotes_Delete(Z_NOTES(notes));
+    zDSideFrm_Delete(Z_DSIDE_FRAME(dfrm));
+    zDTBFrm_Delete(Z_DTB_FRAME(tbfrm));
     zDevice_Delete(&dev);
 
     if(attrib)
