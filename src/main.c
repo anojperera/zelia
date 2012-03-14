@@ -29,7 +29,9 @@ int main(int argc, char** argv)
     zGeneric* sht;
     zGeneric* table;		/* table */
     zGeneric* dfrm;		/* drive frame */
-    zGeneric* tbfrm;		/* top frame */
+    zGeneric* nfrm;		/* non drive side frame */
+    zGeneric* tfrm;		/* top frame */
+    zGeneric* bfrm;		/* bottom frame */
     zGenerics* notes;		/* note */
     
     zBrd_Attrib* attrib;
@@ -109,17 +111,34 @@ int main(int argc, char** argv)
     zBase_Set_Thickness(Z_BASE(dfrm), 2.0);
     zDFrame_Set_Return_Lip_Flg(Z_DFRAME(dfrm), 1);
 
-    tbfrm = zDTBFrm_New(NULL);
-    zGeneric_Set_Device(tbfrm, &dev);
-    zGeneric_Set_Default_Dev_Context(tbfrm);
-    zBase_Set_Base_Coords(Z_BASE(tbfrm), 270.0, 40.0);
-    zBase_Set_Width_and_Height(Z_BASE(tbfrm), 100.0, 10.0);
+    nfrm = zDSideFrm_New(NULL);
+    zGeneric_Set_Device(nfrm, &dev);
+    zGeneric_Set_Default_Dev_Context(nfrm);
+    zBase_Set_Base_Coords(Z_BASE(nfrm), 360.0, 50.0);
+    zBase_Set_Width_and_Height(Z_BASE(nfrm), 10.0, 80.0);
+    zBase_Set_Thickness(Z_BASE(nfrm), 2.0);
+    /* zDFrame_Set_Side_Flg(Z_DFRAME(nfrm), 1); */
+    /* zDFrame_Set_Return_Lip_Flg(Z_DFRAME(nfrm), 1);     */
+
+    tfrm = zDTBFrm_New(NULL);
+    zGeneric_Set_Device(tfrm, &dev);
+    zGeneric_Set_Default_Dev_Context(tfrm);
+    zBase_Set_Base_Coords(Z_BASE(tfrm), 270.0, 40.0);
+    zBase_Set_Width_and_Height(Z_BASE(tfrm), 100.0, 10.0);
+
+    bfrm = zDTBFrm_New(NULL);
+    zGeneric_Set_Device(bfrm, &dev);
+    zGeneric_Set_Default_Dev_Context(bfrm);
+    zBase_Set_Base_Coords(Z_BASE(bfrm), 270.0, 130.0);
+    zBase_Set_Width_and_Height(Z_BASE(bfrm), 100.0, 10.0);    
 
     /* create border */
     zGeneric_Draw(sht);
     zGeneric_Draw(dfrm);
+    zGeneric_Draw(nfrm);
     zGeneric_Draw(table);
-    zGeneric_Draw(tbfrm);
+    zGeneric_Draw(tfrm);
+    zGeneric_Draw(bfrm);
     zGenerics_Draw(notes);
     
     /* delete objects */
@@ -127,7 +146,9 @@ int main(int argc, char** argv)
     zTable_Delete(Z_TABLE(table));
     zNotes_Delete(Z_NOTES(notes));
     zDSideFrm_Delete(Z_DSIDE_FRAME(dfrm));
-    zDTBFrm_Delete(Z_DTB_FRAME(tbfrm));
+    zDSideFrm_Delete(Z_DSIDE_FRAME(nfrm));
+    zDTBFrm_Delete(Z_DTB_FRAME(tfrm));
+    zDTBFrm_Delete(Z_DTB_FRAME(bfrm));
     zDevice_Delete(&dev);
 
     if(attrib)
