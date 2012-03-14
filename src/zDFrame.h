@@ -19,11 +19,11 @@ struct _zDFrame
     zBase z_parent;				/* Inherited parent class */
     unsigned int z_int_flg;			/* Internal flag */
     unsigned int z_rtlip_flg;			/* Flag to indicate return lip */
-    unsigned int z_frm_type;			/* Frame type - FD or ND
-    						 * 0 - FD frame
-						 * 1 - ND frame */
     
     unsigned int z_fillet_flg;			/* Flag to indicate fillet the frame */
+    unsigned int z_side_flg;			/* Side flag, default is
+						 * left - for side,
+						 * top - tb frame */
     double z_rtlip_width;			/* Return lip width */
     zgeneric_fptr z_draw_func;			/* Draw function */
     void* z_child;				/* Child pointer */
@@ -46,10 +46,6 @@ extern "C" {
     inline int zDFrame_Set_Return_Lip_Flg(zDFrame* obj, unsigned int flg);
     inline unsigned int zDFrame_Get_Return_Lip_Flg(zDFrame* obj);
 
-    /* Set and get frame type */
-    inline int zDFrame_Set_Frame_Type(zDFrame* obj, unsigned int ztype);
-    inline unsigned int zDFrame_Get_Frame_Type(zDFrame* obj);
-
     /* Set and get fillet type flag */
     inline int zDFrame_Set_Fillet_Flg(zDFrame* obj, unsigned int flg);
     inline unsigned int zDFrame_Get_Fillet_Flg(zDFrame* obj);
@@ -57,6 +53,13 @@ extern "C" {
     /* Set and get return lip flag */
     inline int zDFrame_Set_Return_Lip_Width(zDFrame* obj, double width);
     inline double zDFrame_Get_Return_Lip_Width(zDFrame* obj);
+
+    /* Set and get side flag */
+    /* Side flag is to differentiate side and tb frame between
+     * left, right and top and bottom. Default for side frame is
+     * left and top for tb frame. */
+    inline int zDFrame_Set_Side_Flg(zDFrame* obj, unsigned int flg);
+    inline unsigned int zDFrame_Get_Side_Flg(zDFrame* obj);
 #ifdef __cplusplus
 }
 #endif    

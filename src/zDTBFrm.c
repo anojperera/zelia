@@ -84,7 +84,8 @@ int zDTBFrm_Draw(zDTBFrm* obj)
     if(obj->z_parent.z_rtlip_flg && _base->z_thk)
 	{
 	    _x = _base->z_x + _base->z_width;
-	    _y = _base->z_y + _base->z_thk;
+	    _y = _base->z_y + (obj->z_parent.z_side_flg? _base->z_height : 0.0)
+		+ (obj->z_parent.z_side_flg? -1 : 1) * _base->z_thk;
 	    /* set line type hidden */
 	    zGeneric_Set_LintType(_generic, zLTHidden);
 	    cairo_move_to(_dev_c,

@@ -23,8 +23,8 @@ zGeneric* zDFrame_New(zDFrame* obj)
 
     /* Set properties */
     obj->z_rtlip_flg = 0;
-    obj->z_frm_type = 0;		/* FD frame */
     obj->z_fillet_flg = 1;		/* Fillet as required */
+    obj->z_side_flg = 0;		/* Side flag */
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
 
@@ -74,23 +74,6 @@ inline unsigned int zDFrame_Get_Return_Lip_Flg(zDFrame* obj)
     return obj->z_rtlip_flg;
 }
 
-/* Set frame type */
-inline int zDFrame_Set_Frame_Type(zDFrame* obj, unsigned int ztype)
-{
-    Z_CHECK_OBJ(obj);
-    obj->z_frm_type = ztype;
-    return 0;
-}
-
-/* Get frame type */
-inline unsigned int zDFrame_Get_Frame_Type(zDFrame* obj)
-{
-    if(obj == NULL)
-	return 0;
-
-    return obj->z_frm_type;
-}
-
 /* Set frame fillet flag */
 inline int zDFrame_Set_Fillet_Flg(zDFrame* obj, unsigned int flg)
 {
@@ -123,6 +106,21 @@ inline double zDFrame_Get_Return_Lip_Width(zDFrame* obj)
     return obj->z_rtlip_width;
 }
 
+/* Set side flag */
+inline int zDFrame_Set_Side_Flg(zDFrame* obj, unsigned int flg)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_side_flg = flg;
+    return 0;
+}
+
+/* Get side flag */
+inline unsigned int zDFrame_Get_Side_Flg(zDFrame* obj)
+{
+    if(obj == NULL)
+	return 0;
+    return obj->z_side_flg;
+}
 /****************************************************************************/
 /* Private draw functions */
 

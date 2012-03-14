@@ -86,7 +86,8 @@ int zDSideFrm_Draw(zDSideFrm* obj)
     /* Check if return lip flag was enable and draw it */
     if(obj->z_parent.z_rtlip_flg && _base->z_thk)
 	{
-	    _x = _base->z_x + _base->z_thk;
+	    _x = _base->z_x + (obj->z_parent.z_side_flg? _base->z_width : 0.0)
+		+ (obj->z_parent.z_side_flg? -1 : 1) * _base->z_thk;
 	    _y = _base->z_y + _base->z_height;
 	    /* set line type to hidden */
 	    zGeneric_Set_LintType(_generic, zLTHidden);
