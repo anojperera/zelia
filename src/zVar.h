@@ -195,9 +195,12 @@
 #define Z_NOTE_LINE_HEIGHT 8.0
 #define Z_NOTE_FONT_STYLE "Century Gothic 10"
 
-/* Mullion default return lip width */
+/* Mullion dimensions */
 #define Z_MULLION_RETURN_LIP 25.0
 #define Z_MULLION_COVERPLATE_GAP 5.0
+
+/* Transom dimensions */
+#define Z_TRANSOM_RETURN_LIP 25.0
 
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
@@ -220,6 +223,7 @@
 #define Z_DSIDE_FRAME(obj) ((zDSideFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DTB_FRAME(obj) ((zDTBFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DML_FRAME(obj) ((zDMLFrm*) Z_DFRAME(obj)->z_child)
+#define Z_DTR_FRAME(obj) ((zDTRFrm*) Z_DFRAME(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
