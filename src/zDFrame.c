@@ -78,7 +78,7 @@ inline unsigned int zDFrame_Get_Return_Lip_Flg(zDFrame* obj)
 inline int zDFrame_Set_Frame_Type(zDFrame* obj, unsigned int ztype)
 {
     Z_CHECK_OBJ(obj);
-    obj->z_frm_type = flg;
+    obj->z_frm_type = ztype;
     return 0;
 }
 
@@ -108,7 +108,7 @@ inline unsigned int zDFrame_Get_Fillet_Flg(zDFrame* obj)
 }
 
 /* Set frame return lip width */
-inline int zDFrame_Set_Return_Lip_Flg(zDFrame* obj, double width)
+inline int zDFrame_Set_Return_Lip_Width(zDFrame* obj, double width)
 {
     /* Check object */
     Z_CHECK_OBJ(obj);
@@ -117,7 +117,7 @@ inline int zDFrame_Set_Return_Lip_Flg(zDFrame* obj, double width)
 }
 
 /* Get return lip width */
-inline doible zDFrame_Get_Return_Lip_Flg(zDFrame* obj)
+inline double zDFrame_Get_Return_Lip_Width(zDFrame* obj)
 {
     Z_CHECK_OBJ_DOUBLE(obj);
     return obj->z_rtlip_width;

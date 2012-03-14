@@ -55,8 +55,8 @@ extern "C" {
     inline unsigned int zDFrame_Get_Fillet_Flg(zDFrame* obj);
 
     /* Set and get return lip flag */
-    inline int zDFrame_Set_Return_Lip_Flg(zDFrame* obj, double width);
-    inline doible zDFrame_Get_Return_Lip_Flg(zDFrame* obj);
+    inline int zDFrame_Set_Return_Lip_Width(zDFrame* obj, double width);
+    inline double zDFrame_Get_Return_Lip_Width(zDFrame* obj);
 #ifdef __cplusplus
 }
 #endif    

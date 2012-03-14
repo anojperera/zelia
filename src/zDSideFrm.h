@@ -1,4 +1,4 @@
-/* Header file for Drive side frame class. Inherits zDFrame class.
+/* Header file for side frame class. Inherits zDFrame class.
  * Tue Mar 13 20:32:27 GMT 2012 */
 
 #ifndef _ZDSIDEFRM_H_

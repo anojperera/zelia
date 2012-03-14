@@ -57,6 +57,7 @@ int zDSideFrm_Draw(zDSideFrm* obj)
     zGeneric* _generic;
     zBase* _base;
     cairo_t* _dev_c;
+    double _x, _y;
     
     /* check object */
     Z_CHECK_OBJ(obj);
@@ -80,22 +81,25 @@ int zDSideFrm_Draw(zDSideFrm* obj)
 		    CONV_TO_POINTS(_base->z_y),
 		    CONV_TO_POINTS(_base->z_width),
 		    CONV_TO_POINTS(_base->z_height));
+    cairo_stroke(_dev_c);
 
     /* Check if return lip flag was enable and draw it */
-    if(obj->z_parent.z_rtlip_flg)
+    if(obj->z_parent.z_rtlip_flg && _base->z_thk)
 	{
+	    _x = _base->z_x + _base->z_thk;
+	    _y = _base->z_y + _base->z_height;
 	    /* set line type to hidden */
 	    zGeneric_Set_LintType(_generic, zLTHidden);
 	    cairo_move_to(_dev_c,
-			  CONV_TO_POINTS(_base->z_thk),
-			  0.0);
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_base->z_y));
 	    cairo_line_to(_dev_c,
-			  0.0,
-			  CONV_TO_POINTS(_base->z_height));
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_stroke(_dev_c);
 	    zGeneric_Set_LintType(_generic, zLTContinuous);
 	}
 
-    cairo_stroke(_dev_c);
 
     /* Restore device context */
     cairo_restore(_dev_c);
@@ -105,4 +109,22 @@ int zDSideFrm_Draw(zDSideFrm* obj)
     _dev_c = NULL;
 
     return 0;
+}
+
+/***************************************************************************/
+/* Private functions */
+
+/* Virtual draw method */
+static int _zdsidefrm_draw(zGeneric* obj)
+{
+    int rt_val;
+    zDSideFrm* _sdfrm;
+    
+    Z_CHECK_OBJ(obj);
+    _sdfrm = Z_DSIDE_FRAME(obj);
+    rt_val = zDSideFrm_Draw(Z_DSIDE_FRAME(obj));
+    if(_sdfrm->z_draw_func)
+	return _sdfrm->z_draw_func(obj);
+    else
+	return rt_val;
 }

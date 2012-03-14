@@ -262,7 +262,7 @@ inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
 			   0.0);	    
 	    break;
 	case zLTContinuous:
-	case default:
+	default:
 	    _array[0] = 0.0;
 	    cairo_set_dash(obj->z_gcairo_dev,
 			   _array,
