@@ -229,6 +229,7 @@
 #define Z_DTB_FRAME(obj) ((zDTBFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DML_FRAME(obj) ((zDMLFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DTR_FRAME(obj) ((zDTRFrm*) Z_DFRAME(obj)->z_child)
+#define Z_DAMPER(obj) ((zDamper*) Z_BASE(obj)->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
