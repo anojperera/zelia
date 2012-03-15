@@ -80,7 +80,7 @@ int zDTRFrm_Draw(zDTRFrm* obj)
 		    CONV_TO_POINTS(_base->z_height));
     cairo_stroke(_dev_c);
 
-    _x = _base->z_x + obj->z_width;
+    _x = _base->z_x + _base->z_width;
     if(obj->z_tr_return_lip > 0.0)
 	{
 	    _y = _base->z_y + obj->z_tr_return_lip;
@@ -90,7 +90,7 @@ int zDTRFrm_Draw(zDTRFrm* obj)
 			  CONV_TO_POINTS(_y));
 	    cairo_line_to(_dev_c,
 			  CONV_TO_POINTS(_x),
-			  CONV_TO_POINTS(_Y));
+			  CONV_TO_POINTS(_y));
 	    
 	    _y = _base->z_y + _base->z_height - obj->z_tr_return_lip;
 	    cairo_move_to(_dev_c,
@@ -98,7 +98,7 @@ int zDTRFrm_Draw(zDTRFrm* obj)
 			  CONV_TO_POINTS(_y));
 	    cairo_line_to(_dev_c,
 			  CONV_TO_POINTS(_x),
-			  CONV_TO_POINTS(_Y));
+			  CONV_TO_POINTS(_y));
 	    cairo_stroke(_dev_c);
 	    zGeneric_Set_LintType(_generic, zLTContinuous);	    
 	}
@@ -124,4 +124,20 @@ inline double zDTRFrm_Get_Return_Lip(zDTRFrm* obj)
 {
     Z_CHECK_OBJ_DOUBLE(obj);
     return obj->z_tr_return_lip;
+}
+
+/* Private Function */
+/* Virtual draw function */
+static int _zdtrfrm_draw(zGeneric* obj)
+{
+    zDTRFrm* _tr;
+    int rt_val;
+
+    Z_CHECK_OBJ(obj);
+    rt_val = zDTRFrm_Draw(Z_DTR_FRAME(obj));
+    _tr = Z_DTR_FRAME(obj);
+    if(_tr->z_draw_func)
+	return _tr->z_draw_func(obj);
+    else
+	return rt_val;
 }

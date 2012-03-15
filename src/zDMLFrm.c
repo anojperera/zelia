@@ -21,7 +21,7 @@ zGeneric* zDMLFrm_New(zDMLFrm* obj)
 	{
 	    if(obj->z_int_flg)
 		free(obj);
-	    return;
+	    return NULL;
 	}
 
     /* set properties */
@@ -84,7 +84,7 @@ int zDMLFrm_Draw(zDMLFrm* obj)
 		    CONV_TO_POINTS(_base->z_height));
     cairo_stroke(_dev_c);
     
-    _y = _base->z_y + obj->z_height;
+    _y = _base->z_y + _base->z_height;
     if(obj->z_ml_type == 0)
 	{
 	    _x = _base->z_x + Z_MULLION_COVERPLATE_GAP;
@@ -110,7 +110,7 @@ int zDMLFrm_Draw(zDMLFrm* obj)
 	{
 	    zGeneric_Set_LintType(_generic, zLTHidden);
 	    _x = _base->z_x + obj->z_ml_return_lip;
-	    cairo_mov_to(_dev_c,
+	    cairo_move_to(_dev_c,
 			  CONV_TO_POINTS(_x),
 			  CONV_TO_POINTS(_base->z_y));
 	    cairo_line_to(_dev_c,
