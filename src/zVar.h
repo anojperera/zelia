@@ -198,9 +198,14 @@
 /* Mullion dimensions */
 #define Z_MULLION_RETURN_LIP 25.0
 #define Z_MULLION_COVERPLATE_GAP 5.0
+#define Z_MULLION_WIDTH 120.0
 
 /* Transom dimensions */
 #define Z_TRANSOM_RETURN_LIP 25.0
+#define Z_TRANSOM_WIDTH 120.0
+
+/* Damper frame flange */
+#define Z_DAMPER_FLANGE 50.0
 
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
