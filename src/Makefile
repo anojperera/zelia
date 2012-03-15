@@ -9,7 +9,8 @@ CCC = gcc
 CCP = g++
 OBJS = main.o zDevice.o zGeneric.o zSheet.o zBase.o zTerminal.o zGenerics.o \
 zTerminals.o zJB.o zGland.o zGlands.o zArrow.o zLeader.o zTCell.o zTCells.o \
-zTRow.o zTRows.o zTable.o zNote.o zNotes.o zDFrame.o zDSideFrm.o zDTBFrm.o
+zTRow.o zTRows.o zTable.o zNote.o zNotes.o zDFrame.o zDSideFrm.o zDTBFrm.o \
+zDMLFrm.o zDTRFrm.o
 LIBSP = ../../g_list/bin/alist.a
 GTKOBJS = `pkg-config --libs gtk+-2.0`
 GTKCFLGS = `pkg-config --cflags gtk+-2.0`
@@ -85,6 +86,12 @@ zDSideFrm.o : zDSideFrm.c zDSideFrm.h
 
 zDTBFrm.o : zDTBFrm.c zDTBFrm.h
 		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zDTBFrm.c $(GTKCFLGS)
+
+zDMLFrm.o : zDMLFrm.c zDMLFrm.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zDMLFrm.c $(GTKCFLGS)
+
+zDTRFrm.o : zDTRFrm.c zDTRFrm.h
+		$(CCC) $(CFLAGS1) $(CFLAGS2) $(CFLAGS3) -c zDTRFrm.c $(GTKCFLGS)
 
 clean :
 	rm -fv *.o
