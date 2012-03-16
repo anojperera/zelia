@@ -43,7 +43,7 @@ zGeneric* zDamper_New(zDamper* obj)
     obj->z_parent.z_child = (void*) obj;
 
     /* return parent object */
-    return &obj->z_parent;
+    return &obj->z_parent.z_sgeneric;
 }
 
 
@@ -69,9 +69,8 @@ int zDamper_Draw(zDamper* obj)
     zGeneric* _lf, *_rf, *_tf, *_bf;		/* frames */
     zGeneric* _ml, *_tr;			/* mullion and transoms */
     zDevice* _dev;
-    double _width, _height;
+    double _height;
     double _mod_width, _mod_height, _ml_width, _tr_width;
-    double i;
     int a, j;
     
     /* Check object */
@@ -100,14 +99,14 @@ int zDamper_Draw(zDamper* obj)
 
     /****************************************************/
     /* Non Drive side frame dimensions */
-    _rh = &obj->z_rh_frm.z_parent.z_parent.z_sgeneric;
-    zBase_Set_Base_Coords(Z_BASE(_rh),
+    _rf = &obj->z_rh_frm.z_parent.z_parent.z_sgeneric;
+    zBase_Set_Base_Coords(Z_BASE(_rf),
 			  obj->z_parent.z_y +
 			  (obj->z_frm_type > 0? 0 : 1) * obj->z_oflange,
-			  obj->z_parent.z_x + obj->z_dflange + obj->z_width);
+			  obj->z_parent.z_x + obj->z_dflange + obj->z_parent.z_width);
     zBase_Set_Width_and_Height(Z_BASE(_rf),
 			       obj->z_oflange,
-			       obj->z_frm_type > 0? _height : obj->z_height);
+			       obj->z_frm_type > 0? _height : obj->z_parent.z_height);
     zGeneric_Set_Device(_rf, _dev);
     zGeneric_Set_Default_Dev_Context(_rf);
 
@@ -145,7 +144,7 @@ int zDamper_Draw(zDamper* obj)
     
     if(obj->z_mls)
 	{
-	    _ml_width = obj->z_mls[0].z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_width :
+	    _ml_width = obj->z_mls[0].z_parent.z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_parent.z_width :
 			 Z_MULLION_WIDTH;
 	    _mod_width = (obj->z_parent.z_width - _ml_width * (double) obj->z_num_ml) / (obj->z_num_ml + 1);
 	    for(a = 0; a < obj->z_num_ml; a++)
@@ -166,7 +165,7 @@ int zDamper_Draw(zDamper* obj)
 
     if(obj->z_trs)
 	{
-	    _tr_width = obj->z_trs[0].z_parent.z_width > 0.0? obj->z_trs[0].z_parent.z_width :
+	    _tr_width = obj->z_trs[0].z_parent.z_parent.z_width > 0.0? obj->z_trs[0].z_parent.z_parent.z_width :
 		Z_TRANSOM_WIDTH;
 	    _mod_height = (obj->z_parent.z_height - _tr_width * (double) obj->z_num_tr) / (obj->z_num_tr + 1);
 	    for(a = 0; a < obj->z_num_tr; a++)
@@ -260,7 +259,7 @@ inline int zDamper_Set_NonDrive_Flange(zDamper* obj, double flange)
 /* Get non drive flange */
 inline double zDamper_Get_NonDrive_Flange(zDamper* obj)
 {
-    Z_CHECK_OBJ_PTR(obj);
+    Z_CHECK_OBJ_DOUBLE(obj);
     return obj->z_oflange;
 }
 
@@ -325,4 +324,22 @@ inline zDTRFrm* zDamper_Get_Transom(zDamper* obj, unsigned int ix)
 	return NULL;
 
     return &obj->z_trs[ix];
+}
+
+/*******************************************************************/
+/* Private functions */
+
+/* Virtual draw functions */
+static int _zdamper_draw(zGeneric* obj)
+{
+    zDamper* _dmp;
+    int rt_val;
+
+    Z_CHECK_OBJ(obj);
+    _dmp = Z_DAMPER(obj);
+    rt_val = zDamper_Draw(Z_DAMPER(obj));
+    if(_dmp->z_draw_func)
+	return _dmp->z_draw_func(obj);
+    else
+	return rt_val;
 }
