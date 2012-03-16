@@ -101,14 +101,14 @@ int main(int argc, char** argv)
     dmp = zDamper_New(NULL);
     zGeneric_Set_Device(dmp, &dev);
     zGeneric_Set_Default_Dev_Context(dmp);
-    zBase_Set_Base_Coords(Z_BASE(dmp), 260.0, 40);
+    zBase_Set_Base_Coords(Z_BASE(dmp), 30.0, 50.0);
     zBase_Set_Width_and_Height(Z_BASE(dmp), 150.0, 150.0);
     zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
 
     /* create border */
     zGeneric_Draw(sht);
-    zGeneric_Draw(table);
+    /* zGeneric_Draw(table); */
     zGenerics_Draw(notes);
     zGeneric_Draw(dmp);
     

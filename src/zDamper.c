@@ -23,9 +23,10 @@ zGeneric* zDamper_New(zDamper* obj)
     /* set properties */
     zDSideFrm_New(&obj->z_lh_frm);
     zDSideFrm_New(&obj->z_rh_frm);
+    zDFrame_Set_Side_Flg(&obj->z_rh_frm.z_parent, 1);
     zDTBFrm_New(&obj->z_t_frm);
     zDTBFrm_New(&obj->z_b_frm);
-
+    zDFrame_Set_Side_Flg(&obj->z_b_frm.z_parent, 1);    
     /* Set transom and mullion collection */
     obj->z_mls = NULL;
     obj->z_trs = NULL;
@@ -111,15 +112,15 @@ int zDamper_Draw(zDamper* obj)
     
     /****************************************************/
     /* Drive side frame dimensions */
-    /* _height = obj->z_parent.z_height + 2 * obj->z_oflange; */
-    /* _lf = &obj->z_lh_frm.z_parent.z_parent.z_sgeneric; */
-    /* zBase_Set_Base_Coords(Z_BASE(_lf), obj->z_parent.z_x, obj->z_parent.z_y); */
-    /* zBase_Set_Width_and_Height(Z_BASE(_lf), */
-    /* 			       obj->z_dflange, */
-    /* 			       _height); */
-    /* zGeneric_Set_Device(_lf, _dev); */
-    /* zGeneric_Set_Default_Dev_Context(_lf); */
-    /* zDFrame_Set_Return_Lip_Flg(Z_DFRAME(_lf), 1); */
+    _height = obj->z_parent.z_height + 2 * obj->z_oflange;
+    _lf = &obj->z_lh_frm.z_parent.z_parent.z_sgeneric;
+    zBase_Set_Base_Coords(Z_BASE(_lf), obj->z_parent.z_x, obj->z_parent.z_y);
+    zBase_Set_Width_and_Height(Z_BASE(_lf),
+    			       obj->z_dflange,
+    			       _height);
+    zGeneric_Set_Device(_lf, _dev);
+    zGeneric_Set_Default_Dev_Context(_lf);
+    zDFrame_Set_Return_Lip_Flg(Z_DFRAME(_lf), 1);
 
     /****************************************************/
     /* Non Drive side frame dimensions */
@@ -131,34 +132,33 @@ int zDamper_Draw(zDamper* obj)
     zBase_Set_Width_and_Height(Z_BASE(_rf),
 			       obj->z_oflange,
 			       obj->z_frm_type > 0? _height : obj->z_parent.z_height);
-    zDFrame_Set_Side_Flg(Z_DFRAME(_rf), 1);
+
     zGeneric_Set_Device(_rf, _dev);
     zGeneric_Set_Default_Dev_Context(_rf);
 
     /****************************************************/
     /* Top frame */
-    /* _tf = &obj->z_t_frm.z_parent.z_parent.z_sgeneric; */
-    /* zBase_Set_Base_Coords(Z_BASE(_tf), */
-    /* 			  obj->z_parent.z_x + obj->z_dflange, */
-    /* 			  obj->z_parent.z_y); */
-    /* zBase_Set_Width_and_Height(Z_BASE(_tf), */
-    /* 			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange, */
-    /* 			       obj->z_oflange); */
-    /* zGeneric_Set_Device(_tf, _dev); */
-    /* zGeneric_Set_Default_Dev_Context(_tf); */
+    _tf = &obj->z_t_frm.z_parent.z_parent.z_sgeneric;
+    zBase_Set_Base_Coords(Z_BASE(_tf),
+    			  obj->z_parent.z_x + obj->z_dflange,
+    			  obj->z_parent.z_y);
+    zBase_Set_Width_and_Height(Z_BASE(_tf),
+    			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange,
+    			       obj->z_oflange);
+    zGeneric_Set_Device(_tf, _dev);
+    zGeneric_Set_Default_Dev_Context(_tf);
 
-    /* /\****************************************************\/ */
-    /* /\* Bottom frame *\/ */
-    /* _bf = &obj->z_b_frm.z_parent.z_parent.z_sgeneric; */
-    /* zBase_Set_Base_Coords(Z_BASE(_bf), */
-    /* 			  obj->z_parent.z_x + obj->z_dflange, */
-    /* 			  _height - obj->z_oflange); */
-    /* zBase_Set_Width_and_Height(Z_BASE(_bf), */
-    /* 			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange, */
-    /* 			       obj->z_oflange); */
-
-    /* zGeneric_Set_Device(_bf, _dev); */
-    /* zGeneric_Set_Default_Dev_Context(_bf); */
+    /****************************************************/
+    /* Bottom frame */
+    _bf = &obj->z_b_frm.z_parent.z_parent.z_sgeneric;
+    zBase_Set_Base_Coords(Z_BASE(_bf),
+    			  obj->z_parent.z_x + obj->z_dflange,
+    			  _height - obj->z_oflange);
+    zBase_Set_Width_and_Height(Z_BASE(_bf),
+    			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange,
+    			       obj->z_oflange);
+    zGeneric_Set_Device(_bf, _dev);
+    zGeneric_Set_Default_Dev_Context(_bf);
     /****************************************************/
     /* Draw mullion and transom */
     /* calculate modular width and height */
@@ -213,10 +213,10 @@ int zDamper_Draw(zDamper* obj)
     /* 	} */
 
     /* Call draw methods of frame components */
-    /* zGeneric_Draw(_lf); */
+    zGeneric_Draw(_lf);
     zGeneric_Draw(_rf);
-    /* zGeneric_Draw(_tr); */
-    /* zGeneric_Draw(_bf); */
+    zGeneric_Draw(_tf);
+    zGeneric_Draw(_bf);
 
     _zg = NULL;
     _lf = NULL;
