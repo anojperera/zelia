@@ -50,11 +50,35 @@ zGeneric* zDamper_New(zDamper* obj)
 /* Destructor */
 void zDamper_Delete(zDamper* obj)
 {
+    int i;
     /* check object */
     Z_CHECK_OBJ_VOID(obj);
 
     zBase_Delete(&obj->z_parent);
 
+    /* Delete objects */
+    zDSideFrm_Delete(&obj->z_lh_frm);
+    zDSideFrm_Delete(&obj->z_rh_frm);
+    zDTBFrm_Delete(&obj->z_t_frm);
+    zDTBFrm_Delete(&obj->z_b_frm);
+
+    if(obj->z_num_ml > 0 && obj->z_mls)
+	{
+	    for(i = 0; i < obj->z_num_ml; i++)
+		zDMLFrm_Delete(&obj->z_mls[i]);
+	    free(obj->z_mls);
+
+	}
+
+    if(obj->z_num_tr > 0 && obj->z_trs)
+	{
+	    for(i = 0; i < obj->z_num_tr; i++)
+		zDTRFrm_Delete(&obj->z_trs[i]);
+	    free(obj->z_trs);
+	}
+
+    obj->z_mls = NULL;
+    obj->z_trs = NULL;
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
 
@@ -87,111 +111,112 @@ int zDamper_Draw(zDamper* obj)
     
     /****************************************************/
     /* Drive side frame dimensions */
-    _height = obj->z_parent.z_height + 2 * obj->z_oflange;
-    _lf = &obj->z_lh_frm.z_parent.z_parent.z_sgeneric;
-    zBase_Set_Base_Coords(Z_BASE(_lf), obj->z_parent.z_x, obj->z_parent.z_y);
-    zBase_Set_Width_and_Height(Z_BASE(_lf),
-			       obj->z_dflange,
-			       _height);
-    zGeneric_Set_Device(_lf, _dev);
-    zGeneric_Set_Default_Dev_Context(_lf);
-    zDFrame_Set_Return_Lip_Flg(Z_DFRAME(_lf), 1);
+    /* _height = obj->z_parent.z_height + 2 * obj->z_oflange; */
+    /* _lf = &obj->z_lh_frm.z_parent.z_parent.z_sgeneric; */
+    /* zBase_Set_Base_Coords(Z_BASE(_lf), obj->z_parent.z_x, obj->z_parent.z_y); */
+    /* zBase_Set_Width_and_Height(Z_BASE(_lf), */
+    /* 			       obj->z_dflange, */
+    /* 			       _height); */
+    /* zGeneric_Set_Device(_lf, _dev); */
+    /* zGeneric_Set_Default_Dev_Context(_lf); */
+    /* zDFrame_Set_Return_Lip_Flg(Z_DFRAME(_lf), 1); */
 
     /****************************************************/
     /* Non Drive side frame dimensions */
     _rf = &obj->z_rh_frm.z_parent.z_parent.z_sgeneric;
     zBase_Set_Base_Coords(Z_BASE(_rf),
+			  obj->z_parent.z_x + obj->z_dflange + obj->z_parent.z_width,
 			  obj->z_parent.z_y +
-			  (obj->z_frm_type > 0? 0 : 1) * obj->z_oflange,
-			  obj->z_parent.z_x + obj->z_dflange + obj->z_parent.z_width);
+			  (obj->z_frm_type > 0? 0 : 1) * obj->z_oflange);
     zBase_Set_Width_and_Height(Z_BASE(_rf),
 			       obj->z_oflange,
 			       obj->z_frm_type > 0? _height : obj->z_parent.z_height);
+    zDFrame_Set_Side_Flg(Z_DFRAME(_rf), 1);
     zGeneric_Set_Device(_rf, _dev);
     zGeneric_Set_Default_Dev_Context(_rf);
 
     /****************************************************/
     /* Top frame */
-    _tf = &obj->z_t_frm.z_parent.z_parent.z_sgeneric;
-    zBase_Set_Base_Coords(Z_BASE(_tf),
-			  obj->z_parent.z_x + obj->z_dflange,
-			  obj->z_parent.z_y);
-    zBase_Set_Width_and_Height(Z_BASE(_tf),
-			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange,
-			       obj->z_oflange);
-    zGeneric_Set_Device(_tf, _dev);
-    zGeneric_Set_Default_Dev_Context(_tf);
+    /* _tf = &obj->z_t_frm.z_parent.z_parent.z_sgeneric; */
+    /* zBase_Set_Base_Coords(Z_BASE(_tf), */
+    /* 			  obj->z_parent.z_x + obj->z_dflange, */
+    /* 			  obj->z_parent.z_y); */
+    /* zBase_Set_Width_and_Height(Z_BASE(_tf), */
+    /* 			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange, */
+    /* 			       obj->z_oflange); */
+    /* zGeneric_Set_Device(_tf, _dev); */
+    /* zGeneric_Set_Default_Dev_Context(_tf); */
 
-    /****************************************************/
-    /* Bottom frame */
-    _bf = &obj->z_b_frm.z_parent.z_parent.z_sgeneric;
-    zBase_Set_Base_Coords(Z_BASE(_bf),
-			  obj->z_parent.z_x + obj->z_dflange,
-			  _height - obj->z_oflange);
-    zBase_Set_Width_and_Height(Z_BASE(_bf),
-			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange,
-			       obj->z_oflange);
+    /* /\****************************************************\/ */
+    /* /\* Bottom frame *\/ */
+    /* _bf = &obj->z_b_frm.z_parent.z_parent.z_sgeneric; */
+    /* zBase_Set_Base_Coords(Z_BASE(_bf), */
+    /* 			  obj->z_parent.z_x + obj->z_dflange, */
+    /* 			  _height - obj->z_oflange); */
+    /* zBase_Set_Width_and_Height(Z_BASE(_bf), */
+    /* 			       obj->z_parent.z_width + obj->z_frm_type > 0? 0.0 : obj->z_oflange, */
+    /* 			       obj->z_oflange); */
 
-    zGeneric_Set_Device(_bf, _dev);
-    zGeneric_Set_Default_Dev_Context(_bf);
+    /* zGeneric_Set_Device(_bf, _dev); */
+    /* zGeneric_Set_Default_Dev_Context(_bf); */
     /****************************************************/
     /* Draw mullion and transom */
     /* calculate modular width and height */
-    _ml_width = 0.0;
-    _tr_width = 0.0;
-    _mod_height = obj->z_parent.z_height;
-    _mod_width = obj->z_parent.z_width;
+    /* _ml_width = 0.0; */
+    /* _tr_width = 0.0; */
+    /* _mod_height = obj->z_parent.z_height; */
+    /* _mod_width = obj->z_parent.z_width; */
     
-    if(obj->z_mls)
-	{
-	    _ml_width = obj->z_mls[0].z_parent.z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_parent.z_width :
-			 Z_MULLION_WIDTH;
-	    _mod_width = (obj->z_parent.z_width - _ml_width * (double) obj->z_num_ml) / (obj->z_num_ml + 1);
-	    for(a = 0; a < obj->z_num_ml; a++)
-		{
-		    _ml = &obj->z_mls[a].z_parent.z_parent.z_sgeneric;
-		    zBase_Set_Base_Coords(Z_BASE(_ml),
-					  obj->z_parent.z_x + obj->z_dflange + (double) (a + 1) * _mod_width +
-					  (double) a * _ml_width,
-					  obj->z_parent.z_y + obj->z_oflange);
-		    zBase_Set_Width_and_Height(Z_BASE(_ml),
-					       _ml_width,
-					       obj->z_parent.z_height);
-		    zGeneric_Set_Device(_ml, _dev);
-		    zGeneric_Set_Default_Dev_Context(_ml);
-		    zGeneric_Draw(_ml);
-		}
-	}
+    /* if(obj->z_mls) */
+    /* 	{ */
+    /* 	    _ml_width = obj->z_mls[0].z_parent.z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_parent.z_width : */
+    /* 			 Z_MULLION_WIDTH; */
+    /* 	    _mod_width = (obj->z_parent.z_width - _ml_width * (double) obj->z_num_ml) / (obj->z_num_ml + 1); */
+    /* 	    for(a = 0; a < obj->z_num_ml; a++) */
+    /* 		{ */
+    /* 		    _ml = &obj->z_mls[a].z_parent.z_parent.z_sgeneric; */
+    /* 		    zBase_Set_Base_Coords(Z_BASE(_ml), */
+    /* 					  obj->z_parent.z_x + obj->z_dflange + (double) (a + 1) * _mod_width + */
+    /* 					  (double) a * _ml_width, */
+    /* 					  obj->z_parent.z_y + obj->z_oflange); */
+    /* 		    zBase_Set_Width_and_Height(Z_BASE(_ml), */
+    /* 					       _ml_width, */
+    /* 					       obj->z_parent.z_height); */
+    /* 		    zGeneric_Set_Device(_ml, _dev); */
+    /* 		    zGeneric_Set_Default_Dev_Context(_ml); */
+    /* 		    zGeneric_Draw(_ml); */
+    /* 		} */
+    /* 	} */
 
-    if(obj->z_trs)
-	{
-	    _tr_width = obj->z_trs[0].z_parent.z_parent.z_width > 0.0? obj->z_trs[0].z_parent.z_parent.z_width :
-		Z_TRANSOM_WIDTH;
-	    _mod_height = (obj->z_parent.z_height - _tr_width * (double) obj->z_num_tr) / (obj->z_num_tr + 1);
-	    for(a = 0; a < obj->z_num_tr; a++)
-		{
-		    _tr = &obj->z_trs[a].z_parent.z_parent.z_sgeneric;
-		    zGeneric_Set_Device(_tr, _dev);
-		    zGeneric_Set_Default_Dev_Context(_tr);		    
-		    for(j = 0; j < obj->z_num_ml; j++)
-			{
+    /* if(obj->z_trs) */
+    /* 	{ */
+    /* 	    _tr_width = obj->z_trs[0].z_parent.z_parent.z_width > 0.0? obj->z_trs[0].z_parent.z_parent.z_width : */
+    /* 		Z_TRANSOM_WIDTH; */
+    /* 	    _mod_height = (obj->z_parent.z_height - _tr_width * (double) obj->z_num_tr) / (obj->z_num_tr + 1); */
+    /* 	    for(a = 0; a < obj->z_num_tr; a++) */
+    /* 		{ */
+    /* 		    _tr = &obj->z_trs[a].z_parent.z_parent.z_sgeneric; */
+    /* 		    zGeneric_Set_Device(_tr, _dev); */
+    /* 		    zGeneric_Set_Default_Dev_Context(_tr);		     */
+    /* 		    for(j = 0; j < obj->z_num_ml; j++) */
+    /* 			{ */
 
-			    zBase_Set_Base_Coords(Z_BASE(_tr),
-						  obj->z_parent.z_x + obj->z_dflange + (double) j * (_mod_width + _ml_width),
-						  obj->z_parent.z_y + obj->z_oflange + (double) (a + 1) * _mod_height);
-			    zBase_Set_Width_and_Height(Z_BASE(_tr),
-						       _mod_width,
-						       _tr_width);
-			    zGeneric_Draw(_tr);
-			}
-		}
-	}
+    /* 			    zBase_Set_Base_Coords(Z_BASE(_tr), */
+    /* 						  obj->z_parent.z_x + obj->z_dflange + (double) j * (_mod_width + _ml_width), */
+    /* 						  obj->z_parent.z_y + obj->z_oflange + (double) (a + 1) * _mod_height); */
+    /* 			    zBase_Set_Width_and_Height(Z_BASE(_tr), */
+    /* 						       _mod_width, */
+    /* 						       _tr_width); */
+    /* 			    zGeneric_Draw(_tr); */
+    /* 			} */
+    /* 		} */
+    /* 	} */
 
     /* Call draw methods of frame components */
-    zGeneric_Draw(_lf);
+    /* zGeneric_Draw(_lf); */
     zGeneric_Draw(_rf);
-    zGeneric_Draw(_tr);
-    zGeneric_Draw(_bf);
+    /* zGeneric_Draw(_tr); */
+    /* zGeneric_Draw(_bf); */
 
     _zg = NULL;
     _lf = NULL;

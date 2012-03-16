@@ -19,19 +19,14 @@
 #include "zTable.h"
 #include "zNote.h"
 #include "zNotes.h"
-#include "zDFrame.h"
-#include "zDSideFrm.h"
-#include "zDTBFrm.h"
+#include "zDamper.h"
 
 int main(int argc, char** argv)
 {
     zDevice dev;		/* device object */
     zGeneric* sht;
     zGeneric* table;		/* table */
-    zGeneric* dfrm;		/* drive frame */
-    zGeneric* nfrm;		/* non drive side frame */
-    zGeneric* tfrm;		/* top frame */
-    zGeneric* bfrm;		/* bottom frame */
+    zGeneric* dmp;		/* damper */
     zGenerics* notes;		/* note */
     
     zBrd_Attrib* attrib;
@@ -103,52 +98,26 @@ int main(int argc, char** argv)
     zNotes_Add(Z_NOTES(notes), "DAMPER BLADES TO BE HOT DIP GALVANISED.");
     zNotes_Add(Z_NOTES(notes), "BLADES ARE WELDED TO SHAFTS.");
 
-    dfrm = zDSideFrm_New(NULL);
-    zGeneric_Set_Device(dfrm, &dev);
-    zGeneric_Set_Default_Dev_Context(dfrm);
-    zBase_Set_Base_Coords(Z_BASE(dfrm), 260.0, 40.0);
-    zBase_Set_Width_and_Height(Z_BASE(dfrm), 10.0, 100.0);
-    zBase_Set_Thickness(Z_BASE(dfrm), 2.0);
-    zDFrame_Set_Return_Lip_Flg(Z_DFRAME(dfrm), 1);
-
-    nfrm = zDSideFrm_New(NULL);
-    zGeneric_Set_Device(nfrm, &dev);
-    zGeneric_Set_Default_Dev_Context(nfrm);
-    zBase_Set_Base_Coords(Z_BASE(nfrm), 360.0, 50.0);
-    zBase_Set_Width_and_Height(Z_BASE(nfrm), 10.0, 80.0);
-    zBase_Set_Thickness(Z_BASE(nfrm), 2.0);
-    /* zDFrame_Set_Side_Flg(Z_DFRAME(nfrm), 1); */
-    /* zDFrame_Set_Return_Lip_Flg(Z_DFRAME(nfrm), 1);     */
-
-    tfrm = zDTBFrm_New(NULL);
-    zGeneric_Set_Device(tfrm, &dev);
-    zGeneric_Set_Default_Dev_Context(tfrm);
-    zBase_Set_Base_Coords(Z_BASE(tfrm), 270.0, 40.0);
-    zBase_Set_Width_and_Height(Z_BASE(tfrm), 100.0, 10.0);
-
-    bfrm = zDTBFrm_New(NULL);
-    zGeneric_Set_Device(bfrm, &dev);
-    zGeneric_Set_Default_Dev_Context(bfrm);
-    zBase_Set_Base_Coords(Z_BASE(bfrm), 270.0, 130.0);
-    zBase_Set_Width_and_Height(Z_BASE(bfrm), 100.0, 10.0);    
+    dmp = zDamper_New(NULL);
+    zGeneric_Set_Device(dmp, &dev);
+    zGeneric_Set_Default_Dev_Context(dmp);
+    zBase_Set_Base_Coords(Z_BASE(dmp), 260.0, 40);
+    zBase_Set_Width_and_Height(Z_BASE(dmp), 150.0, 150.0);
+    zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
+    zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
 
     /* create border */
     zGeneric_Draw(sht);
-    zGeneric_Draw(dfrm);
-    zGeneric_Draw(nfrm);
     zGeneric_Draw(table);
-    zGeneric_Draw(tfrm);
-    zGeneric_Draw(bfrm);
     zGenerics_Draw(notes);
+    zGeneric_Draw(dmp);
     
     /* delete objects */
     zSheet_Delete(Z_SHEET(sht));
     zTable_Delete(Z_TABLE(table));
     zNotes_Delete(Z_NOTES(notes));
-    zDSideFrm_Delete(Z_DSIDE_FRAME(dfrm));
-    zDSideFrm_Delete(Z_DSIDE_FRAME(nfrm));
-    zDTBFrm_Delete(Z_DTB_FRAME(tfrm));
-    zDTBFrm_Delete(Z_DTB_FRAME(bfrm));
+    zDamper_Delete(Z_DAMPER(dmp));
+    
     zDevice_Delete(&dev);
 
     if(attrib)
