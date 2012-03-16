@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     zTable_Set_Column_Width(Z_TABLE(table), 2, 60.0);
     zTable_Set_Content(Z_TABLE(table), 0, 1, "DAMPERS");
 
-    notes = zNotes_New(NULL, &dev, 40.0, 40.0, 200.0);
+    notes = zNotes_New(NULL, &dev, 260.0, 130.0, 150.0);
     zNotes_Set_Title(Z_NOTES(notes), "DAMPER OPERATION");
     zNotes_Add(Z_NOTES(notes), "FRAMES ARE CONTINUOUSLY WELDED CONSTRUCTION.");
     zNotes_Add(Z_NOTES(notes), "DAMPER BLADES TO BE HOT DIP GALVANISED.");
@@ -105,6 +105,7 @@ int main(int argc, char** argv)
     zBase_Set_Width_and_Height(Z_BASE(dmp), 150.0, 150.0);
     zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
+    zDamper_Set_Frame_Type(Z_DAMPER(dmp), 0);
 
     /* create border */
     zGeneric_Draw(sht);
