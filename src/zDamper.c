@@ -28,6 +28,7 @@ zGeneric* zDamper_New(zDamper* obj)
     zDTBFrm_New(&obj->z_b_frm);
     zDFrame_Set_Side_Flg(&obj->z_b_frm.z_parent, 1);    
     /* Set transom and mullion collection */
+    obj->z_frm_type = 0;    
     obj->z_mls = NULL;
     obj->z_trs = NULL;
     obj->z_oflange = Z_DAMPER_FLANGE;
@@ -349,6 +350,22 @@ inline zDTRFrm* zDamper_Get_Transom(zDamper* obj, unsigned int ix)
 	return NULL;
 
     return &obj->z_trs[ix];
+}
+
+/* Set frame type */
+inline int zDamper_Set_Frame_Type(zDamper* obj, unsigned int ztype)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_frm_type = ztype;
+    return 0;
+}
+
+/* Get frame type */
+inline unsigned int zDamper_Get_Frame_Type(zDamper* obj)
+{
+    if(obj == NULL)
+	return 0;
+    return obj->z_frm_type;
 }
 
 /*******************************************************************/

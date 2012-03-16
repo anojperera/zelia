@@ -53,6 +53,9 @@ extern "C" {
 
     /*********************************************************/
     /* Property methods */
+    /* Set and get frame type */
+    inline int zDamper_Set_Frame_Type(zDamper* obj, unsigned int ztype);
+    inline unsigned int zDamper_Get_Frame_Type(zDamper* obj);
 
     /* Get frames */
     inline zDSideFrm* zDamper_Get_LH_Frame(zDamper* obj);
