@@ -14,6 +14,10 @@
 /* Forward declaration of struct */
 typedef struct _zNote zNote;
 
+/* Function pointer for informing final height of
+ * text height */
+typedef int (*znote_fptr)(zGeneric* obj, void* usr_data, int height);
+
 struct _zNote
 {
     zBase z_parent;			/* Inherited parent object */
@@ -25,6 +29,8 @@ struct _zNote
     size_t z_note_sz;			/* Note length */
     size_t z_obj_sz;			/* Object size */
     zgeneric_fptr z_draw_func;		/* Draw function pointer */
+    znote_fptr z_height_func;		/* Inform function pointer */
+    void* z_usr_data;			/* User data */
     void* z_child;			/* Child pointer */
 };
 

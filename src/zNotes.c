@@ -8,6 +8,7 @@
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
 #include "../../g_list/src/alist.h"
+#include <math.h>
 
 static int _znotes_counter = 0;
 static int _znotes_draw_helper(zNotes* obj);
@@ -15,6 +16,7 @@ static int _znotes_draw_helper(zNotes* obj);
 /* Virtual functions */
 static int _znotes_draw(void* obj, void* usr_data);
 static int _znotes_delete(void* obj, void* usr_data);
+static int _znotes_get_note_height(zGeneric* obj, void* usr_data, int height);
 
 /* Constructor */
 zGenerics* zNotes_New(zNotes* obj,		/* optional argument */
@@ -40,6 +42,7 @@ zGenerics* zNotes_New(zNotes* obj,		/* optional argument */
     obj->z_width = width;
     obj->z_x = x;
     obj->z_y = y;
+    obj->_z_note_height = 0.0;
     obj->z_title[0] = '\0';
     obj->z_uline_flg = 1;
     obj->z_counter = 0;
@@ -112,6 +115,10 @@ int zNotes_Add(zNotes* obj, const char* note)
 			  obj->z_x,
 			  obj->z_y + (double) obj->z_counter * Z_NOTE_LINE_HEIGHT);
     zBase_Set_Width(Z_BASE(_zg), obj->z_width);
+
+    /* Set inform function pointer */
+    _note.z_usr_data = (void*) obj;
+    _note.z_height_func = _znotes_get_note_height;
 
     /* add to collection */
     aList_Add(&obj->z_parent.z_generics_d,
@@ -187,13 +194,29 @@ static int _znotes_draw(void* obj, void* usr_data)
 {
     zNotes* _zns;
     zNote* _zn;
+    zNote* _zn_prev;			/* previous note */
+    aNode* _node;
     
     /* check for object */
     Z_CHECK_OBJ(obj);
     _zn = (zNote*) obj;
     _zns = (zNotes*) usr_data;
+    
+    /* Reset counter */
+    if(_znotes_counter > _zns->z_parent.z_count)
+	_znotes_counter = 0;
+    
     if(_znotes_counter == 0)
 	_znotes_draw_helper(_zns);
+
+    /* Get previous object and set height if required */
+    _node = aList_Item(&_zns->z_parent.z_generics_d, _znotes_counter);
+    if(_node)
+	{
+	    _zn_prev = (zNote*) _node->data;
+	    if((_zns->_z_note_height +_zn_prev->z_parent.z_y - _zn->z_parent.z_y) > Z_NOTE_LINE_HEIGHT)
+		_zn->z_parent.z_y = _zn_prev->z_parent.z_y + _zns->_z_note_height * 2;
+	}
     _znotes_counter++;
     return zNote_Draw(_zn);
 }
@@ -282,4 +305,23 @@ static int _znotes_draw_helper(zNotes* obj)
     _attr = NULL;
     
     return 0;
+}
+
+/* Virtual inform height function */
+static int _znotes_get_note_height(zGeneric* obj, void* usr_data, int height)
+{
+    zNotes* _notes;
+    
+    /* Check objects */
+    Z_CHECK_OBJ(obj);
+    Z_CHECK_OBJ(usr_data);
+    _notes = (zNotes*) usr_data;
+    if(height <= 0)
+	{
+	    _notes->_z_note_height = Z_NOTE_LINE_HEIGHT * fabs((double) height);;
+	    return 1;
+	}
+
+    _notes->_z_note_height = pango_units_to_double(height);
+    return 0;	
 }

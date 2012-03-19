@@ -33,6 +33,8 @@ zGeneric* zNote_New(zNote* obj)
     obj->z_note_sz = 0;
     obj->z_obj_sz = sizeof(zNote);
     obj->z_draw_func = NULL;
+    obj->z_height_func = NULL;
+    obj->z_usr_data = NULL;
     obj->z_child = NULL;
 
     /* Set child and function pointers of parent object */
@@ -127,6 +129,10 @@ int zNote_Draw(zNote* obj)
 
     /* show layout */
     pango_cairo_show_layout(_dev_c, _layout);
+
+    /* If height inform function was set call it */
+    if(obj->z_height_func)
+	obj->z_height_func(_generic, obj->z_usr_data, pango_layout_get_height(_layout));
 
     /* free layout object */
     g_object_unref(_layout);

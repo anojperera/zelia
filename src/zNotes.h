@@ -23,6 +23,7 @@ struct _zNotes
     double z_width;				/* Width */
     double z_x;					/* x coord */
     double z_y;					/* y coord */
+    double _z_note_height;			/* Note height */
     char z_title[Z_NOTES_TITLE_BUFF];		/* Title buffer */
     unsigned int z_uline_flg;			/* Underline flag */
     unsigned int z_counter;			/* Counter */
