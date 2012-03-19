@@ -326,6 +326,16 @@ typedef enum {
     zArrow3
 } zArrowTypes;
 
+/* Blade Types */
+typedef enum {
+    zBlade_ISO,
+    zBlade_NISO,
+    zBlade_LFD,
+    zBlade_TOTAL,
+    zBlade_BRD,
+    zBlade_PRD
+} zBladeType;
+
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)
 {
