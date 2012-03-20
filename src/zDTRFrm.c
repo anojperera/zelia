@@ -84,7 +84,7 @@ int zDTRFrm_Draw(zDTRFrm* obj)
     if(obj->z_tr_return_lip > 0.0)
 	{
 	    _y = _base->z_y + obj->z_tr_return_lip;
-	    zGeneric_Set_LintType(_generic, zLTHidden);	    
+	    zGeneric_Set_LintType(_generic, zLTHidden);
 	    cairo_move_to(_dev_c,
 			  CONV_TO_POINTS(_base->z_x),
 			  CONV_TO_POINTS(_y));
@@ -100,7 +100,29 @@ int zDTRFrm_Draw(zDTRFrm* obj)
 			  CONV_TO_POINTS(_x),
 			  CONV_TO_POINTS(_y));
 	    cairo_stroke(_dev_c);
-	    zGeneric_Set_LintType(_generic, zLTContinuous);	    
+	    zGeneric_Set_LintType(_generic, zLTContinuous);
+	}
+
+    if(_base->z_thk > 0.0)
+	{
+	    _y = _base->z_y + _base->z_thk;
+	    zGeneric_Set_LintType(_generic, zLTHidden);
+	    cairo_move_to(_dev_c,
+			  CONV_TO_POINTS(_base->z_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_line_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    _y = _base->z_y + _base->z_height - _base->z_thk;
+	    cairo_move_to(_dev_c,
+			  CONV_TO_POINTS(_base->z_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_line_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_stroke(_dev_c);
+	    zGeneric_Set_LintType(_generic, zLTContinuous);
+	    
 	}
 
     /* restore cairo */

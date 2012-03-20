@@ -104,7 +104,7 @@ int zDSideFrm_Draw(zDSideFrm* obj)
     /* If thickness was assigned draw hidden line */
     if(_base->z_thk > 0.0)
 	{
-	    _x = _base->z_x + (obj->z_parent.z_side_flg? _base->z_width : 2 * _base->z_thk)
+	    _x = _base->z_x + (obj->z_parent.z_side_flg? 2 * _base->z_thk :  _base->z_width)
 		- _base->z_thk;
 	    _y = _base->z_y + _base->z_height;
 

@@ -121,6 +121,7 @@ int zDamper_Draw(zDamper* obj)
     			       _height);
     zGeneric_Set_Device(_lf, _dev);
     zGeneric_Set_Default_Dev_Context(_lf);
+    zBase_Set_Thickness(Z_BASE(_lf), obj->z_parent.z_thk);
     zDFrame_Set_Return_Lip_Flg(Z_DFRAME(_lf), 1);
 
     /****************************************************/
@@ -133,6 +134,7 @@ int zDamper_Draw(zDamper* obj)
     zBase_Set_Width_and_Height(Z_BASE(_rf),
 			       obj->z_oflange,
 			       obj->z_frm_type > 0? _height : obj->z_parent.z_height);
+    zBase_Set_Thickness(Z_BASE(_rf), obj->z_parent.z_thk);
 
     zGeneric_Set_Device(_rf, _dev);
     zGeneric_Set_Default_Dev_Context(_rf);
@@ -146,6 +148,7 @@ int zDamper_Draw(zDamper* obj)
     zBase_Set_Width_and_Height(Z_BASE(_tf),
     			       obj->z_parent.z_width + (obj->z_frm_type > 0? 0.0 : obj->z_oflange),
     			       obj->z_oflange);
+    zBase_Set_Thickness(Z_BASE(_tf), obj->z_parent.z_thk);
     zGeneric_Set_Device(_tf, _dev);
     zGeneric_Set_Default_Dev_Context(_tf);
 
@@ -158,6 +161,7 @@ int zDamper_Draw(zDamper* obj)
     zBase_Set_Width_and_Height(Z_BASE(_bf),
     			       obj->z_parent.z_width + (obj->z_frm_type > 0? 0.0 : obj->z_oflange),
     			       obj->z_oflange);
+    zBase_Set_Thickness(Z_BASE(_bf), obj->z_parent.z_thk);
     zGeneric_Set_Device(_bf, _dev);
     zGeneric_Set_Default_Dev_Context(_bf);
     /****************************************************/

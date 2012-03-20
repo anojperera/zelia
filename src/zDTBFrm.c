@@ -101,7 +101,7 @@ int zDTBFrm_Draw(zDTBFrm* obj)
     if(_base->z_thk > 0.0)
 	{
 	    _x = _base->z_x + _base->z_width;
-	    _y = _base->z_y + (obj->z_parent.z_side_flg? _base->z_height : 2 * _base->z_thk) - _base->z_thk;
+	    _y = _base->z_y + (obj->z_parent.z_side_flg? 2 * _base->z_thk : _base->z_height) - _base->z_thk;
 
 	    /* set line to hidden */
 	    zGeneric_Set_LintType(_generic, zLTHidden);

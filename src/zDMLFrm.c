@@ -127,6 +127,28 @@ int zDMLFrm_Draw(zDMLFrm* obj)
 	    zGeneric_Set_LintType(_generic, zLTContinuous);
 	}
 
+    /* draw thickness */
+    if(_base->z_thk > 0.0)
+	{
+	    _x = _base->z_x + _base->z_thk;
+	    zGeneric_Set_LintType(_generic, zLTHidden);
+	    cairo_move_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_base->z_y));
+	    cairo_line_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    _x = _base->z_x + _base->z_width - _base->z_thk;
+	    cairo_move_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_base->z_y));
+	    cairo_line_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_stroke(_dev_c);
+	    zGeneric_Set_LintType(_generic, zLTContinuous);
+	}
+
     /* restor cairo context */
     cairo_restore(_dev_c);
 
