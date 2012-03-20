@@ -81,7 +81,7 @@ int zDTBFrm_Draw(zDTBFrm* obj)
 		    CONV_TO_POINTS(_base->z_height));
     cairo_stroke(_dev_c);
     
-    if(obj->z_parent.z_rtlip_flg && _base->z_thk)
+    if(obj->z_parent.z_rtlip_flg && _base->z_thk > 0.0)
 	{
 	    _x = _base->z_x + _base->z_width;
 	    _y = _base->z_y + (obj->z_parent.z_side_flg? _base->z_height : 0.0)
@@ -96,6 +96,23 @@ int zDTBFrm_Draw(zDTBFrm* obj)
 			  CONV_TO_POINTS(_y));
 	    cairo_stroke(_dev_c);
 	    zGeneric_Set_LintType(_generic, zLTContinuous);
+	}
+
+    if(_base->z_thk > 0.0)
+	{
+	    _x = _base->z_x + _base->z_width;
+	    _y = _base->z_y + (obj->z_parent.z_side_flg? _base->z_height : 2 * _base->z_thk) - _base->z_thk;
+
+	    /* set line to hidden */
+	    zGeneric_Set_LintType(_generic, zLTHidden);
+	    cairo_move_to(_dev_c,
+			  CONV_TO_POINTS(_base->z_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_line_to(_dev_c,
+			  CONV_TO_POINTS(_x),
+			  CONV_TO_POINTS(_y));
+	    cairo_stroke(_dev_c);
+	    zGeneric_Set_LintType(_generic, zLTContinuous);	    
 	}
 
     /* Restore device context */
