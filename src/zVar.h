@@ -207,6 +207,10 @@
 /* Damper frame flange */
 #define Z_DAMPER_FLANGE 50.0
 
+/* Damper blade */
+#define Z_BLADE_ISO_EXTRA 0.02			/* Token for return lip adjustment
+						 * on isolating blades */
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
@@ -335,6 +339,12 @@ typedef enum {
     zBlade_BRD,
     zBlade_PRD
 } zBladeType;
+
+typedef enum {
+    zBladeISO_AA,
+    zBladeISO_AB,
+    zBladeISO_BB
+} zBladeISO_Type;    
 
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)
