@@ -31,6 +31,7 @@ zGeneric* zBlade_New(zBlade* obj)
     obj->z_blade_type = zBlade_ISO;
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
+    obj->z_iso_type = zBladeISO_AA;
 
     /* set child and function pointers of parent object */
     obj->z_parent.z_child = (void*) obj;
@@ -122,4 +123,66 @@ static int _zblade_draw(zGeneric* obj)
 	return _bld->z_draw_func(obj);
     else
 	return rt_val;
+}
+
+/* Draw isolating blade */
+static inline int _zblade_draw_iso(zGeneric* obj)
+{
+    /* object not require checking */
+    zBase* _base;			/* base object */
+    cairo_t* _dev_c;			/* device context */
+
+    _base = &obj->z_parent;
+    _dev_c = zGeneric_Get_Dev_Context(&obj->z_parent.z_sgeneric);
+
+    /* Check width and height */
+    if(_base->z_width <= 0.0 || _base->z_height <= 0.0)
+	return 1;
+
+    /* draw blade */
+    switch(obj->z_iso_type)
+	{
+	case zBladeISO_AA:
+	    cairo_move_to(_dev_c,
+			  _base->z_x,
+			  _base->z_y - _base->z_height / 2);
+	    cairo_line_to(_dev_c,
+			  _base->z_x,
+			  _base->z_y + _base->z_height / 2);
+	    cairo_move_to(_dev_c,
+			  _base->z_x + _base->z_width,
+			  _base->z_y - _base->z_height / 2);
+	    cairo_line_to(_dev_c,
+			  _base->z_x + _base->z_width,
+			  _base->z_y + _base->z_height / 2);
+	    break;
+
+	case zBladeISO_AB:
+	    cairo_move_to(_dev_c,
+			  _base->z_x,
+			  _base->z_y - _base->z_height / 2);
+	    cairo_line_to(_dev_c,
+			  _base->z_x,
+			  _base->z_y + _base->z_height / 2);
+	    cairo_line_to(_dev_c,
+			  _base->z_x + _base->z_width,
+			  _base->z_y + _base->z_height / 2);
+	    cairo_line_to(_dev_c,
+			  _base->z_x + _base->z_width,
+			  _base->z_y - _base->z_height / 2);
+	    break;
+	default:
+	    cairo_rectangle(_dev_c,
+			    _base->z_x,
+			    _base->z_y,
+			    _base->z_width,
+			    _base->z_height);
+	}
+
+    cairo_stroke(_dev_c);
+    
+    _base = NULL;
+    _dev_c = NULL;
+    
+    return 0;
 }
