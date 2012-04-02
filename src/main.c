@@ -28,6 +28,7 @@ int main(int argc, char** argv)
     zGeneric* table;		/* table */
     zGeneric* dmp;		/* damper */
     zGenerics* notes;		/* note */
+    zDSideFrm* dfrm;		/* Drive side frame */
     
     zBrd_Attrib* attrib;
     zDevice_New2(zFormatPDF,
@@ -107,6 +108,7 @@ int main(int argc, char** argv)
     zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
     zDamper_Set_Frame_Type(Z_DAMPER(dmp), 0);
+    
 
     /* create border */
     zGeneric_Draw(sht);
