@@ -33,8 +33,8 @@ extern "C" {
 			   zDevice* dev,		/* device pointer */
 			   double x,			/* x coordinate of blade collection */
 			   double y,			/* y coordinate of blade collection */
-			   double width,
-			   double height,
+			   double width,		/* total width of blades */
+			   double height,		/* total height of blades */
 			   unsigned int num_blades,	/* number of blades */
 			   zBladeType ztype);
     void zBlades_Delete(zBlades* obj);

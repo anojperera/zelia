@@ -39,8 +39,10 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 
     obj->z_x = x;
     obj->z_y = y;
+    
+    bld_height = height / (double) num_blades;
 
-    for(i=0; i<num_blades; i++)
+    for(i=0,bld_y=y; i<num_blades; i++,bld_y += bld_height/2)
 	{
 	    obj->z_parent.z_generics_s[i] =
 		zBlade_New(NULL);
@@ -71,6 +73,59 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 					      zBladeISO_BB);
 		}
 
-	    
+	    /* Set blade x and y coordinates */
+	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
+				  x,
+				  bld_y);
+
+	    /* Set blade width and height */
+	    zBase_Set_Width_and_Height(Z_BASE(obj->z_parent.z_generics_s[i]),
+				       width,
+				       bld_height);
 	}
+
+    /* set function pointers of parent object */
+    obj->z_parent.z_draw_func = _zblades_draw;
+    obj->z_parent.z_destructor_func = _zblades_delete;
+    obj->z_parent.z_child = (void*) obj;
+    obj->z_parent.z_usr_data = (void*) obj;
+
+    obj->z_obj_sz = sizeof(zBlades);
+
+    /* return parent object */
+    return &obj->z_parent;
+}
+
+
+/* Destructor */
+void zBlades_Delete(zBlades* obj)
+{
+    Z_CHECK_OBJ_VOID(obj);
+
+    /* Call delete method of parent object */
+    zGenerics_Delete(&obj->z_parent);
+
+    obj->z_child = NULL;
+    obj->z_draw_func = NULL;
+
+    if(obj->z_int_flg)
+	free(obj);
+}
+
+/* Private functions */
+/*************************************************************************/
+
+/* Virtual draw function */
+static int _zblades_draw(void* obj, void* usr_data)
+{
+    Z_CHECK_OBJ(obj);
+    return zBlade_Draw(Z_BLADE(obj));
+}
+
+/* Virtual delete function */
+static int _zblades_delete(void* obj, void* usr_data)
+{
+    Z_CHECK_OBJ(obj);
+    zBlade_Delete(Z_BLADE(obj));
+    return 0;
 }
