@@ -7,12 +7,12 @@
 static int _zblade_draw(zGeneric* obj);
 
 /* Private drawing functions - draws various types of blades */
-static inline int _zblade_draw_iso(zGeneric* obj);
-static inline int _zblade_draw_niso(zGeneric* obj);
-static inline int _zblade_draw_lfd(zGeneric* obj);
-static inline int _zblade_draw_total(zGeneric* obj);
-static inline int _zblade_draw_brd(zGeneric* obj);
-static inline int _zblade_draw_prd(zGeneric* obj);
+static inline int _zblade_draw_iso(zBlade* obj);
+static inline int _zblade_draw_niso(zBlade* obj);
+static inline int _zblade_draw_lfd(zBlade* obj);
+static inline int _zblade_draw_total(zBlade* obj);
+static inline int _zblade_draw_brd(zBlade* obj);
+static inline int _zblade_draw_prd(zBlade* obj);
 
 /* Constructor */
 zGeneric* zBlade_New(zBlade* obj)
@@ -108,6 +108,22 @@ inline zBladeType zBlade_Get_Blade_Type(zBlade* obj)
     return obj->z_blade_type;
 }
 
+/* Set ISO blade type */
+inline int zBlade_Set_Blade_ISO_Type(zBlade* obj, zBladeISO_Type ztype)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_iso_type = ztype;
+    return 0;
+}
+
+/* Get ISO blade type */
+inline zBladeISO_Type zBlade_Get_Blade_ISO_Type(zBlade* obj)
+{
+    if(obj == NULL)
+	return zBladeISO_AA;
+    else
+	return obj->z_iso_type;
+}
 /*************************************************************************/
 /* Private method */
 /* Virtual draw method */
@@ -126,7 +142,7 @@ static int _zblade_draw(zGeneric* obj)
 }
 
 /* Draw isolating blade */
-static inline int _zblade_draw_iso(zGeneric* obj)
+static inline int _zblade_draw_iso(zBlade* obj)
 {
     /* object not require checking */
     zBase* _base;			/* base object */
@@ -188,31 +204,31 @@ static inline int _zblade_draw_iso(zGeneric* obj)
 }
 
 /* Draw non isolating blade */
-static inline int _zblade_draw_niso(zGeneric* obj)
+static inline int _zblade_draw_niso(zBlade* obj)
 {
     return 0;
 }
 
 /* Draw LFD blade */
-static inline int _zblade_draw_lfd(zGeneric* obj)
+static inline int _zblade_draw_lfd(zBlade* obj)
 {
     return 0;
 }
 
 /* Draw total blade */
-static inline int _zblade_draw_total(zGeneric* obj)
+static inline int _zblade_draw_total(zBlade* obj)
 {
     return 0;
 }
 
 /* draw brd blade */
-static inline int _zblade_draw_brd(zGeneric* obj)
+static inline int _zblade_draw_brd(zBlade* obj)
 {
     return 0;
 }
 
 /* draw prd blade */
-static inline int _zblade_draw_prd(zGeneric* obj)
+static inline int _zblade_draw_prd(zBlade* obj)
 {
     return 0;
 }
