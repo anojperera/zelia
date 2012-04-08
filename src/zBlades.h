@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "zDevice.h"
 #include "zGenerics.h"
-#include "zBlade.h"
+
 
 typedef struct _zBlades zBlades;
 
@@ -21,6 +21,8 @@ struct _zBlades
     double z_y;						/* y coordinate */
     void* z_child;					/* child pointer */
     zcollection_fptr z_draw_func;			/* draw function pointer */
+    unsigned int z_num_blades;				/* number of blades */
+    double z_bld_height;				/* blade height */
     size_t z_obj_sz;					/* size of object */
 };
 
@@ -38,7 +40,10 @@ extern "C" {
 			   unsigned int num_blades,	/* number of blades */
 			   zBladeType ztype);
     void zBlades_Delete(zBlades* obj);
-    
+
+    /* Property function */
+    inline int zBlades_Set_Base_Coordinates(zBlades* obj, double x, double y);
+
 #ifdef __cplusplus
 }
 #endif

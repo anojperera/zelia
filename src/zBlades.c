@@ -1,6 +1,6 @@
 /* Implementation of Blade collection */
 /* Wed Mar 28 21:33:53 BST 2012 */
-
+#include "zBlade.h"
 #include "zBlades.h"
 
 /* Virtual functions */
@@ -39,9 +39,11 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 
     obj->z_x = x;
     obj->z_y = y;
-    
-    bld_height = height / (double) num_blades;
+    obj->z_num_blades = num_blades;
 
+    bld_height = height / (double) num_blades;
+    obj->z_bld_height = bld_height;
+    
     for(i=0,bld_y=y; i<num_blades; i++,bld_y += bld_height/2)
 	{
 	    obj->z_parent.z_generics_s[i] =
@@ -112,20 +114,39 @@ void zBlades_Delete(zBlades* obj)
 	free(obj);
 }
 
+/* Set base coordinates */
+inline int zBlades_Set_Base_Coordinates(zBlades* obj, double x, double y)
+{
+    int i;
+    double bld_y;
+    Z_CHECK_OBJ(obj);
+    for(i=0, bld_y=y; i<obj->z_num_blades; i++, bld_y += obj->z_bld_height/2)
+	{
+	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
+				  x,
+				  bld_y);	    
+	}
+    return 0;
+}
+
 /* Private functions */
 /*************************************************************************/
 
 /* Virtual draw function */
 static int _zblades_draw(void* obj, void* usr_data)
 {
+    zGeneric* zg;
     Z_CHECK_OBJ(obj);
-    return zBlade_Draw(Z_BLADE(obj));
+    zg = (zGeneric*) obj;
+    return zBlade_Draw(Z_BLADE(zg));
 }
 
 /* Virtual delete function */
 static int _zblades_delete(void* obj, void* usr_data)
 {
+    zGeneric* zg;
     Z_CHECK_OBJ(obj);
-    zBlade_Delete(Z_BLADE(obj));
+    zg = (zGeneric*) obj;
+    zBlade_Delete(Z_BLADE(zg));
     return 0;
 }

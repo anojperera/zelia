@@ -100,9 +100,13 @@ int zGlands_Add(zGlands* obj,
 /* Virtual delete function */
 static int _zglands_delete(void* obj, void* usr_data)
 {
+    zGland* zgl;
+    
     if(obj)
-	zGland_Delete(Z_GLAND(zgl));
-
+	{
+	    zgl = (zGland*) obj;
+	    zGland_Delete(zgl);
+	}
     return 0;
 }
 
@@ -110,6 +114,8 @@ static int _zglands_delete(void* obj, void* usr_data)
 /* Virtual draw function */
 static int _zglands_draw(void* obj, void* usr_data)
 {
+    zGland* zgl;
     Z_CHECK_OBJ(obj);
-    return zGland_Draw(Z_GLAND(zgl));
+    zgl = (zGland*) obj;
+    return zGland_Draw(zgl);
 }
