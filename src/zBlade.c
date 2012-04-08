@@ -174,7 +174,7 @@ static inline int _zblade_draw_iso(zGeneric* obj)
 	default:
 	    cairo_rectangle(_dev_c,
 			    _base->z_x,
-			    _base->z_y,
+			    _base->z_y - _base->z_height / 2,
 			    _base->z_width,
 			    _base->z_height);
 	}
@@ -184,5 +184,35 @@ static inline int _zblade_draw_iso(zGeneric* obj)
     _base = NULL;
     _dev_c = NULL;
     
+    return 0;
+}
+
+/* Draw non isolating blade */
+static inline int _zblade_draw_niso(zGeneric* obj)
+{
+    return 0;
+}
+
+/* Draw LFD blade */
+static inline int _zblade_draw_lfd(zGeneric* obj)
+{
+    return 0;
+}
+
+/* Draw total blade */
+static inline int _zblade_draw_total(zGeneric* obj)
+{
+    return 0;
+}
+
+/* draw brd blade */
+static inline int _zblade_draw_brd(zGeneric* obj)
+{
+    return 0;
+}
+
+/* draw prd blade */
+static inline int _zblade_draw_prd(zGeneric* obj)
+{
     return 0;
 }
