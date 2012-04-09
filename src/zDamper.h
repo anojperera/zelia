@@ -8,6 +8,7 @@
 #ifndef _ZDAMPER_H_
 #define _ZDAMPER_H_
 
+#include "zVar.h"
 #include "zGeneric.h"
 #include "zBase.h"
 #include "zDSideFrm.h"
@@ -87,8 +88,8 @@ extern "C" {
     inline zDTRFrm* zDamper_Get_Transom(zDamper* obj, unsigned int ix);
 
     /* Get blades collection */
-    inline zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades);
-    inline zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype);
+    inline int zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades);
+    inline int zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype);
     inline zBlades* zDamper_Get_Blades(zDamper* obj);
 
 #ifdef __cplusplus

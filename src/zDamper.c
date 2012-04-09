@@ -36,7 +36,7 @@ zGeneric* zDamper_New(zDamper* obj)
     obj->z_dflange = Z_DAMPER_FLANGE;
     obj->z_num_ml = 0;
     obj->z_num_tr = 0;
-    obj->z_num_blades = 0;				/* number of blades */
+    obj->z_num_blades = 1;				/* number of blades */
     obj->z_bld_type = zBlade_ISO;
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
@@ -47,7 +47,7 @@ zGeneric* zDamper_New(zDamper* obj)
     obj->z_parent.z_child = (void*) obj;
 
     /* return parent object */
-n    return &obj->z_parent.z_sgeneric;
+    return &obj->z_parent.z_sgeneric;
 }
 
 
@@ -65,6 +65,7 @@ void zDamper_Delete(zDamper* obj)
     zDSideFrm_Delete(&obj->z_rh_frm);
     zDTBFrm_Delete(&obj->z_t_frm);
     zDTBFrm_Delete(&obj->z_b_frm);
+    zBlades_Delete(&obj->z_blds);
 
     if(obj->z_num_ml > 0 && obj->z_mls)
 	{
@@ -219,20 +220,28 @@ int zDamper_Draw(zDamper* obj)
     			}
     		}
     	}
-
+    
+    /* Call draw methods of frame components */
+    zGeneric_Draw(_lf);
+    zGeneric_Draw(_rf);
+    zGeneric_Draw(_tf);
+    zGeneric_Draw(_bf);
+    
     /* create blades collection */
+    obj->z_num_ml++;
+    obj->z_num_tr++;
     for(a=0; a<obj->z_num_ml; a++)
 	{
 	    for(j=0; j<obj->z_num_tr; j++)
 		{
-		    if(obj->z_bld_flg && a==0)
+		    if(obj->z_bld_flg==0 && a==0)
 			{
 			    zBlades_New(&obj->z_blds,
 					_dev,
 					obj->z_parent.z_x + obj->z_dflange,
 					obj->z_parent.z_y + obj->z_oflange,
-					obj->_mod_width,
-					obj->_mod_height,
+					_mod_width,
+					_mod_height,
 					obj->z_num_blades,
 					obj->z_bld_type);
 			    obj->z_bld_flg = 1;
@@ -247,12 +256,6 @@ int zDamper_Draw(zDamper* obj)
 		    zGenerics_Draw(&obj->z_blds.z_parent);
 		}
 	}
-
-    /* Call draw methods of frame components */
-    zGeneric_Draw(_lf);
-    zGeneric_Draw(_rf);
-    zGeneric_Draw(_tf);
-    zGeneric_Draw(_bf);
 
     _zg = NULL;
     _lf = NULL;
@@ -404,7 +407,7 @@ inline unsigned int zDamper_Get_Frame_Type(zDamper* obj)
 }
 
 /* Set number of blades */
-inline zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades)
+inline int zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades)
 {
     Z_CHECK_OBJ(obj);
     obj->z_num_blades = num_blades;
@@ -412,7 +415,7 @@ inline zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades)
 }
 
 /* Set blade type */
-inline zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype)
+inline int zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype)
 {
     Z_CHECK_OBJ(obj);
     obj->z_bld_type = ztype;
