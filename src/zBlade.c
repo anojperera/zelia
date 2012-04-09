@@ -160,43 +160,58 @@ static inline int _zblade_draw_iso(zBlade* obj)
 	{
 	case zBladeISO_AA:
 	    cairo_move_to(_dev_c,
-			  _base->z_x,
-			  _base->z_y - _base->z_height / 2);
+	    		  CONV_TO_POINTS(_base->z_x),
+	    		  CONV_TO_POINTS((_base->z_y - _base->z_height / 2)));
 	    cairo_line_to(_dev_c,
-			  _base->z_x,
-			  _base->z_y + _base->z_height / 2);
+	    		  CONV_TO_POINTS(_base->z_x),
+	    		  CONV_TO_POINTS((_base->z_y + _base->z_height / 2)));
 	    cairo_move_to(_dev_c,
-			  _base->z_x + _base->z_width,
-			  _base->z_y - _base->z_height / 2);
+	    		  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+	    		  CONV_TO_POINTS((_base->z_y - _base->z_height / 2)));
 	    cairo_line_to(_dev_c,
-			  _base->z_x + _base->z_width,
-			  _base->z_y + _base->z_height / 2);
+	    		  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+	    		  CONV_TO_POINTS((_base->z_y + _base->z_height / 2)));
+
 	    break;
 
 	case zBladeISO_AB:
 	    cairo_move_to(_dev_c,
-			  _base->z_x,
-			  _base->z_y - _base->z_height / 2);
+			  CONV_TO_POINTS(_base->z_x),
+			  CONV_TO_POINTS((_base->z_y - _base->z_height / 2)));
 	    cairo_line_to(_dev_c,
-			  _base->z_x,
-			  _base->z_y + _base->z_height / 2);
+			  CONV_TO_POINTS(_base->z_x),
+			  CONV_TO_POINTS((_base->z_y + _base->z_height / 2)));
 	    cairo_line_to(_dev_c,
-			  _base->z_x + _base->z_width,
-			  _base->z_y + _base->z_height / 2);
+			  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+			  CONV_TO_POINTS((_base->z_y + _base->z_height / 2)));
 	    cairo_line_to(_dev_c,
-			  _base->z_x + _base->z_width,
-			  _base->z_y - _base->z_height / 2);
+			  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+			  CONV_TO_POINTS((_base->z_y - _base->z_height / 2)));
 	    break;
 	default:
 	    cairo_rectangle(_dev_c,
-			    _base->z_x,
-			    _base->z_y - _base->z_height / 2,
-			    _base->z_width,
-			    _base->z_height);
+			    CONV_TO_POINTS(_base->z_x),
+			    CONV_TO_POINTS((_base->z_y - _base->z_height / 2)),
+			    CONV_TO_POINTS(_base->z_width),
+			    CONV_TO_POINTS(_base->z_height));
 	}
 
+    /* Fold line */
+    cairo_move_to(_dev_c,
+		  CONV_TO_POINTS(_base->z_x),
+		  CONV_TO_POINTS((_base->z_y - _base->z_height * Z_BLADE_ISO_FOLD)));
+    cairo_line_to(_dev_c,
+		  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+		  CONV_TO_POINTS((_base->z_y - _base->z_height * Z_BLADE_ISO_FOLD)));
+
+    cairo_move_to(_dev_c,
+		  CONV_TO_POINTS(_base->z_x),
+		  CONV_TO_POINTS((_base->z_y + _base->z_height * Z_BLADE_ISO_FOLD)));
+    cairo_line_to(_dev_c,
+		  CONV_TO_POINTS((_base->z_x + _base->z_width)),
+		  CONV_TO_POINTS((_base->z_y + _base->z_height * Z_BLADE_ISO_FOLD)));
     cairo_stroke(_dev_c);
-    
+
     _base = NULL;
     _dev_c = NULL;
     
