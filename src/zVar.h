@@ -210,6 +210,7 @@
 /* Damper blade */
 #define Z_BLADE_ISO_EXTRA 0.02			/* Token for return lip adjustment
 						 * on isolating blades */
+#define Z_BLADE_ISO_FOLD 0.3			/* Fold line */
 
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
