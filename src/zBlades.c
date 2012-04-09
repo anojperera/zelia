@@ -43,8 +43,8 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 
     bld_height = height / (double) num_blades;
     obj->z_bld_height = bld_height;
-    
-    for(i=0,bld_y=y; i<num_blades; i++,bld_y += bld_height/2)
+
+    for(i=0, bld_y=y+bld_height/2; i<num_blades; i++,bld_y += bld_height)
 	{
 	    obj->z_parent.z_generics_s[i] =
 		zBlade_New(NULL);
@@ -52,6 +52,9 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 	    /* set blade type */
 	    zBlade_Set_Blade_Type(Z_BLADE(obj->z_parent.z_generics_s[i]),
 				  ztype);
+	    
+	    zGeneric_Set_Device(obj->z_parent.z_generics_s[i], dev);
+	    zGeneric_Set_Default_Dev_Context(obj->z_parent.z_generics_s[i]);
 
 	    /* top, middle or last blade */
 	    if(ztype == zBlade_ISO && i==0 && num_blades > 1)
