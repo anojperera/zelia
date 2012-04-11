@@ -238,6 +238,7 @@
 #define Z_BLADE(obj) ((zBlade*) Z_BASE(obj)->z_child)
 #define Z_BLADES(obj) ((zBlades*) obj->z_child)
 #define Z_SHAFT(obj) ((zShaft*) Z_BASE(obj)->z_child)
+#define Z_SHAFTS(obj) ((zShafts*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
