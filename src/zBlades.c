@@ -43,6 +43,8 @@ zGenerics* zBlades_New(zBlades* obj,		/* optional object */
 
     bld_height = height / (double) num_blades;
     obj->z_bld_height = bld_height;
+    obj->z_draw_func = NULL;
+    obj->z_child = NULL;
 
     for(i=0, bld_y=y+bld_height/2; i<num_blades; i++,bld_y += bld_height)
 	{
