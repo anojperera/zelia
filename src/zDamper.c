@@ -26,6 +26,7 @@ zGeneric* zDamper_New(zDamper* obj)
     zDFrame_Set_Side_Flg(&obj->z_rh_frm.z_parent, 1);
     zDTBFrm_New(&obj->z_t_frm);
     zDTBFrm_New(&obj->z_b_frm);
+    obj->z_bld_flg = 0;					/* blade flag set to false */
     zDFrame_Set_Side_Flg(&obj->z_b_frm.z_parent, 1);    
     /* Set transom and mullion collection */
     obj->z_frm_type = 0;    
@@ -35,7 +36,8 @@ zGeneric* zDamper_New(zDamper* obj)
     obj->z_dflange = Z_DAMPER_FLANGE;
     obj->z_num_ml = 0;
     obj->z_num_tr = 0;
-    
+    obj->z_num_blades = 1;				/* number of blades */
+    obj->z_bld_type = zBlade_ISO;
     obj->z_draw_func = NULL;
     obj->z_child = NULL;
 
@@ -63,6 +65,7 @@ void zDamper_Delete(zDamper* obj)
     zDSideFrm_Delete(&obj->z_rh_frm);
     zDTBFrm_Delete(&obj->z_t_frm);
     zDTBFrm_Delete(&obj->z_b_frm);
+    zBlades_Delete(&obj->z_blds);
 
     if(obj->z_num_ml > 0 && obj->z_mls)
 	{
@@ -110,6 +113,7 @@ int zDamper_Draw(zDamper* obj)
     _zg = &obj->z_parent.z_sgeneric;
     _dev = zGeneric_Get_Device(_zg);
     Z_CHECK_OBJ(_dev);
+
     
     /****************************************************/
     /* Drive side frame dimensions */
@@ -216,12 +220,42 @@ int zDamper_Draw(zDamper* obj)
     			}
     		}
     	}
-
+    
     /* Call draw methods of frame components */
     zGeneric_Draw(_lf);
     zGeneric_Draw(_rf);
     zGeneric_Draw(_tf);
     zGeneric_Draw(_bf);
+    
+    /* create blades collection */
+    obj->z_num_ml++;
+    obj->z_num_tr++;
+    for(a=0; a<obj->z_num_ml; a++)
+	{
+	    for(j=0; j<obj->z_num_tr; j++)
+		{
+		    if(obj->z_bld_flg==0 && a==0)
+			{
+			    zBlades_New(&obj->z_blds,
+					_dev,
+					obj->z_parent.z_x + obj->z_dflange,
+					obj->z_parent.z_y + obj->z_oflange,
+					_mod_width,
+					_mod_height,
+					obj->z_num_blades,
+					obj->z_bld_type);
+			    obj->z_bld_flg = 1;
+			}
+		    else
+			{
+			    zBlades_Set_Base_Coordinates(&obj->z_blds,
+							 obj->z_parent.z_x + obj->z_dflange + (double) a * (_mod_width + _ml_width),
+							 obj->z_parent.z_y + obj->z_oflange + (double) j * (_mod_height + _tr_width));
+			}
+
+		    zGenerics_Draw(&obj->z_blds.z_parent);
+		}
+	}
 
     _zg = NULL;
     _lf = NULL;
@@ -372,6 +406,28 @@ inline unsigned int zDamper_Get_Frame_Type(zDamper* obj)
     return obj->z_frm_type;
 }
 
+/* Set number of blades */
+inline int zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_num_blades = num_blades;
+    return 0;
+}
+
+/* Set blade type */
+inline int zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype)
+{
+    Z_CHECK_OBJ(obj);
+    obj->z_bld_type = ztype;
+    return 0;
+}
+
+/* Get blades collection */
+inline zBlades* zDamper_Get_Blades(zDamper* obj)
+{
+    Z_CHECK_OBJ_PTR(obj);
+    return &obj->z_blds;
+}
 /*******************************************************************/
 /* Private functions */
 

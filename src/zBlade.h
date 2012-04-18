@@ -15,6 +15,7 @@ struct _zBlade
     zBase z_parent;				/* parent object */
     unsigned int z_int_flg;			/* internal flag */
     zBladeType z_blade_type;			/* blade type */
+    zBladeISO_Type z_iso_type;			/* isolating blade type */
     zgeneric_fptr z_draw_func;			/* draw function */
     void* z_child;				/* child pointer */
 };
@@ -34,6 +35,11 @@ extern "C" {
     /* Set and get blade type */
     inline int zBlade_Set_Blade_Type(zBlade* obj, zBladeType ztype);
     inline zBladeType zBlade_Get_Blade_Type(zBlade* obj);
+
+    /* Set and get isolating blade type */
+    /* Default is set to AA */
+    inline int zBlade_Set_Blade_ISO_Type(zBlade* obj, zBladeISO_Type ztype);
+    inline zBladeISO_Type zBlade_Get_Blade_ISO_Type(zBlade* obj);
 
 #ifdef __cplusplus
 }

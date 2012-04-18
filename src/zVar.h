@@ -207,6 +207,11 @@
 /* Damper frame flange */
 #define Z_DAMPER_FLANGE 50.0
 
+/* Damper blade */
+#define Z_BLADE_ISO_EXTRA 0.02			/* Token for return lip adjustment
+						 * on isolating blades */
+#define Z_BLADE_ISO_FOLD 0.3			/* Fold line */
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
@@ -230,6 +235,10 @@
 #define Z_DML_FRAME(obj) ((zDMLFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DTR_FRAME(obj) ((zDTRFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DAMPER(obj) ((zDamper*) Z_BASE(obj)->z_child)
+#define Z_BLADE(obj) ((zBlade*) Z_BASE(obj)->z_child)
+#define Z_BLADES(obj) ((zBlades*) obj->z_child)
+#define Z_SHAFT(obj) ((zShaft*) Z_BASE(obj)->z_child)
+#define Z_SHAFTS(obj) ((zShafts*) obj->z_child)
 
 /* Object checking macro */
 #define Z_CHECK_OBJ(obj) \
@@ -335,6 +344,12 @@ typedef enum {
     zBlade_BRD,
     zBlade_PRD
 } zBladeType;
+
+typedef enum {
+    zBladeISO_AA,
+    zBladeISO_AB,
+    zBladeISO_BB
+} zBladeISO_Type;    
 
 /* convert milimeters to points */
 static inline double ConvToPoints(double* mm)

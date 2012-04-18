@@ -8,12 +8,14 @@
 #ifndef _ZDAMPER_H_
 #define _ZDAMPER_H_
 
+#include "zVar.h"
 #include "zGeneric.h"
 #include "zBase.h"
 #include "zDSideFrm.h"
 #include "zDTBFrm.h"
 #include "zDTRFrm.h"
 #include "zDMLFrm.h"
+#include "zBlades.h"
 
 /* Forward declaration of struct */
 typedef struct _zDamper zDamper;
@@ -29,10 +31,14 @@ struct _zDamper
     zDSideFrm z_rh_frm;					/* right hand side frame */
     zDTBFrm z_t_frm;					/* top frame */
     zDTBFrm z_b_frm;					/* bottom frame */
+    zBlades z_blds;					/* blades collection */
     zDMLFrm* z_mls;					/* mullion collection */
     zDTRFrm* z_trs;					/* transom collection */
     unsigned int z_num_ml;				/* number of mullions */
     unsigned int z_num_tr;				/* number of transoms */
+    unsigned int z_bld_flg;				/* flag to indicate blade creation flag */
+    unsigned int z_num_blades;				/* number of blades */
+    zBladeType z_bld_type;				/* blade type */
     double z_oflange;					/* other flanges */
     double z_dflange;					/* drive flanges */
     zgeneric_fptr z_draw_func;				/* draw function */
@@ -80,6 +86,11 @@ extern "C" {
     /* Get mullion and transom */
     inline zDMLFrm* zDamper_Get_Mullion(zDamper* obj, unsigned int ix);
     inline zDTRFrm* zDamper_Get_Transom(zDamper* obj, unsigned int ix);
+
+    /* Get blades collection */
+    inline int zDamper_Set_Num_Blades(zDamper* obj, unsigned int num_blades);
+    inline int zDamper_Set_Blade_Type(zDamper* obj, zBladeType ztype);
+    inline zBlades* zDamper_Get_Blades(zDamper* obj);
 
 #ifdef __cplusplus
 }
