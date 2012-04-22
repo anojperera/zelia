@@ -16,6 +16,7 @@
 #include "zDTRFrm.h"
 #include "zDMLFrm.h"
 #include "zBlades.h"
+#include "zShafts.h"
 
 /* Forward declaration of struct */
 typedef struct _zDamper zDamper;
@@ -32,6 +33,7 @@ struct _zDamper
     zDTBFrm z_t_frm;					/* top frame */
     zDTBFrm z_b_frm;					/* bottom frame */
     zBlades z_blds;					/* blades collection */
+    zShafts z_shfts;					/* shafts collection */
     zDMLFrm* z_mls;					/* mullion collection */
     zDTRFrm* z_trs;					/* transom collection */
     unsigned int z_num_ml;				/* number of mullions */

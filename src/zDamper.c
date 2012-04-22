@@ -100,6 +100,7 @@ int zDamper_Draw(zDamper* obj)
     zDevice* _dev;
     double _height;
     double _mod_width, _mod_height, _ml_width, _tr_width;
+    double _bld_pitch;
     int a, j;
     
     /* Check object */
@@ -175,7 +176,7 @@ int zDamper_Draw(zDamper* obj)
     _tr_width = 0.0;
     _mod_height = obj->z_parent.z_height;
     _mod_width = obj->z_parent.z_width;
-    
+    _bld_pitch = _mod_height / (double) obj->z_num_bld;
     if(obj->z_mls)
     	{
     	    _ml_width = obj->z_mls[0].z_parent.z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_parent.z_width :
@@ -227,9 +228,10 @@ int zDamper_Draw(zDamper* obj)
     zGeneric_Draw(_tf);
     zGeneric_Draw(_bf);
     
-    /* create blades collection */
+    /* Create blades and shafts collection */
     obj->z_num_ml++;
     obj->z_num_tr++;
+
     for(a=0; a<obj->z_num_ml; a++)
 	{
 	    for(j=0; j<obj->z_num_tr; j++)
@@ -244,6 +246,15 @@ int zDamper_Draw(zDamper* obj)
 					_mod_height,
 					obj->z_num_blades,
 					obj->z_bld_type);
+
+			    zShafts_New(&obj->z_shfts,
+					_dev,
+					obj->z_parent.z_x + obj->z_dflange - Z_SHAFT_EXTRA,
+					obj->z_parent.z_y + obj->z_oflange + _bld_pitch,
+					obj->z_parent.z_width + Z_SHAFT_EXTRA * 2,
+					obj->z_num_blades,
+					_bld_pitch);
+			    
 			    obj->z_bld_flg = 1;
 			}
 		    else
@@ -251,9 +262,14 @@ int zDamper_Draw(zDamper* obj)
 			    zBlades_Set_Base_Coordinates(&obj->z_blds,
 							 obj->z_parent.z_x + obj->z_dflange + (double) a * (_mod_width + _ml_width),
 							 obj->z_parent.z_y + obj->z_oflange + (double) j * (_mod_height + _tr_width));
+
+			    zShafts_Set_Coordinates(&obj->z_shfts,
+						    obj->z_parent.z_x + obj->z_dflange - Z_SHAFT_EXTRA,
+						    obj->z_parent.z_y + obj->z_oflange + (double) j * (_mod_height + _tr_width));
 			}
 
 		    zGenerics_Draw(&obj->z_blds.z_parent);
+		    zGenerics_Draw(&obj->z_shfts.z_parent);
 		}
 	}
 
