@@ -93,7 +93,7 @@ static int _zshaft_draw(zGeneric* obj)
     int rt_val;
     
     Z_CHECK_OBJ(obj);
-    rt_val = zShaft_Draw(Z_SHEET(obj));
+    rt_val = zShaft_Draw(Z_SHAFT(obj));
     _shft = Z_SHAFT(obj);
     if(_shft->z_draw_func)
 	return _shft->z_draw_func(obj);

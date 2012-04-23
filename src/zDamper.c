@@ -176,7 +176,7 @@ int zDamper_Draw(zDamper* obj)
     _tr_width = 0.0;
     _mod_height = obj->z_parent.z_height;
     _mod_width = obj->z_parent.z_width;
-    _bld_pitch = _mod_height / (double) obj->z_num_bld;
+
     if(obj->z_mls)
     	{
     	    _ml_width = obj->z_mls[0].z_parent.z_parent.z_width > 0.0? obj->z_mls[0].z_parent.z_parent.z_width :
@@ -231,7 +231,7 @@ int zDamper_Draw(zDamper* obj)
     /* Create blades and shafts collection */
     obj->z_num_ml++;
     obj->z_num_tr++;
-
+    _bld_pitch = _mod_height / (double) obj->z_num_blades;
     for(a=0; a<obj->z_num_ml; a++)
 	{
 	    for(j=0; j<obj->z_num_tr; j++)
@@ -250,8 +250,9 @@ int zDamper_Draw(zDamper* obj)
 			    zShafts_New(&obj->z_shfts,
 					_dev,
 					obj->z_parent.z_x + obj->z_dflange - Z_SHAFT_EXTRA,
-					obj->z_parent.z_y + obj->z_oflange + _bld_pitch,
+					obj->z_parent.z_y + obj->z_oflange + _bld_pitch / 2,
 					obj->z_parent.z_width + Z_SHAFT_EXTRA * 2,
+					Z_SHAFT_DIA,
 					obj->z_num_blades,
 					_bld_pitch);
 			    
