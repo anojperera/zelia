@@ -38,7 +38,7 @@ extern "C" {
 			   double dia,			/* shaft diameter */
 			   unsigned int num_shafts,	/* number of shafts */
 			   double pitch);		/* blade pitch */
-    zGenerics* zShafts_Delete(zShafts* obj);
+    void zShafts_Delete(zShafts* obj);
 
     /* Set coordinates */
     inline int zShafts_Set_Coordinates(zShafts* obj, double x, double y);

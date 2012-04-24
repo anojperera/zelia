@@ -15,7 +15,7 @@ zGenerics* zShafts_New(zShafts* obj,		/* optional self pointer */
 		       double y,		/* y coordinate */
 		       double width,	/* shaft width */
 		       double dia,		/* shaft diameter */
-		       unsigned int num_shafts	/* number of shafts */
+		       unsigned int num_shafts,	/* number of shafts */
 		       double pitch)	/* blade pitch */
 {
     int i;
@@ -76,7 +76,7 @@ zGenerics* zShafts_New(zShafts* obj,		/* optional self pointer */
 }
 
 /* Destructor */
-void zBlades_Delete(zBlades* obj)
+void zShafts_Delete(zShafts* obj)
 {
     Z_CHECK_OBJ_VOID(obj);
 
@@ -91,14 +91,14 @@ void zBlades_Delete(zBlades* obj)
 }
 
 /* Set base coordinates */
-inline int zShafts_Set_Coordinates(zShafts* obj, double x, double y);
+inline int zShafts_Set_Coordinates(zShafts* obj, double x, double y)
 {
     int i;
     double shft_y;
     
     Z_CHECK_OBJ(obj);
 
-    for(i=0,shft_y=y, i<obj->z_parent.z_count; i++,shft_y+=obj->z_pitch)
+    for(i=0,shft_y=y; i<obj->z_parent.z_count; i++,shft_y+=obj->z_pitch)
 	{
 	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
 				  obj->z_x,
@@ -125,6 +125,7 @@ static int _zshafts_delete(void* obj, void* usr_data)
 {
     zGeneric* zg;
     Z_CHECK_OBJ(obj);
-    zShaft_Delete(Z_SHAFT(obj));
+    zg = (zGeneric*) obj;
+    zShaft_Delete(Z_SHAFT(zg));
     return 0;
 }

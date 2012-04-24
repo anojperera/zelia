@@ -28,8 +28,13 @@ int main(int argc, char** argv)
     zGeneric* table;		/* table */
     zGeneric* dmp;		/* damper */
     zGenerics* notes;		/* note */
+    int _num_blds = 1;
 
     zBrd_Attrib* attrib;
+
+    if(argc > 1)
+	_num_blds = atoi(argv[1]);    
+
     zDevice_New2(zFormatPDF,
 		 zSheetA3_Landscape,
 		 "test.pdf",
@@ -108,8 +113,7 @@ int main(int argc, char** argv)
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
     zDamper_Set_Frame_Type(Z_DAMPER(dmp), 0);
 
-    zDamper_Set_Num_Blades(Z_DAMPER(dmp), 1);
-
+    zDamper_Set_Num_Blades(Z_DAMPER(dmp), _num_blds);
 
     /* create border */
     zGeneric_Draw(sht);
