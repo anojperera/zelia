@@ -2,7 +2,6 @@
 /* Tue Apr 24 23:04:34 BST 2012 */
 
 #include "zBearing.h"
-#include "zDevice.h"
 #include <math.h>
 
 /* Virtual draw function */
@@ -116,7 +115,43 @@ static int _zbearing_draw(zGeneric* obj)
 /* Draw cutdown bearing */
 static inline int _zbearing_draw_cutdown(zBearing* obj)
 {
-    zDevice* _dev;
+    zGeneric* _generic;
+    zBase* _base;
+    cairo_t* _dev_c;
+    double _height;
+    /* check for object */
+    Z_CHECK_OBJ(obj);
 
-    
+    /* Get base and generic object */
+    _base = &obj->z_parent;
+    _generic = &obj->z_parent.z_sgeneric;
+
+    _dev_c = zGeneric_Get_Dev_Context(_generic);
+
+    /* check all objects */
+    Z_CHECK_OBJ(_base);
+    Z_CHECK_OBJ(_generic);
+    Z_CHECK_OBJ(_dev_c);
+
+    /* save cairo context */
+    cairo_save(_dev_c);
+
+    /* change line type to hidden */
+    zGeneric_Set_LineType(_generic, zLTHidden);
+    cairo_rectangle(_dev_c,
+		    _base->z_x,
+		    _base->z_y - _base->z_height / 2;
+		    Z_BEARING_CT_FLANGE_THICKNESS,
+		    _base->z_height);
+    _height = _base->z_height * Z_BEARING_CT_BASE_HEIGHT_FCT;
+    cairo_rectangle(_dev_c
+		    _base->z_x + Z_BEARING_CT_FLANGE_THICKNESS,
+		    _base->z_y - _height / 2,
+		    Z_BEARING_CT_BASE_THICKNESS,
+		    _height);
+    cairo_stroke(_dev_c);
+    zGeneric_Set_LintType(_generic, zLTContinuous);
+
+    cairo_retore(_dev_c);
+    return 0;
 }
