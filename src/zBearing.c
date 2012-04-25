@@ -12,6 +12,12 @@ static inline int _zbearing_draw_cutdown(zBearing* obj);		/* draw cutdown bearin
 static inline int _zbearing_draw_blind(zBearing* obj);			/* draw blind bearing */
 static inline int _zbearing_draw_linkage(zBearing* obj);		/* linkage bearing */
 
+/* Priavte variables */
+static zGeneric* _generic;
+static zBase* _base;
+static cairo_t* _dev_c;
+static double _height;
+
 /* Constructor */
 zGeneric* zBearing_New(zBearing* obj)
 {
@@ -59,9 +65,19 @@ void zBearing_Delete(zBearing* obj)
 /* Draw method */
 int zBearing_Draw(zBearing* obj)
 {
-    /* object check */
+    /* check for object */
     Z_CHECK_OBJ(obj);
 
+    /* Get base and generic object */
+    _base = &obj->z_parent;
+    _generic = &obj->z_parent.z_sgeneric;
+
+    _dev_c = zGeneric_Get_Dev_Context(_generic);
+
+    /* check all objects */
+    Z_CHECK_OBJ(_base);
+    Z_CHECK_OBJ(_generic);
+    Z_CHECK_OBJ(_dev_c);
     switch(obj->z_type)
 	{
 	case zBearingBlind:
@@ -115,24 +131,6 @@ static int _zbearing_draw(zGeneric* obj)
 /* Draw cutdown bearing */
 static inline int _zbearing_draw_cutdown(zBearing* obj)
 {
-    zGeneric* _generic;
-    zBase* _base;
-    cairo_t* _dev_c;
-    double _height;
-    /* check for object */
-    Z_CHECK_OBJ(obj);
-
-    /* Get base and generic object */
-    _base = &obj->z_parent;
-    _generic = &obj->z_parent.z_sgeneric;
-
-    _dev_c = zGeneric_Get_Dev_Context(_generic);
-
-    /* check all objects */
-    Z_CHECK_OBJ(_base);
-    Z_CHECK_OBJ(_generic);
-    Z_CHECK_OBJ(_dev_c);
-
     /* save cairo context */
     cairo_save(_dev_c);
 
@@ -153,5 +151,47 @@ static inline int _zbearing_draw_cutdown(zBearing* obj)
     zGeneric_Set_LintType(_generic, zLTContinuous);
 
     cairo_retore(_dev_c);
+    return 0;
+}
+
+/* Draw blind bearing */
+static inline int _zbearing_draw_blind(zBearing* obj)
+{
+#define ZBEARING_BLIND_COORDS 4
+    int i;
+    double _x[ZBEARING_BLIND_COORDS], _y[ZBEARING_BLIND_COORDS];
+    double _wall_thickness;
+    /* save cairo context */
+    cairo_save(_dev_c);
+
+    /* change line type to hidden */
+    zGeneric_Set_LineType(_generic, zLTHidden);
+    
+    cairo_rectangle(_dev_c,
+		    _base->z_x,
+		    _base->z_y - _base->z_height / 2;
+		    Z_BEARING_CT_FLANGE_THICKNESS,
+		    _base->z_height);
+
+    _wall_thickness = _base->z_height * Z_BEARING_BL_WALL_THICKNESS;
+    _x[0] = _base->z_x;
+    _y[0] = _base->z_y - _base->z_height / 2 + _wall_thickness;
+
+    _x[1] = _base->z_x + _base->z_width - _wall_thickness;
+    _y[1] = _y[0];
+
+    _x[2] = _x[1];
+    _y[2] = _base->z_y + _base->z_height / 2 - _wall_thickness;
+
+    _x[3] = _base->z_x;
+    _y[3] = _y[2];
+
+    cairo_move_to(_dev_c, _x[0], _y[0]);
+    for(i=1; i<ZBEARING_BLIND_COORDS; i++)
+	cairo_line_to(_dev_c, _x[i], _y[i]);
+
+    cairo_stroke(_dev_c);
+    zGeneric_Set_LintType(_generic, zLTContinuous);
+    cairo_restore(_dev_c);
     return 0;
 }
