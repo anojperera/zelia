@@ -125,7 +125,7 @@ inline int zBlades_Set_Base_Coordinates(zBlades* obj, double x, double y)
     int i;
     double bld_y;
     Z_CHECK_OBJ(obj);
-    for(i=0, bld_y=y; i<obj->z_num_blades; i++, bld_y += obj->z_bld_height/2)
+    for(i=0, bld_y=y+obj->z_bld_height/2; i<obj->z_num_blades; i++, bld_y += obj->z_bld_height/2)
 	{
 	    zBase_Set_Base_Coords(Z_BASE(obj->z_parent.z_generics_s[i]),
 				  x,
