@@ -232,9 +232,9 @@ int zDamper_Draw(zDamper* obj)
     _num_h_mod += obj->z_num_ml;				/* assign number of horizontal and vertical modules */
     _num_v_mod += obj->z_num_tr;
     _bld_pitch = _mod_height / (double) obj->z_num_blades;
-    for(a=0; a<_num_h_mod; a++)
+    for(j=0; j<_num_v_mod; j++)    
 	{
-	    for(j=0; j<_num_v_mod; j++)
+	    for(a=0; a<_num_h_mod; a++)
 		{
 		    if(obj->z_bld_flg==0 && a==0)
 			{
@@ -261,17 +261,20 @@ int zDamper_Draw(zDamper* obj)
 		    else
 			{
 			    zBlades_Set_Base_Coordinates(&obj->z_blds,
-							 obj->z_parent.z_x + obj->z_dflange + (double) a * (_mod_width + _ml_width),
+							 obj->z_parent.z_x + obj->z_dflange + (double) a  * (_mod_width + _ml_width),
 							 obj->z_parent.z_y + obj->z_oflange + (double) j * (_mod_height + _tr_width));
-
-			    zShafts_Set_Coordinates(&obj->z_shfts,
-						    obj->z_parent.z_x + obj->z_dflange - Z_SHAFT_EXTRA,
-						    obj->z_parent.z_y + obj->z_oflange + (double) j * (_mod_height + _tr_width));
 			}
 
 		    zGenerics_Draw(&obj->z_blds.z_parent);
-		    zGenerics_Draw(&obj->z_shfts.z_parent);
 		}
+	    if(obj->z_bld_flg)
+		{
+		    zShafts_Set_Coordinates(&obj->z_shfts,
+					    obj->z_parent.z_x + obj->z_dflange - Z_SHAFT_EXTRA,
+					    obj->z_parent.z_y + obj->z_oflange + _bld_pitch / 2 + 
+					    (double) j * (_mod_height + _tr_width));
+		}
+	    zGenerics_Draw(&obj->z_shfts.z_parent);
 	}
     _zg = NULL;
     _lf = NULL;
