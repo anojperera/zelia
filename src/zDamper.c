@@ -72,7 +72,6 @@ void zDamper_Delete(zDamper* obj)
 	    for(i = 0; i < obj->z_num_ml; i++)
 		zDMLFrm_Delete(&obj->z_mls[i]);
 	    free(obj->z_mls);
-
 	}
 
     if(obj->z_num_tr > 0 && obj->z_trs)
@@ -101,6 +100,7 @@ int zDamper_Draw(zDamper* obj)
     double _height;
     double _mod_width, _mod_height, _ml_width, _tr_width;
     double _bld_pitch;
+    unsigned int _num_h_mod = 1, _num_v_mod = 1;
     int a, j;
     
     /* Check object */
@@ -229,12 +229,12 @@ int zDamper_Draw(zDamper* obj)
     zGeneric_Draw(_bf);
     
     /* Create blades and shafts collection */
-    obj->z_num_ml++;
-    obj->z_num_tr++;
+    _num_h_mod += obj->z_num_ml;				/* assign number of horizontal and vertical modules */
+    _num_v_mod += obj->z_num_tr;
     _bld_pitch = _mod_height / (double) obj->z_num_blades;
-    for(a=0; a<obj->z_num_ml; a++)
+    for(a=0; a<_num_h_mod; a++)
 	{
-	    for(j=0; j<obj->z_num_tr; j++)
+	    for(j=0; j<_num_v_mod; j++)
 		{
 		    if(obj->z_bld_flg==0 && a==0)
 			{
@@ -273,7 +273,6 @@ int zDamper_Draw(zDamper* obj)
 		    zGenerics_Draw(&obj->z_shfts.z_parent);
 		}
 	}
-
     _zg = NULL;
     _lf = NULL;
     _rf = NULL;
