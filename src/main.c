@@ -112,6 +112,7 @@ int main(int argc, char** argv)
     zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
     zDamper_Set_Frame_Type(Z_DAMPER(dmp), 0);
+
     zDamper_Set_Num_Blades(Z_DAMPER(dmp), _num_blds);
     zDamper_Set_Num_Mullions(Z_DAMPER(dmp), 1);
     zDamper_Set_Num_Transoms(Z_DAMPER(dmp), 1);

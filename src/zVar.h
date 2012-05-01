@@ -222,6 +222,9 @@
 #define Z_BEARING_CT_BASE_THICKNESS 3.0
 #define Z_BEARING_CT_BASE_HEIGHT_FCT 0.7	/* base height factor */
 
+#define Z_BEARING_BL_WALL_THICKNESS 0.2		/* Wall thickness for blind bearings is
+						 * is specified as a percentage of height */
+
 /* Object conversion macro */
 #define Z_SHEET(obj) ((zSheet*) obj->z_child)
 #define Z_BASE(obj) ((zBase*) obj->z_child)
