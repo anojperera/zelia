@@ -107,12 +107,14 @@ int main(int argc, char** argv)
     zGeneric_Set_Device(dmp, &dev);
     zGeneric_Set_Default_Dev_Context(dmp);
     zBase_Set_Base_Coords(Z_BASE(dmp), 30.0, 50.0);
-    zBase_Set_Width_and_Height(Z_BASE(dmp), 150.0, 150.0);
+    zBase_Set_Width_and_Height(Z_BASE(dmp), 200.0, 150.0);
     zBase_Set_Thickness(Z_BASE(dmp), 1.0);
     zDamper_Set_Drive_Flagne(Z_DAMPER(dmp), 10.0);
     zDamper_Set_NonDrive_Flange(Z_DAMPER(dmp), 10.0);
     zDamper_Set_Frame_Type(Z_DAMPER(dmp), 0);
     zDamper_Set_Num_Blades(Z_DAMPER(dmp), _num_blds);
+    zDamper_Set_Num_Mullions(Z_DAMPER(dmp), 1);
+    zDamper_Set_Num_Transoms(Z_DAMPER(dmp), 1);
 
     /* create border */
     zGeneric_Draw(sht);
