@@ -6,6 +6,7 @@
 #define _ZSHEET_H_
 
 #include <cairo/cairo.h>
-
+#include <cairo/cairo-svg.h>
+#include <cairo/cairo-pdf.h>
 
 #endif /* _ZSHEET_H_ */
