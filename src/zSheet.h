@@ -8,5 +8,8 @@
 #include <cairo/cairo.h>
 #include <cairo/cairo-svg.h>
 #include <cairo/cairo-pdf.h>
+#include <librsvg-2.0/librsvg/rsvg.h>
+#include <librsvg-2.0/librsvg/rsvg-cairo.h>
+
 
 #endif /* _ZSHEET_H_ */
