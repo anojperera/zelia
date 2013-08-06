@@ -103,6 +103,12 @@
 
 
 #define Z_MAX_ATTRIB 20
+#define Z_SHT_ATTRIB_SZ1 4
+#define Z_SHT_ATTRIB_SZ2 8
+#define Z_SHT_ATTRIB_SZ3 16
+#define Z_SHT_ATTRIB_SZ4 24
+#define Z_SHT_ATTRIB_SZ5 48
+#define Z_SHT_ATTRIB_SZ6 64
 
 /* drawing attribute words *
  * attribute word describes drawing titles *
