@@ -25,6 +25,7 @@ typedef struct _zDevice zDevice;
 struct _zDevice
 {
     unsigned int var_int_flg;			/* internal flag */
+    unsigned int var_ref_cnt;			/* reference counter */
     cairo_surface_t* z_surface;			/* cairo surface */
     cairo_t* z_device;				/* cairo default device */
 

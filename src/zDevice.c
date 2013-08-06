@@ -4,9 +4,9 @@
 #include "zDevice.h"
 
 /* private functions */
-inline static int zdevice_rgb(zDevice* obj);
-inline static int zdevice_page_dims(zDevice* obj);
-inline static int zdevice_create_context(zDevice* obj);
+static int zdevice_rgb(zDevice* obj);
+static int zdevice_page_dims(zDevice* obj);
+static int zdevice_create_context(zDevice* obj);
 
 /* constructor */
 zDevice* zDevice_New(zDevice* obj)
@@ -21,6 +21,9 @@ zDevice* zDevice_New(zDevice* obj)
     else
 	obj->var_int_flg = 0;
 
+    /* reference counter */
+    obj->var_ref_cnt = 0;
+    
     /* set properties */
     obj->z_surface = NULL;
     obj->z_device = NULL;
@@ -172,7 +175,7 @@ inline int zDevice_Set_SurfaceType(zDevice* obj,
 
 /******************************************************************/
 /* private functions */
-inline static int zdevice_rgb(zDevice* obj)
+static int zdevice_rgb(zDevice* obj)
 {
     switch(obj->z_line_color_ix)
 	{
@@ -207,7 +210,7 @@ inline static int zdevice_rgb(zDevice* obj)
 }
 
 /* set page size */
-inline static int zdevice_page_dims(zDevice* obj)
+static int zdevice_page_dims(zDevice* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
@@ -234,7 +237,7 @@ inline static int zdevice_page_dims(zDevice* obj)
 }
 
 /* create device context */
-inline static int zdevice_create_context(zDevice* obj)
+static int zdevice_create_context(zDevice* obj)
 {
     /* check for NULL pointer */
     Z_CHECK_OBJ(obj);
