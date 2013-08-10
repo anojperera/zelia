@@ -63,26 +63,17 @@ int zGeneric_Draw(zGeneric* obj)
     Z_CHECK_OBJ(obj->z_draw_func);
     return obj->z_draw_func(obj);
 }
-	
-/* set device */
-inline int zGeneric_Set_Device(zGeneric* obj, zDevice* var)
+
+int zGeneric_Set_LineWeight(zGeneric* obj, zLineWeights var)
 {
-    /* check for arguments */
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(var);
+	/* check NULL pointer */
+	Z_CHECK_OBJ(obj);
 
-    obj->z_gdev = var;
+	obj->z_gline_weight = var;
 
-    /* Set to default context */
-    return 0;
-}
-
-/* get device */
-inline zDevice* zGeneric_Get_Device(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ_PTR(obj);
-    return obj->z_gdev;
+	/* set line weight to context */
+	zgeneric_set_lineweight(obj);
+	return 0;	
 }
 
 /* set line colour index */
@@ -125,61 +116,6 @@ inline int zGeneric_Set_LineColour(zGeneric* obj,
     return 0;
 }
 
-/* get line colour */
-inline zLineColour zGeneric_Get_LineColour(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return zLBlack;
-    else
-	return obj->z_gline_color_ix;
-
-}
-
-/* set line weight */
-inline int zGeneric_Set_LineWeight(zGeneric* obj,
-				   zLineWeights var)
-{
-    /* check NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    obj->z_gline_weight = var;
-
-    /* set line weight to context */
-    zgeneric_set_lineweight(obj);
-    return 0;
-
-}
-
-/* get line weights */
-inline zLineWeights zGeneric_Get_LineWeight(zGeneric* obj)
-{
-    /* check NULL pointer */
-    if(obj == NULL)
-	return zLWeight1;
-    else
-	return obj->z_gline_weight;
-}
-
-/* set device context to default */
-inline int zGeneric_Set_Default_Dev_Context(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    /* check for device context */
-    Z_CHECK_OBJ(obj->z_gdev);
-
-    /* check if device context was set in
-       device object */
-    if(obj->z_gdev->z_device)
-	{
-	    obj->z_gcairo_dev = obj->z_gdev->z_device;
-	    obj->z_def_dev_ctxt_flg = 1;
-	}
-    
-    return 0;
-}
 
 /* create generic device context */
 inline int zGeneric_Create_Dev_Context(zGeneric* obj)
@@ -203,33 +139,6 @@ inline int zGeneric_Create_Dev_Context(zGeneric* obj)
     return 0;
 }
 
-/* get pointer to device context */
-inline cairo_t* zGeneric_Get_Dev_Context(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ_PTR(obj);
-
-    return obj->z_gcairo_dev;
-}
-
-inline int zGeneric_Set_Defauts(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    /* check if device context was
-       created */
-    Z_CHECK_OBJ(obj->z_gcairo_dev);
-
-    /* set default joining */
-    cairo_set_line_join (obj->z_gcairo_dev,
-			 CAIRO_LINE_JOIN_MITER);
-
-    /* set default line weight */
-    zgeneric_set_lineweight(obj);
-    
-    return 0;
-}
 
 /* set line type */
 inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
@@ -272,17 +181,6 @@ inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
 	}
 	    
     return 0;
-}
-
-/* get line type */
-inline zLineTypes zGeneric_Get_LineType(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    if(obj == NULL)
-	return zLTContinuous;
-    else
-	return obj->z_gltype;
-
 }
 
 
