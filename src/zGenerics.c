@@ -4,9 +4,9 @@
 #include "zGenerics.h"
 
 /* Virtual functions */
-static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix);		/* delete child objects */
+static int _zgenerics_callback_delete(void* usr_obj);						/* delete child objects */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix);			/* draw child object */
-static inline int _zgenerics_del_helper(zGenerics* obj);						/* delete helper */
+static inline int _zgenerics_del_helper(zGenerics* obj);					/* delete helper */
 
 /* Constructor */
 int zGenerics_New(zGenerics* obj,
@@ -35,7 +35,9 @@ int zGenerics_New(zGenerics* obj,
 	obj->z_int_flg = 0;
 
     /* Set properties */
-    obj->z_generics_d = NULL;
+
+    /* Initialise the dynamic collection */
+    blist_new(&obj->z_generics_d, _zgenerics_callback_delete);
 
     obj->z_device = NULL;
 
@@ -99,38 +101,17 @@ void zGenerics_Delete(zGenerics* obj)
     return;
 }
 
-/* Return count of itnernal object */
-inline unsigned int zGenerics_Get_Count(zGenerics* obj)
-{
-    if(obj == NULL)
-	return 0;
-    else
-	return obj->z_count;
-}
-
-/* Set device */
-inline int zGenerics_Set_Device(zGenerics* obj, zDevice* dev)
-{
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(dev);
-
-    obj->z_device = dev;
-    return 0;
-}
-
-/* Get device */
-inline zDevice* zGenerics_Get_Device(zGenerics* obj)
-{
-    Z_CHECK_OBJ_PTR(obj);
-    return obj->z_device;
-}
-
 /* Clear array */
 void zGenerics_Clear(zGenerics* obj)
 {
     /* check for object */
     Z_CHECK_OBJ_VOID(obj);
     _zgenerics_del_helper(obj);
+
+    /* If dynamically expansion collection was deleted, recreate it */
+    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
+	blist_new(&obj->z_generics_d, _zgenerics_callback_delete);
+
 }
 
 /* Draw function */
@@ -142,12 +123,12 @@ int zGenerics_Draw(zGenerics* obj)
     Z_CHECK_OBJ(obj);
 
     /* check for expansion object, if dynamic, use dynamic array */
-    if(obj->z_expansion_flg && obj->z_generics_d)
+    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
 	{
-	    aList_Display2(&obj->z_generics_d,
+	    blist_foreach(&obj->z_generics_d,
 			  0,
-			   _zgenerics_callback_draw,
-			   (void*) obj);
+			  (void*) obj,
+			  _zgenerics_callback_draw);
 	}
     else if(obj->z_generics_s)
 	{
@@ -170,17 +151,8 @@ static inline int _zgenerics_del_helper(zGenerics* obj)
 {
     int i;
     /* check for expansion flag */
-    if(obj->z_expansion_flg)
-	{
-	    /* call destructors of child objects */
-	    aList_Display2(&obj->z_generics_d,
-			  0,
-			   _zgenerics_callback_delete,
-			   (void*) obj);
-
-	    /* clear internal list */
-	    aList_Clear(&obj->z_generics_d);
-	}
+    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
+	blist_delete(&obj->z_generics_d);
     else
 	{
 	    /* iterate through static collection and destructors */

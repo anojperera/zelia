@@ -5,7 +5,7 @@
 #define _ZGENERICS_H_
 
 #include <stdlib.h>
-#include "../../g_list/src/alist.h"
+#include <blist.h>
 #include "zGeneric.h"
 #include "zDevice.h"
 
@@ -18,7 +18,7 @@ typedef int (*zcollection_fptr)(void*, void*);
 
 struct _zGenerics
 {
-    aNode* z_generics_d;				/* dynamically expandable collection */
+    blist z_generics_d;					/* dynamically expandable collection */
     zGeneric** z_generics_s;				/* static collection */
     unsigned int z_count;				/* count of objects */
     unsigned int z_expansion_flg;			/* expansion flag */
@@ -48,11 +48,30 @@ extern "C" {
     void zGenerics_Delete(zGenerics* obj);
 
     /* Get object count */
-    inline unsigned int zGenerics_Get_Count(zGenerics* obj);
+    inline __attribute__ ((always_inline)) static unsigned int zGenerics_Get_Count(zGenerics* obj)
+    {
+	if(obj == NULL)
+	    return 0;
+	else
+	    return obj->z_count;
+    }
 
     /* Set and get device object */
-    inline int zGenerics_Set_Device(zGenerics* obj, zDevice* dev);
-    inline zDevice* zGenerics_Get_Device(zGenerics* obj);
+    inline __attribute__ ((always_inline)) static int zGenerics_Set_Device(zGenerics* obj, zDevice* dev)
+    {
+	Z_CHECK_OBJ(obj);
+	Z_CHECK_OBJ(dev);
+
+	obj->z_device = dev;
+	return 0;
+    }
+
+    /* Get device */
+    inline __attribute__ ((always_inline)) static zDevice* zGenerics_Get_Device(zGenerics* obj)
+    {
+	Z_CHECK_OBJ_PTR(obj);
+	return obj->z_device;
+    }
 
     /* Clear array */
     void zGenerics_Clear(zGenerics* obj);
