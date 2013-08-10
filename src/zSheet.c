@@ -1,6 +1,10 @@
 /* implementation of sheet object
    Sat Oct 16 23:50:14 BST 2010 */
 #include "zSheet.h"
+#include <librsvg-2.0/librsvg/rsvg.h>
+#include <librsvg-2.0/librsvg/rsvg-cairo.h>
+
+#define Z_SHEET_SCALE_ADJ 0.8
 
 /* token for cairo stroke in each
    function */
@@ -31,7 +35,7 @@ static int zsheet_add_attribs(zSheet* obj);
 /*==================================================================*/
 /* draw function */
 static int _zsheet_draw_function(zGeneric* obj);
-
+static int _zsheet_import_border(zGeneric* obj);
 
 /* create generic sheet object */
 zGeneric* zSheet_New(zSheet* obj)
@@ -219,6 +223,14 @@ int zSheet_Create_Border(zSheet* obj)
     if(obj->z_ssafe_flg)
 	return 0;
 
+    /* if template path was set import border */
+    if(obj->z_tmp_path != NULL)
+	{
+	    _zsheet_import_border(zGeneric* obj);
+	    obj->z_ssafe_flg = 1;
+	    return 0;	    	
+	}
+    
     dec += zsheet_draw_oborder(obj);
     dec += zsheet_draw_grid(obj);
     dec += zsheet_draw_top_revbox(obj);
@@ -1912,4 +1924,33 @@ static int zsheet_add_attribs(zSheet* obj)
 static int _zsheet_draw_function(zGeneric* obj)
 {
     return zSheet_Create_Border(Z_SHEET(obj));
+}
+
+
+/* import border into template */
+static int _zsheet_import_border(zGeneric* obj)
+{
+    GError* _err;
+    RsvgHandle* _svg;
+    cairo_t* _cr;
+    RsvgDimensionData _dims;
+
+    
+    g_type_init();
+    _svg = rsvg_handle_new_from_file(Z_FILE_PATH, &_err);
+
+    /* get device context */
+    _cr = zGeneric_Get_Dev_Context(&obj->z_sgeneric);
+
+    /* save context and scale to suit */
+    cairo_save(_cr);
+    cairo_scale(_cr, Z_SHEET_SCALE_ADJ, Z_SHEET_SCALE_ADJ);
+    rsvg_handle_render_cairo(_svg, _cr);
+    rsvg_handle_close(_svg, &_err);
+
+    cairo_restore(_cr);
+
+    _cr = NULL;
+    return 0;
+    
 }
