@@ -136,6 +136,17 @@ void zDevice_Delete(zDevice* obj)
 	
 }
 
+/* Set page size */
+int zDevice_Set_PageSize(zDevice* obj, zSheets var)
+{
+    /* check for NULL pointer */
+    Z_CHECK_OBJ(obj);
+
+    obj->z_page_sz = var;
+    zdevice_page_dims(obj);
+    return 0;
+}
+
 /* set surface type */
 inline int zDevice_Set_SurfaceType(zDevice* obj,
 				   zOutputFormat var)
@@ -170,6 +181,26 @@ inline int zDevice_Set_SurfaceType(zDevice* obj,
 	    break;
 	}
 
+    return 0;
+}
+
+/* Get default device context */
+cairo_t* zDevice_Get_Context(zDevice* obj)
+{
+    /* check for NULL pointer */
+    Z_CHECK_OBJ_PTR(obj);
+
+    zdevice_create_context(obj);
+    return obj->z_device;
+}
+
+int zDevice_Set_LineColourIx(zDevice* obj, zLineColour var)
+{
+    /* check for NULL pointer */
+    Z_CHECK_OBJ(obj);
+
+    obj->z_line_color_ix = var;
+    zdevice_rgb(obj);
     return 0;
 }
 

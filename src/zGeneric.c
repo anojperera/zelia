@@ -183,6 +183,25 @@ inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
     return 0;
 }
 
+int zGeneric_Set_Defauts(zGeneric* obj)
+{
+    /* check for NULL pointer */
+    Z_CHECK_OBJ(obj);
+
+    /* check if device context was
+       created */
+    Z_CHECK_OBJ(obj->z_gcairo_dev);
+
+    /* set default joining */
+    cairo_set_line_join (obj->z_gcairo_dev,
+			 CAIRO_LINE_JOIN_MITER);
+
+    /* set default line weight */
+    zgeneric_set_lineweight(obj);
+    
+    return 0;
+
+}
 
 /* Private methods */
 /***********************************************************************/

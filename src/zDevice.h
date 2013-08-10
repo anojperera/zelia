@@ -60,8 +60,7 @@ extern "C" {
     /********************************************************************/
 
     /* Set and get type of surface */
-    inline int zDevice_Set_SurfaceType(zDevice* obj,
-				       zOutputFormat var);
+    inline int zDevice_Set_SurfaceType(zDevice* obj, zOutputFormat var);
     inline __attribute__ ((always_inline)) static zOutputFormat zDevice_Get_SurfaceType(zDevice* obj)
     {
 	if(obj == NULL)
@@ -71,15 +70,7 @@ extern "C" {
     }
 
     /* Set and get page size */
-    inline __attribute__ ((always_inline)) static int zDevice_Set_PageSize(zDevice* obj, zSheets var)
-    {
-	/* check for NULL pointer */
-	Z_CHECK_OBJ(obj);
-
-	obj->z_page_sz = var;
-	zdevice_page_dims(obj);
-	return 0;
-    }
+    int zDevice_Set_PageSize(zDevice* obj, zSheets var);
 
     /* get page size */
     inline __attribute__ ((always_inline)) static zSheets zDevice_Get_PageSize(zDevice* obj)
@@ -118,25 +109,10 @@ extern "C" {
     }
 		
     /* Get default device context */
-    inline __attribute__ ((always_inline)) static cairo_t* zDevice_Get_Context(zDevice* obj)
-    {
-	/* check for NULL pointer */
-	Z_CHECK_OBJ_PTR(obj);
-
-	zdevice_create_context(obj);
-	return obj->z_device;
-    }
+    cairo_t* zDevice_Get_Context(zDevice* obj);
 
     /* Set and get line colour */
-    inline __attribute__ ((always_inline)) static int zDevice_Set_LineColourIx(zDevice* obj, zLineColour var)
-    {
-	/* check for NULL pointer */
-	Z_CHECK_OBJ(obj);
-
-	obj->z_line_color_ix = var;
-	zdevice_rgb(obj);
-	return 0;
-    }
+    int zDevice_Set_LineColourIx(zDevice* obj, zLineColour var);
 
     /* get line color index */
     inline __attribute__ ((always_inline)) static zLineColour zDevice_Get_LineColourIx(zDevice* obj)

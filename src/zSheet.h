@@ -27,7 +27,7 @@ struct _zSheet
     
     unsigned int z_int_flg;			/* internal flag */
     unsigned int z_attrib_init;			/* attribute initialised */
-    char z_slogo_path[256];			/* logo path */
+    char z_slogo_path[Z_SHEET_LOGO_PATH_SZ];	/* logo path */
     zBrd_Attrib z_sbrd_attrib;			/* border attributes */
     int z_sgrid_flg;				/* grid flag */
     int z_ssafe_flg;				/* flag to indicate
@@ -73,17 +73,50 @@ extern "C" {
     void zSheet_Delete(zSheet* obj);
 
     /* set and get border attributes */
-    inline int zSheet_Set_Attributes(zSheet* obj,
-			       zBrd_Attrib* var);
-    inline zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj);
+    inline int zSheet_Set_Attributes(zSheet* obj, zBrd_Attrib* var);
+    inline __attribute__ ((always_inline)) static zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj)
+    {
+	/* check for NULL pointer */
+	Z_CHECK_OBJ_PTR(obj);
+	return &obj->z_sbrd_attrib;
+    }
 
     /* set and get Grid Flag */
-    inline int zSheet_Set_GridFlag(zSheet* obj, int var);
-    inline int zSheet_Get_GridFlag(zSheet* obj);
+    inline __attribute__ ((always_inline)) static int zSheet_Set_GridFlag(zSheet* obj, int var)
+    {
+	/* check for NULL pointer */
+	Z_CHECK_OBJ(obj);
+	obj->z_sgrid_flg = var;
+	return 0;
+    }
+    
+    inline __attribute__ ((always_inline)) static int zSheet_Get_GridFlag(zSheet* obj)
+    {
+	/* check for NULL pointer */
+	Z_CHECK_OBJ(obj);
+	return obj->z_sgrid_flg;
+    }
 
     /* set and get logo path */
-    inline int zSheet_Set_LogoPath(zSheet* obj, const char* var);
-    inline char* zSheet_Get_LogoPath(zSheet* obj);
+    inline int __attribute__ ((always_inline)) static zSheet_Set_LogoPath(zSheet* obj, const char* var)
+    {
+	/* check for NULL pointer */
+	Z_CHECK_OBJ(obj);
+	Z_CHECK_OBJ(var);
+
+	/* copy to buffer */
+	strncpy(obj->z_slogo_path, var, Z_SHEET_LOGO_PATH_SZ-1);
+
+	return 0;
+    }
+
+    /* get logo path */
+    inline __attribute__ ((always_inline)) static char* zSheet_Get_LogoPath(zSheet* obj)
+    {
+	/* check for NULL pointer */
+	Z_CHECK_OBJ_PTR(obj);
+	return obj->z_slogo_path;
+    }
 
     /* set template path */
     inline __attribute__ ((always_inline)) static in zSheet_Set_Template_Path(zSheet* obj, const char* path)

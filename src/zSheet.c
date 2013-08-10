@@ -164,52 +164,6 @@ inline int zSheet_Set_Attributes(zSheet* obj,
     return 0;
 }
 
-/* get attributes */
-inline zBrd_Attrib* zSheet_Get_Attributes(zSheet* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ_PTR(obj);
-    return &obj->z_sbrd_attrib;
-}
-
-/* set grid flag */
-inline int  zSheet_Set_GridFlag(zSheet* obj, int var)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-    obj->z_sgrid_flg = var;
-    return 0;
-}
-
-/* get grid flag */
-inline int zSheet_Get_GridFlag(zSheet* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-    return obj->z_sgrid_flg;
-}
-
-/* set logo path */
-inline int zSheet_Set_LogoPath(zSheet* obj, const char* var)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(var);
-
-    /* copy to buffer */
-    strcpy(obj->z_slogo_path, var);
-
-    return 0;
-}
-
-/* get logo path */
-inline char* zSheet_Get_LogoPath(zSheet* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ_PTR(obj);
-    return obj->z_slogo_path;
-}
-
 /* create border */
 int zSheet_Create_Border(zSheet* obj)
 {
