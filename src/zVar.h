@@ -18,6 +18,7 @@
 
 #define Z_A3_PAGE_NAME "A3"				/* page size name */
 #define Z_A4_PAGE_NAME "A4"				/* page size name */
+#define Z_SHEET_LOGO_PATH_SZ 256			/* logo path */
 
 #define Z_MM_TO_INCHES 25.4				/* conversion inches to mm */
 #define Z_POINT_TO_INCHES 72				/* points to inches */
