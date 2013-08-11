@@ -64,7 +64,7 @@ zDevice* zDevice_New2(zOutputFormat fm,
     zdevice_page_dims(obj);
 
     /* create sufrace */
-    obj->z_format = zFormatPDF;
+    obj->z_format = fm;
     switch(fm)
 	{
 	case zFormatPDF:
@@ -84,6 +84,7 @@ zDevice* zDevice_New2(zOutputFormat fm,
 		cairo_pdf_surface_create(obj->z_filename,
 					 ConvToPoints(&obj->z_page_width),
 					 ConvToPoints(&obj->z_page_height));
+	    obj->z_format = zFormatPDF;
 	    break;
 	}
 				
