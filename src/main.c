@@ -38,5 +38,6 @@ int main(int argc, char** argv)
 
     /* delete sheet object */
     zSheet_Delete(Z_SHEET(sht));
+    zDevice_Delete(&dev);
     return 0;
 }
