@@ -233,22 +233,22 @@
 						 * is specified as a percentage of height */
 
 /* Object conversion macro */
-#define Z_SHEET(obj) ((zSheet*) obj->z_child)
-#define Z_BASE(obj) ((zBase*) obj->z_child)
+#define Z_SHEET(obj) ((zSheet*) (obj)->z_child)
+#define Z_BASE(obj) ((zBase*) (obj)->z_child)
 #define Z_TERMINAL(obj) ((zTerminal*) Z_BASE(obj)->z_child)
-#define Z_TERMINALS(obj) ((zTerminals*) obj->z_child)
+#define Z_TERMINALS(obj) ((zTerminals*) (obj)->z_child)
 #define Z_JB(obj) ((zJB*) Z_BASE(obj)->z_child)
 #define Z_GLAND(obj) ((zGland*) Z_BASE(obj)->z_child)
-#define Z_GLANDS(obj) ((zGlands*) obj->z_child)
+#define Z_GLANDS(obj) ((zGlands*) (obj)->z_child)
 #define Z_ARROW(obj) ((zArrow*) Z_BASE(obj)->z_child)
 #define Z_LEADER(obj) ((zLeader*) Z_ARROW(obj)->z_child)
 #define Z_TCELL(obj) ((zTCell*) Z_BASE(obj)->z_child)
-#define Z_TCELLS(obj) ((zTCells*) obj->z_child)
+#define Z_TCELLS(obj) ((zTCells*) (obj)->z_child)
 #define Z_TROW(obj) ((zTRow*) Z_BASE(obj)->z_child)
-#define Z_TROWS(obj) ((zTRows*) obj->z_child)
+#define Z_TROWS(obj) ((zTRows*) (obj)->z_child)
 #define Z_TABLE(obj) ((zTable*) Z_BASE(obj)->z_child)
 #define Z_NOTE(obj) ((zNote*) Z_BASE(obj)->z_child)
-#define Z_NOTES(obj) ((zNotes*) obj->z_child)
+#define Z_NOTES(obj) ((zNotes*) (obj)->z_child)
 #define Z_DFRAME(obj) ((zDFrame*) Z_BASE(obj)->z_child)
 #define Z_DSIDE_FRAME(obj) ((zDSideFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DTB_FRAME(obj) ((zDTBFrm*) Z_DFRAME(obj)->z_child)
@@ -256,37 +256,37 @@
 #define Z_DTR_FRAME(obj) ((zDTRFrm*) Z_DFRAME(obj)->z_child)
 #define Z_DAMPER(obj) ((zDamper*) Z_BASE(obj)->z_child)
 #define Z_BLADE(obj) ((zBlade*) Z_BASE(obj)->z_child)
-#define Z_BLADES(obj) ((zBlades*) obj->z_child)
+#define Z_BLADES(obj) ((zBlades*) (obj)->z_child)
 #define Z_SHAFT(obj) ((zShaft*) Z_BASE(obj)->z_child)
-#define Z_SHAFTS(obj) ((zShafts*) obj->z_child)
+#define Z_SHAFTS(obj) ((zShafts*) (obj)->z_child)
 #define Z_BEARING(obj) ((zBearing*) Z_BASE(obj)->z_child)
 
 /* Object checking macro */
-#define Z_CHECK_OBJ(obj) \
-    if(!obj) \
+#define Z_CHECK_OBJ(obj)			\
+    if(!(obj))					\
 	return 1
 
-#define Z_CHECK_OBJ_PTR(obj) \
-    if(!obj) \
+#define Z_CHECK_OBJ_PTR(obj)			\
+    if(!(obj))					\
 	return NULL
 
-#define Z_CHECK_OBJ_DOUBLE(obj) \
-    if(!obj) \
+#define Z_CHECK_OBJ_DOUBLE(obj)			\
+    if(!(obj))					\
 	return 0.0
 
-#define Z_CHECK_OBJ_VOID(obj) \
-    if(!obj) \
+#define Z_CHECK_OBJ_VOID(obj)			\
+    if(!(obj))					\
 	return
 
 /* constructor helper */
-#define Z_CONSTRUCTOR_HELPER(obj, ztype) \
-    if(obj == NULL) \
-	{ \
-    obj = (ztype*) malloc(sizeof(ztype)); \
-    Z_CHECK_OBJ_PTR(obj); \
-    obj->z_int_flg = 1; \
-	} \
-    else \
+#define Z_CONSTRUCTOR_HELPER(obj, ztype)		\
+    if((obj) == NULL)					\
+	{						\
+	    obj = (ztype*) malloc(sizeof(ztype));	\
+	    Z_CHECK_OBJ_PTR(obj);			\
+	    obj->z_int_flg = 1;				\
+	}						\
+    else						\
 	obj->z_int_flg = 0
 
 /* error messages */
