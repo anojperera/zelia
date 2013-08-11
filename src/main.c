@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     /* create sheet */
     sht = zSheet_New(NULL);
 
-    zSheet_Set_LogoPath(Z_SHEET(sht), Z_SHEET_PATH);
+    zSheet_Set_Template_Path(Z_SHEET(sht), Z_SHEET_PATH);
     zGeneric_Set_Device(sht, &dev);
     zGeneric_Set_Default_Dev_Context(sht);
 
