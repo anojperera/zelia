@@ -35,7 +35,7 @@ static int zsheet_add_attribs(zSheet* obj);
 /*==================================================================*/
 /* draw function */
 static int _zsheet_draw_function(zGeneric* obj);
-static int _zsheet_import_border(zGeneric* obj);
+static int _zsheet_import_border(zSheet* obj);
 
 /* create generic sheet object */
 zGeneric* zSheet_New(zSheet* obj)
@@ -96,10 +96,7 @@ void zSheet_Delete(zSheet* obj)
 
     /* destroy parent object */
     zGeneric_Delete(&obj->z_sgeneric);
-
-    /* set border attributes pointer to NULL */
-    obj->z_sbrd_attrib = NULL;
-
+    
     /* delete object if it was internally created */
     if(obj->z_int_flg)
 	free(obj);
@@ -180,7 +177,7 @@ int zSheet_Create_Border(zSheet* obj)
     /* if template path was set import border */
     if(obj->z_tmp_path != NULL)
 	{
-	    _zsheet_import_border(zGeneric* obj);
+	    _zsheet_import_border(obj);
 	    obj->z_ssafe_flg = 1;
 	    return 0;	    	
 	}
@@ -1631,7 +1628,7 @@ static int zsheet_add_attribs(zSheet* obj)
     if(obj == NULL)
 	return 0;
 
-    tmp_attrib = obj->z_sbrd_attrib;
+    tmp_attrib = &obj->z_sbrd_attrib;
     /* create new description */
     z_desp_g = pango_font_description_new();
     z_desp_s = pango_font_description_new();
@@ -1882,16 +1879,14 @@ static int _zsheet_draw_function(zGeneric* obj)
 
 
 /* import border into template */
-static int _zsheet_import_border(zGeneric* obj)
+static int _zsheet_import_border(zSheet* obj)
 {
     GError* _err;
     RsvgHandle* _svg;
     cairo_t* _cr;
-    RsvgDimensionData _dims;
-
     
     g_type_init();
-    _svg = rsvg_handle_new_from_file(Z_FILE_PATH, &_err);
+    _svg = rsvg_handle_new_from_file(obj->z_tmp_path, &_err);
 
     /* get device context */
     _cr = zGeneric_Get_Dev_Context(&obj->z_sgeneric);

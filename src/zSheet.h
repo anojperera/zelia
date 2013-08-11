@@ -9,7 +9,7 @@
 #include <string.h>
 #include <math.h>
 #include <cairo/cairo.h>
-#include <pango/pangocairo.h>
+#include <pango-1.0/pango/pangocairo.h>
 
 #include "zVar.h"
 #include "zGeneric.h"
@@ -19,7 +19,26 @@
 typedef struct _zBrd_Attrib zBrd_Attrib;
 typedef struct _zSheet zSheet;
 
-/* const int Z_MAX_ATTRIB = 20; */
+struct _zBrd_Attrib
+{
+    char z_dwg_num[Z_SHT_ATTRIB_SZ3];		/* drawing number */
+    char z_sht_num[Z_SHT_ATTRIB_SZ1];		/* sheet number */
+    char z_rev_num[Z_SHT_ATTRIB_SZ1];		/* revision number */
+    char z_scale[Z_SHT_ATTRIB_SZ1];		/* scale */
+    char z_title[Z_SHT_ATTRIB_SZ6];		/* title */
+    char z_client[Z_SHT_ATTRIB_SZ6];		/* client name */
+    char z_site[Z_SHT_ATTRIB_SZ6];		/* site / project*/
+    char z_jobnum[Z_SHT_ATTRIB_SZ3];		/* job */
+    char z_ordnum[Z_SHT_ATTRIB_SZ6];		/* order number */
+    char z_drawn[Z_SHT_ATTRIB_SZ2];		/* drawn */
+    char z_drawn_date[Z_SHT_ATTRIB_SZ2];	/* drawn date */
+    char z_chked[Z_SHT_ATTRIB_SZ2];		/* checked */
+    char z_chk_date[Z_SHT_ATTRIB_SZ2];		/* checked date */
+    char z_app[Z_SHT_ATTRIB_SZ2];		/* approved by */
+    char z_app_date[Z_SHT_ATTRIB_SZ2];		/* approved date */
+    char z_material[Z_SHT_ATTRIB_SZ5];		/* material */
+    char z_qty[Z_SHT_ATTRIB_SZ2];		/* quantity */
+};
 
 struct _zSheet
 {
@@ -42,28 +61,9 @@ struct _zSheet
     const char* z_tmp_path;			/* set template path */        
     size_t z_obj_sz;				/* object size */
 };
-		
-struct _zBrd_Attrib
-{
-    char z_dwg_num[Z_SHT_ATTRIB_SZ3];		/* drawing number */
-    char z_sht_num[Z_SHT_ATTRIB_SZ1];		/* sheet number */
-    char z_rev_num[Z_SHT_ATTRIB_SZ1];		/* revision number */
-    char z_scale[Z_SHT_ATTRIB_SZ1];		/* scale */
-    char z_title[Z_SHT_ATTRIB_SZ6];		/* title */
-    char z_client[Z_SHT_ATTRIB_SZ6];		/* client name */
-    char z_site[Z_SHT_ATTRIB_SZ6];		/* site / project*/
-    char z_jobnum[Z_SHT_ATTRIB_SZ3];		/* job */
-    char z_ordnum[Z_SHT_ATTRIB_SZ6];		/* order number */
-    char z_drawn[Z_SHT_ATTRIB_SZ2];		/* drawn */
-    char z_drawn_date[Z_SHT_ATTRIB_SZ2];	/* drawn date */
-    char z_chked[Z_SHT_ATTRIB_SZ2];		/* checked */
-    char z_chk_date[Z_SHT_ATTRIB_SZ2];		/* checked date */
-    char z_app[Z_SHT_ATTRIB_SZ2];		/* approved by */
-    char z_app_date[Z_SHT_ATTRIB_SZ2];		/* approved date */
-    char z_material[Z_SHT_ATTRIB_SZ5];		/* material */
-    char z_qty[Z_SHT_ATTRIB_SZ2];		/* quantity */
-};
 
+/* const int Z_MAX_ATTRIB = 20; */
+		
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -119,10 +119,11 @@ extern "C" {
     }
 
     /* set template path */
-    inline __attribute__ ((always_inline)) static in zSheet_Set_Template_Path(zSheet* obj, const char* path)
+    inline __attribute__ ((always_inline)) static int zSheet_Set_Template_Path(zSheet* obj, const char* path)
     {
 	if(obj != NULL && path != NULL)
 	    obj->z_tmp_path = path;
+	return 0;
     }
     
 
