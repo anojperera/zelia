@@ -35,5 +35,8 @@ int main(int argc, char** argv)
     zGeneric_Set_Defauts(sht);
 
     zGeneric_Draw(sht);
+
+    /* delete sheet object */
+    zSheet_Delete(Z_SHEET(sht));
     return 0;
 }
