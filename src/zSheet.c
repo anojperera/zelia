@@ -1887,7 +1887,12 @@ static int _zsheet_import_border(zSheet* obj)
     
     g_type_init();
     _svg = rsvg_handle_new_from_file(obj->z_tmp_path, &_err);
-
+    if(_svg == NULL)
+	{
+	    fprintf(stderr, "Unable to open file\n");
+	    return -1;
+	}
+    
     /* get device context */
     _cr = zGeneric_Get_Dev_Context(&obj->z_sgeneric);
 
