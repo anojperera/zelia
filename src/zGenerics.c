@@ -4,7 +4,7 @@
 #include "zGenerics.h"
 
 /* Virtual functions */
-static int _zgenerics_callback_delete(void* usr_obj);						/* delete child objects */
+static void _zgenerics_callback_delete(void* usr_obj, void* obj);						/* delete child objects */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix);			/* draw child object */
 static inline int _zgenerics_del_helper(zGenerics* obj);					/* delete helper */
 
@@ -37,7 +37,9 @@ int zGenerics_New(zGenerics* obj,
     /* Set properties */
 
     /* Initialise the dynamic collection */
-    blist_new(&obj->z_generics_d, _zgenerics_callback_delete);
+    blist_new(&obj->z_generics_d, NULL);
+    blist_set_usr_obj(&obj->z_generics_d, (void*) obj);
+    blist_set_option_del_callback(&obj->z_generics_d, _zgenerics_callback_delete);
 
     obj->z_device = NULL;
 
@@ -110,8 +112,11 @@ void zGenerics_Clear(zGenerics* obj)
 
     /* If dynamically expansion collection was deleted, recreate it */
     if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
-	blist_new(&obj->z_generics_d, _zgenerics_callback_delete);
-
+	{
+	    blist_new(&obj->z_generics_d, NULL);
+	    blist_set_usr_obj(&obj->z_generics_d, (void*) obj);
+	    blist_set_option_del_callback(&obj->z_generics_d, _zgenerics_callback_delete);	    
+	}
 }
 
 /* Draw function */
@@ -164,23 +169,24 @@ static inline int _zgenerics_del_helper(zGenerics* obj)
 		}
 	}
     obj->z_count = 0;
-    obj->z_generics_d = NULL;
 
     return 0;
 }
 
 /* Delete callback function */
-static int _zgenerics_callback_delete(void* usr_obj, void* obj, unsigned int ix)
+static void _zgenerics_callback_delete(void* usr_obj, void* obj)
 {
     zGenerics* zg;
     /* indicate failure if objects were NULL */
-    if(usr_obj == NULL || obj == NULL)
-	return 1;
+    if(obj == NULL || usr_obj == NULL)
+	return;
 
     zg = (zGenerics*) usr_obj;
 
     /* Call delete function pointer of child pointer */
-    return zg->z_destructor_func(obj, zg->z_usr_data);
+    zg->z_destructor_func(obj, zg->z_usr_data);
+
+    return;
 }
 
 /* Draw callback function */
