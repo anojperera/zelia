@@ -155,14 +155,6 @@ int zArrow_Draw(zArrow* obj)
     return 0;
 }
 
-/* Set fill arrow head */
-inline int zArrow_Set_Fill_Flag(zArrow* obj, unsigned int flg)
-{
-    Z_CHECK_OBJ(obj);
-    obj->z_fill_flg = flg;
-    return 0;
-}
-
 /* Get fill arrow head */
 inline unsigned int zArrow_Get_Fill_Flag(zArrow* obj)
 {

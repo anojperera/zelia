@@ -38,8 +38,17 @@ extern "C" {
     /* Property methods */
 
     /* Set and get fill flag */
-    inline int zArrow_Set_Fill_Flag(zArrow* obj, unsigned int flg);
-    inline unsigned int zArrow_Get_Fill_Flag(zArrow* obj);
+    inline __attribute__ ((always_inline)) static int zArrow_Set_Fill_Flag(zArrow* obj, unsigned int flg)
+    {
+	Z_CHECK_OBJ(obj);
+	obj->z_fill_flg = flg;
+	return 0;
+    }
+    inline unsigned int zArrow_Get_Fill_Flag(zArrow* obj)
+    {
+	Z_CHECK_OBJ(obj);
+	return obj->z_fill_flg;
+    }
 
     /* Set and get arrow head type */
     inline int zArrow_Set_Arrow_Type(zArrow* obj, zArrowTypes type);
