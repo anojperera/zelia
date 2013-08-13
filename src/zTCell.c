@@ -147,54 +147,6 @@ int zTCell_Draw(zTCell* obj)
     return 0;
 }
 
-/* Set cell content */
-inline int zTCell_Set_Content(zTCell* obj, const char* content)
-{
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(content);
-    strcpy(obj->z_content, content);
-    return 0;
-}
-
-/* Get cell content */
-inline const char* zTCell_Get_Content(zTCell* obj)
-{
-    Z_CHECK_OBJ_PTR(obj);
-    return obj->z_content;
-}
-
-/* Get Row index */
-inline unsigned int zTCell_Get_Row_Ix(zTCell* obj)
-{
-    Z_CHECK_OBJ(obj);
-    return obj->_z_row_ix;
-}
-
-/* Get Column index */
-inline unsigned int zTCell_Get_Col_Ix(zTCell* obj)
-{
-    Z_CHECK_OBJ(obj);
-    return obj->_z_col_ix;
-}
-
-/* Set line flag */
-inline int zTCell_Set_Line_Flg(zTCell* obj, unsigned int flg)
-{
-    Z_CHECK_OBJ(obj);
-    obj->z_line_flg = flg;
-    return 0;
-}
-
-/* Get line flag */
-inline unsigned int zTCell_Get_Line_Flg(zTCell* obj)
-{
-    if(obj == NULL)
-	return 0;
-    else
-	return obj->z_line_flg;
-}
-
-
 /* Private functions */
 /*******************************************************************************************************/
 
