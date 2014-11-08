@@ -49,6 +49,10 @@ void zgeneric_delete(zGeneric* obj)
      */
     if((obj->var_ref_cnt--) > 0)
 	return;
+
+    obj->var_cairo_device_obj = NULL;
+    obj->var_usurface = NULL;
+    obj->var_child = NULL;    
     
     if(obj->var_init_flg == Z_OBJECT_INTERNAL)
 	free(obj);

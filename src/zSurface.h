@@ -11,6 +11,8 @@
 #include <cario/cario_surface.h>
 #include "zVar.h"
 
+#include <libxml/tree.h>
+
 /* typedef the underlying struct */
 typedef struct _zSurface zSurface;
 
@@ -22,6 +24,8 @@ struct _zSurface
 
     zFile_Type var_file_type;							/* under lying file type */
     zFile_Dimension var_dim_type;						/* dimension type */
+
+    xmlDocPtr var_xml_doc_ptr;							/* xml document pointer */
     
     double var_width;								/* width of the sheet */
     double var_size;								/* height of the sheet */
@@ -45,7 +49,7 @@ extern "C" {
     if(!(obj)) \
 	(obj)->var_dim_type = dim_type
 
-
+    
 #ifdef __cplusplus
 }
 #endif
