@@ -24,6 +24,8 @@
 #define Z_FILE_NAME_SZ 512
 #define Z_FILE_PATH_SZ 2000
 
+#define Z_TEMP_FILE_DIR "/tmp/"
+
 /* file types handled by the system */
 typedef enum {
     zFile_Type_SVG,
@@ -38,6 +40,22 @@ typedef enum {
     zFile_Dimension_PT
 } zFile_Dimension;
 
+/* line colours */
+typedef enum {
+    zLRed,
+    zLBlue,
+    zLYellow,
+    zLCyan,
+    zLBlack
+} zLineColour;
+
+/* Page sizes */
+typedef enum {
+    zSheetA4_Portrait,
+    zSheetA4_Landscape,
+    zSheetA3_Portrait,
+    zSheetA4_Landscape
+} zSheets;
 
 /* error codes */
 #define ZELIA_CONSTRUCTED 1
@@ -50,12 +68,13 @@ typedef enum {
 #define ZELIA_FILE_COPY_ERROR -2
 #define ZELIA_CACHE_ERROR -3
 #define ZELIA_ATTRIB_ERROR -4
+#define ZELIA_EMPTY_FILE -5
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
     if((obj) == NULL)					\
 	{						\
-	    (obj) = type* malloc(sizeof(type));		\
+	    (obj) = (type*) malloc(sizeof(type));	\
 	    (obj)->_init_flg = ZELIA_CONSTRUCTED;	\
 	}						\
     else						\
@@ -80,6 +99,9 @@ typedef enum {
 #define ZCHECK_OBJ_INT(obj)			\
     if((obj) == NULL)				\
 	return 0
+#define ZCHECK_OBJ_PTR(obj)			\
+    if((obj) == NULL)				\
+	return NULL
 
 #define ZELIA_LOG_MESSAGE(msg)			\
     fprintf(stdout, "%s\n", (msg))
