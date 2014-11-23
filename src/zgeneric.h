@@ -8,7 +8,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <cairo/cairo.h>
-#include <cairo/cairo-pdf.h>
 #include <cairo/cairo-svg.h>
 
 #include "zVar.h"
@@ -34,23 +33,23 @@ struct _zgeneric_vtable
 
 struct _zgeneric
 {
-    zdevice* z_gdev;				/* primary device */
-    void* z_child;				/* child sheet object */
-		
-    cairo_t* z_gcairo_dev;			/* cairo device */
-	
-    double z_gred_rgb;				/* rgb red */
-    double z_ggreen_rgb;			/* rgb green */
-    double z_gblue_rgb;				/* rgb blue */
+    zdevice* gdev;				/* primary device */
+    void* child;				/* child sheet object */
 
-    zLineColour z_gline_color_ix;		/* line color index */
-    zLineWeights z_gline_weight;		/* line weight */
-    zLineTypes z_gltype;			/* line type */
-    unsigned int z_int_flg;			/* internal flag */
-    unsigned int z_def_dev_ctxt_flg;		/* defulat device context set */
-    
-    struct _zgeneric_vtable z_vtable;		/* vtable for element object classes */
-    size_t z_obj_sz;				/* object size */
+    cairo_t* gcairo_dev;			/* cairo device */
+
+    double gred_rgb;				/* rgb red */
+    double ggreen_rgb;			/* rgb green */
+    double gblue_rgb;				/* rgb blue */
+
+    zLineColour gline_color_ix;		/* line color index */
+    zLineWeights gline_weight;		/* line weight */
+    zLineTypes gltype;			/* line type */
+    unsigned int int_flg;			/* internal flag */
+    unsigned int def_dev_ctxt_flg;		/* defulat device context set */
+
+    struct _zgeneric_vtable vtable;		/* vtable for element object classes */
+    size_t obj_sz;				/* object size */
 };
 
 #ifdef __cplusplus
@@ -75,42 +74,42 @@ extern "C" {
     inline __attribute__ ((always_inline)) static int zgeneric_set_device(zgeneric* obj, zdevice* var)
     {
 	/* check for arguments */
-	Z_CHECK_OBJ(obj);
-	Z_CHECK_OBJ(var);
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(var);
 
-	obj->z_gdev = var;
+	obj->gdev = var;
 
 	/* Set to default context */
 	return 0;
     }
-    
+
     inline __attribute__ ((always_inline)) static zdevice* zgeneric_get_device(zgeneric* obj)
     {
 	/* check for NULL pointer */
-	Z_CHECK_OBJ_PTR(obj);
-	return obj->z_gdev;
+	ZCHECK_OBJ_PTR(obj);
+	return obj->gdev;
     }
 
     /* Set and get line colour ix */
-    inline int zgeneric_set_linecolour(zgeneric* obj, zlinecolour var);
-    inline __attribute__ ((always_inline)) static zlinecolour zgeneric_get_linecolour(zgeneric* obj)
+    inline int zgeneric_set_linecolour(zgeneric* obj, zLineColour var);
+    inline __attribute__ ((always_inline)) static zLineColour zgeneric_get_linecolour(zgeneric* obj)
     {
 	/* check for NULL pointer */
 	if(obj == NULL)
 	    return zLBlack;
 	else
-	    return obj->z_gline_color_ix;
+	    return obj->gline_color_ix;
     }
 
     /* Set and line weight */
     int zgeneric_set_lineweight(zgeneric* obj, zlineweights var);
-    inline __attribute__ ((always_inline)) static zlineweights zgeneric_get_lineweight(zgeneric* obj)
+    inline __attribute__ ((always_inline)) static zLineWeights zgeneric_get_lineweight(zgeneric* obj)
     {
 	/* check NULL pointer */
 	if(obj == NULL)
 	    return zLWeight1;
 	else
-	    return obj->z_gline_weight;	
+	    return obj->gline_weight;
     }
 
     /* Set default device context.
@@ -119,43 +118,43 @@ extern "C" {
     inline __attribute__ ((always_inline)) static int zgeneric_set_default_dev_context(zgeneric* obj)
     {
 	/* check for NULL pointer */
-	Z_CHECK_OBJ(obj);
+	ZCHECK_OBJ_INT(obj);
 
 	/* check for device context */
-	Z_CHECK_OBJ(obj->z_gdev);
+	ZCHECK_OBJ_INT(obj->gdev);
 
 	/* check if device context was set in
 	   device object */
-	if(obj->z_gdev->z_device)
+	if(obj->gdev->device)
 	    {
-		obj->z_gcairo_dev = obj->z_gdev->z_device;
-		obj->z_def_dev_ctxt_flg = 1;
+		obj->gcairo_dev = obj->gdev->device;
+		obj->def_dev_ctxt_flg = 1;
 	    }
-    
+
 	return 0;
     }
 
     /* set defaults */
     int zgeneric_set_defauts(zgeneric* obj);
-	
+
     /* get device context */
     inline __attribute__ ((always_inline)) static cairo_t* zgeneric_get_dev_context(zgeneric* obj)
     {
 	/* check for NULL pointer */
-	Z_CHECK_OBJ_PTR(obj);
+	ZCHECK_OBJ_PTR(obj);
 
-	return obj->z_gcairo_dev;
+	return obj->gcairo_dev;
     }
-	
+
     /* set and get line type */
-    inline int zgeneric_set_linttype(zgeneric* obj, zlinetypes var);
-    inline __attribute__ ((always_inline)) static zlinetypes zgeneric_get_linetype(zgeneric* obj)
+    inline int zgeneric_set_linttype(zgeneric* obj, zLineTypes var);
+    inline __attribute__ ((always_inline)) static zLineTypes zgeneric_get_linetype(zgeneric* obj)
     {
 	/* check for NULL pointer */
 	if(obj == NULL)
 	    return zLTContinuous;
 	else
-	    return obj->z_gltype;	
+	    return obj->gltype;
     }
 
     /* helper macros for setting function pointers */
@@ -165,7 +164,7 @@ extern "C" {
     (obj)->z_parent.z_vtable.zgeneric_delete = (callback)
 #define zgeneric_set_draw(obj, callback)		\
     (obj)->z_parent.z_vtable.zgeneric_draw = (callback)
-    
+
 #ifdef __cplusplus
 }
 #endif
