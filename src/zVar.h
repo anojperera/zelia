@@ -57,6 +57,18 @@ typedef enum {
     zSheetA4_Landscape
 } zSheets;
 
+/* line weights */
+typedef enum {
+    zLWeight1,
+    zLWeight2,
+    zLWeight3,
+    zLWeight4,
+    zLWeight5,
+    zLWeight6,
+    zLWeight7,
+    zLWeight8
+} zLineWeights;
+
 /* error codes */
 #define ZELIA_CONSTRUCTED 1
 #define ZELIA_INITIALISED 2
@@ -69,6 +81,16 @@ typedef enum {
 #define ZELIA_CACHE_ERROR -3
 #define ZELIA_ATTRIB_ERROR -4
 #define ZELIA_EMPTY_FILE -5
+
+/* line weights */
+#define Z_LINE_WEIGHT1 0.25
+#define Z_LINE_WEIGHT2 0.5
+#define Z_LINE_WEIGHT3 0.75
+#define Z_LINE_WEIGHT4 1
+#define Z_LINE_WEIGHT5 1.25
+#define Z_LINE_WEIGHT6 1.5
+#define Z_LINE_WEIGHT7 1.75
+#define Z_LINE_WEIGHT8 2.0
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
