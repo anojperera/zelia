@@ -69,6 +69,13 @@ typedef enum {
     zLWeight8
 } zLineWeights;
 
+/* line types */
+typedef enum {
+    zLTContinuous,
+    zLTCenter,
+    zLTHidden
+} zLineTypes;
+
 /* error codes */
 #define ZELIA_CONSTRUCTED 1
 #define ZELIA_INITIALISED 2
@@ -91,6 +98,14 @@ typedef enum {
 #define Z_LINE_WEIGHT6 1.5
 #define Z_LINE_WEIGHT7 1.75
 #define Z_LINE_WEIGHT8 2.0
+
+/* line type dimensions */
+#define Z_LT_HIDDEN_ON 5.0
+#define Z_LT_HIDDEN_OFF 5.0
+
+#define Z_LT_CENTRE_ON 5.0
+#define Z_LT_CENTRE_OFF 5.0
+#define Z_LT_CENTRE_LONG 8.0
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
