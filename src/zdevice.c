@@ -96,6 +96,16 @@ void zdevice_delete(zdevice* obj)
 	/* check for NULL pointer */
 	ZCHECK_OBJ_VOID(obj);
 
+	/*
+	 * Check reference count,
+	 * if the device context is being shared between
+	 * other objects, we just decrement it.
+	 * When objects are no longer referenced to this
+	 * we remove it.
+	 */
+	if(obj->ref_cnt-- > 0)
+		return;
+	
 	/* destroy surface */
 	if(obj->surface != NULL)
 	{
@@ -144,6 +154,9 @@ cairo_t* zdevice_get_context(zdevice* obj)
 	ZCHECK_OBJ_PTR(obj);
 
 	zdevice_create_context(obj);
+
+	/* increment reference counter */
+	obj->ref_cnt++;
 	return obj->device;
 }
 
