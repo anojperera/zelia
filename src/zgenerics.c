@@ -1,151 +1,146 @@
 /* Implemenation of generics collection
  * Sun Jan 22 23:48:16 GMT 2012 */
 
-#include "zGenerics.h"
+#include "zgenerics.h"
 
-/* Virtual functions */
+/* callback methods */
 static void _zgenerics_callback_delete(void* usr_obj, void* obj);						/* delete child objects */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix);			/* draw child object */
-static inline int _zgenerics_del_helper(zGenerics* obj);					/* delete helper */
+static inline int _zgenerics_del_helper(zGenerics* obj);								/* delete helper */
 
 /* Constructor */
-int zGenerics_New(zGenerics* obj,
-		  unsigned int s_flg,
-		  unsigned int g_count)
+int zgenerics_new(zgenerics* obj,
+				  unsigned int s_flg,
+				  unsigned int g_count)
 {
-    int i = 0;
-    /* Check for object */
-    Z_CHECK_OBJ(obj);
+	int i = 0;
+	/* Check for object */
+	ZCHECK_OBJ_INT(obj);
 
-    /* check for static flag */
-    if(s_flg == 0 && g_count == 0)
-	{
-	    obj = NULL;
-	    return 1;
-	}
+	/* check for static flag */
+	if(s_flg == 0 && g_count == 0)
+		{
+			obj = NULL;
+			return 1;
+		}
 
-    /* Create object if NULL */
-    if(obj == NULL)
-	{
-	    obj = (zGenerics*) malloc(sizeof(zGenerics));
-	    Z_CHECK_OBJ(obj);
-	    obj->z_int_flg = 1;
-	}
-    else
-	obj->z_int_flg = 0;
+	/* call constructor */
+	ZCONSTRUCTOR(obj, zgeneric);
 
-    /* Set properties */
+	/* Set properties */
 
-    /* Initialise the dynamic collection */
-    blist_new(&obj->z_generics_d, NULL);
-    blist_set_usr_obj(&obj->z_generics_d, (void*) obj);
-    blist_set_option_del_callback(&obj->z_generics_d, _zgenerics_callback_delete);
+	/* Initialise the dynamic collection */
+	blist_new(&obj->generics_d, NULL);
+	blist_set_usr_obj(&obj->generics_d, (void*) obj);
+	blist_set_option_del_callback(&obj->generics_d, _zgenerics_callback_delete);
 
-    obj->z_device = NULL;
+	obj->device = NULL;
 
-    /* if static flag and count was set create the object array
-     * as static */
-    if(s_flg == 0 && g_count > 0)
-	{
-	    obj->z_generics_s = (zGeneric**)
-		calloc(g_count, sizeof(zGeneric*));
+	/* if static flag and count was set create the object array
+	 * as static */
+	if(s_flg == 0 && g_count > 0)
+		{
+			obj->generics_s = (zgeneric**)
+				calloc(g_count, sizeof(zgeneric*));
 
-	    /* initialise all objects in array to NULL */
-	    for(i=0; i<g_count; i++)
-		obj->z_generics_s[i] = NULL;
+			/* initialise all objects in array to NULL */
+			for(i=0; i<g_count; i++)
+				obj->generics_s[i] = NULL;
 
-	    /* set the expansion flag to 0 - indicating not dynamically
-	     * expanding */
-	    obj->z_expansion_flg = 0;
-	    obj->z_count = g_count;
-	}
-    else
-	{
-	    /* Initialise to NULL as the collection is dynamically
-	     * expandable */
-	    obj->z_generics_s = NULL;
+			/* set the expansion flag to 0 - indicating not dynamically
+			 * expanding */
+			obj->expansion_flg = 0;
+			obj->count = g_count;
+		}
+	else
+		{
+			/* Initialise to NULL as the collection is dynamically
+			 * expandable */
+			obj->generics_s = NULL;
 
-	    obj->z_expansion_flg = 1;			/* expansion flag to to dynamically expanding */
-	    obj->z_count = 0;				/* counter set to zero */
-	}
-    
-    /* set function pointers to NULL */
-    obj->z_draw_func = NULL;
-    obj->z_destructor_func = NULL;
-    
-    /* set child pointer to NULL */
-    obj->z_child = NULL;
-    obj->z_usr_data = NULL;
-    
-    return 0;
+			obj->expansion_flg = 1;			/* expansion flag to to dynamically expanding */
+			obj->count = 0;					/* counter set to zero */
+		}
+
+	/* set function pointers to NULL */
+	obj->draw_func = NULL;
+	obj->destructor_func = NULL;
+
+	/* set child pointer to NULL */
+	obj->child = NULL;
+	obj->usr_data = NULL;
+
+	return ZELIA_OK;
 }
 
 /* Destructor */
-void zGenerics_Delete(zGenerics* obj)
+void zgenerics_delete(zgenerics* obj)
 {
-    /* check for object */
-    Z_CHECK_OBJ_VOID(obj);
+	/* check for object */
+	ZCHECK_OBJ_VOID(obj);
 
-    
-    _zgenerics_del_helper(obj);
-    
-    if(obj->z_generics_s)
-	free(obj->z_generics_s);
 
-    obj->z_generics_s = NULL;
-    obj->z_device = NULL;
-    obj->z_child = NULL;
-    obj->z_usr_data = NULL;
-    
-    if(obj->z_int_flg)
-	free(obj);
+	_zgenerics_del_helper(obj);
 
-    return;
+	if(obj->generics_s)
+		free(obj->generics_s);
+
+	obj->generics_s = NULL;
+	obj->device = NULL;
+	obj->child = NULL;
+	obj->usr_data = NULL;
+
+	if(ZDESTRUCTOR_CHECK)
+		free(obj);
+
+	return;
 }
 
 /* Clear array */
-void zGenerics_Clear(zGenerics* obj)
+void zgenerics_clear(zgenerics* obj)
 {
-    /* check for object */
-    Z_CHECK_OBJ_VOID(obj);
-    _zgenerics_del_helper(obj);
+	/* check for object */
+	ZCHECK_OBJ_VOID(obj);
+	_zgenerics_del_helper(obj);
 
-    /* If dynamically expansion collection was deleted, recreate it */
-    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
-	{
-	    blist_new(&obj->z_generics_d, NULL);
-	    blist_set_usr_obj(&obj->z_generics_d, (void*) obj);
-	    blist_set_option_del_callback(&obj->z_generics_d, _zgenerics_callback_delete);	    
-	}
+	/* If dynamically expansion collection was deleted, recreate it */
+	if(obj->expansion_flg && blist_count(&obj->generics_d))
+		{
+			blist_new(&obj->generics_d, NULL);
+			blist_set_usr_obj(&obj->generics_d, (void*) obj);
+			blist_set_option_del_callback(&obj->generics_d, _zgenerics_callback_delete);
+		}
+	
+	return;
 }
 
 /* Draw function */
-int zGenerics_Draw(zGenerics* obj)
+int zgenerics_draw(zgenerics* obj)
 {
-    int i;
-    
-    /* Check for object */
-    Z_CHECK_OBJ(obj);
+	int i = 0;
 
-    /* check for expansion object, if dynamic, use dynamic array */
-    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
-	{
-	    blist_foreach(&obj->z_generics_d,
-			  0,
-			  (void*) obj,
-			  _zgenerics_callback_draw);
-	}
-    else if(obj->z_generics_s)
-	{
-	    for(i=0; i<obj->z_count; i++)
+	/* Check for object */
+	ZCHECK_OBJ_INT(obj);
+
+	/* check for expansion object, if dynamic, use dynamic array */
+	if(obj->expansion_flg && blist_count(&obj->generics_d))
 		{
-		    if(obj->z_draw_func && obj->z_generics_s[i])
-			obj->z_draw_func((void*) obj->z_generics_s[i], obj->z_usr_data);
+			blist_foreach(&obj->generics_d,
+						  0,
+						  (void*) obj,
+						  _zgenerics_callback_draw);
 		}
-	}
+	else if(obj->generics_s)
+		{
+			for(i=0; i<obj->count; i++)
+				{
+					if(obj->vtable.zgeneric_draw && obj->generics_s[i])
+						obj->vtable.zgeneric_draw((void*) obj->generics_s[i]);
+				}
+		}
 
-    return 0;
-    
+	return ZELIA_OK;
+
 }
 
 /*================================================================*/
@@ -154,51 +149,51 @@ int zGenerics_Draw(zGenerics* obj)
 /* Delete and clear function helper */
 static inline int _zgenerics_del_helper(zGenerics* obj)
 {
-    int i;
-    /* check for expansion flag */
-    if(obj->z_expansion_flg && blist_count(&obj->z_generics_d))
-	blist_delete(&obj->z_generics_d);
-    else
-	{
-	    /* iterate through static collection and destructors */
-	    for(i=0; i<obj->z_count; i++)
+	int _i;
+	/* check for expansion flag */
+	if(obj->expansion_flg && blist_count(&obj->generics_d))
+		blist_delete(&obj->generics_d);
+	else
 		{
-		    if(obj->z_destructor_func && obj->z_generics_s[i])
-			obj->z_destructor_func((void*) obj->z_generics_s[i], NULL);
-		    obj->z_generics_s[i] = NULL;
+			/* iterate through static collection and destructors */
+			for(_i=0; _i<obj->count; _i++)
+				{
+					if(obj->vtable.zgeneric_delete && obj->generics_s[_i])
+						obj->vtable.zgeneric_delete((void*) obj->generics_s[_i], NULL);
+					obj->generics_s[_i] = NULL;
+				}
 		}
-	}
-    obj->z_count = 0;
+	obj->count = 0;
 
-    return 0;
+	return 0;
 }
 
 /* Delete callback function */
 static void _zgenerics_callback_delete(void* usr_obj, void* obj)
 {
-    zGenerics* zg;
-    /* indicate failure if objects were NULL */
-    if(obj == NULL || usr_obj == NULL)
+	zgenerics* _zg;
+	/* indicate failure if objects were NULL */
+	if(obj == NULL || usr_obj == NULL)
+		return;
+
+	_zg = (zgenerics*) usr_obj;
+
+	/* Call delete function pointer of child pointer */
+	_zg->vtable.zgeneric_delete(obj, zg->z_usr_data);
+
 	return;
-
-    zg = (zGenerics*) usr_obj;
-
-    /* Call delete function pointer of child pointer */
-    zg->z_destructor_func(obj, zg->z_usr_data);
-
-    return;
 }
 
 /* Draw callback function */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix)
 {
-    zGenerics* zg;
-    /* indicate failure if objects were NULL */
-    if(usr_obj == NULL || obj == NULL)
-	return 1;
+	zgenerics* _zg;
+	/* indicate failure if objects were NULL */
+	if(usr_obj == NULL || obj == NULL)
+		return 1;
 
-    zg = (zGenerics*) usr_obj;
+	_zg = (zgenerics*) usr_obj;
 
-    /* Call draw function pointer of child pointer */
-    return zg->z_draw_func(obj, zg->z_usr_data);
+	/* Call draw function pointer of child pointer */
+	return _zg->vtable.zgeneric_draw(obj);
 }
