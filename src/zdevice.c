@@ -144,7 +144,7 @@ int zdevice_set_pagesize(zdevice* obj, zSheets var)
 
 	obj->page_sz = var;
 	zdevice_page_dims(obj);
-	return 0;
+	return ZELIA_OK;
 }
 
 /* Get default device context */
@@ -167,7 +167,7 @@ int zdevice_set_linecolourix(zdevice* obj, zLineColour var)
 
 	obj->line_color_ix = var;
 	zdevice_rgb(obj);
-	return 0;
+	return ZELIA_OK;
 }
 
 /* get temporary buffer */
@@ -270,7 +270,7 @@ int zdevice_set_linettype(zdevice* obj, zLineTypes var)
 			break;
 		}
 
-	return 0;
+	return ZELIA_OK;
 }
 /*=================================== Private Methods ===================================*/
 static int zdevice_rgb(zdevice* obj)
@@ -305,7 +305,7 @@ static int zdevice_rgb(zdevice* obj)
 		break;
 	}
 
-	return 0;
+	return ZELIA_OK;
 }
 
 /* set page size */
@@ -341,7 +341,7 @@ static int zdevice_page_dims(zdevice* obj)
 		ZELIA_LOG_MESSAGE("zdevice was not created properly, setting the surface pointer to NULL");
 		obj->surface = NULL;
 	}
-	return 0;
+	return ZELIA_OK;
 }
 
 /* create device context */
@@ -351,7 +351,7 @@ static int zdevice_create_context(zdevice* obj)
 	if(!obj->device && obj->surface)
 	obj->device = cairo_create(obj->surface);
 
-	return 0;
+	return ZELIA_OK;
 }
 
 /*
