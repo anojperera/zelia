@@ -54,7 +54,7 @@ typedef enum {
     zSheetA4_Portrait,
     zSheetA4_Landscape,
     zSheetA3_Portrait,
-    zSheetA4_Landscape
+    zSheetA3_Landscape
 } zSheets;
 
 /* line weights */
