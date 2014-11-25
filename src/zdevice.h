@@ -24,27 +24,27 @@ typedef struct _zdevice zdevice;
 
 struct _zdevice
 {
-	unsigned int _int_flg;			/* internal flag */
-	unsigned int ref_cnt;			/* reference counter */
+	unsigned int _int_flg;					/* internal flag */
+	unsigned int ref_cnt;					/* reference counter */
 
-	int _fd;					/* file descriptor read / write */
+	int _fd;								/* file descriptor read / write */
 	char _fname[ZDEVICE_TEMP_FILE_SZ 256];	/* file name buffer */
-	size_t _buff_sz;				/* buffer size */
-	char* _buff;				/* temporary buffer contets */
+	size_t _buff_sz;						/* buffer size */
+	char* _buff;							/* temporary buffer contets */
 
-	cairo_surface_t* surface;			/* cairo surface */
-	cairo_t* device;				/* cairo default device */
+	cairo_surface_t* surface;				/* cairo surface */
+	cairo_t* device;						/* cairo default device */
 
-	zLineColour line_color_ix;			/* line color index */
+	zLineColour line_color_ix;				/* line color index */
 	zLineTypes line_type_ix;				/* line type index */
-	zSheets page_sz;				/* page size */
+	zSheets page_sz;						/* page size */
 
-	doubl red_rgb;				/* rgb red */
-	double green_rgb;				/* rgb green */
-	double blue_rgb;				/* rgb blue */
+	doubl red_rgb;							/* rgb red */
+	double green_rgb;						/* rgb green */
+	double blue_rgb;						/* rgb blue */
 
-	double page_width;				/* page width */
-	double page_height;				/* page height */
+	double page_width;						/* page width */
+	double page_height;						/* page height */
 };
 
 #ifdef __cplusplus
@@ -101,6 +101,7 @@ extern "C" {
 		else
 			return obj->line_type_ix;
 	}
+
 #ifdef __cplusplus
 }
 #endif
