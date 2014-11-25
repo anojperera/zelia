@@ -33,23 +33,20 @@ struct _zgeneric_vtable
 
 struct _zgeneric
 {
-    zdevice* gdev;				/* primary device */
-    void* child;				/* child sheet object */
+    zdevice* gdev;						/* primary device */
+    void* child;						/* child sheet object */
 
-    cairo_t* gcairo_dev;			/* cairo device */
+    cairo_t* gcairo_dev;				/* cairo device */
 
-    double gred_rgb;				/* rgb red */
-    double ggreen_rgb;			/* rgb green */
-    double gblue_rgb;				/* rgb blue */
+    double gred_rgb;					/* rgb red */
+    double ggreen_rgb;					/* rgb green */
+    double gblue_rgb;					/* rgb blue */
 
-    zLineColour gline_color_ix;		/* line color index */
-    zLineWeights gline_weight;		/* line weight */
-    zLineTypes gltype;			/* line type */
-    unsigned int int_flg;			/* internal flag */
+    unsigned int int_flg;				/* internal flag */
     unsigned int def_dev_ctxt_flg;		/* defulat device context set */
 
     struct _zgeneric_vtable vtable;		/* vtable for element object classes */
-    size_t obj_sz;				/* object size */
+    size_t obj_sz;						/* object size */
 };
 
 #ifdef __cplusplus
@@ -90,27 +87,6 @@ extern "C" {
 	return obj->gdev;
     }
 
-    /* Set and get line colour ix */
-    inline int zgeneric_set_linecolour(zgeneric* obj, zLineColour var);
-    inline __attribute__ ((always_inline)) static zLineColour zgeneric_get_linecolour(zgeneric* obj)
-    {
-	/* check for NULL pointer */
-	if(obj == NULL)
-	    return zLBlack;
-	else
-	    return obj->gline_color_ix;
-    }
-
-    /* Set and line weight */
-    int zgeneric_set_lineweight(zgeneric* obj, zlineweights var);
-    inline __attribute__ ((always_inline)) static zLineWeights zgeneric_get_lineweight(zgeneric* obj)
-    {
-	/* check NULL pointer */
-	if(obj == NULL)
-	    return zLWeight1;
-	else
-	    return obj->gline_weight;
-    }
 
     /* Set default device context.
      * Function is used for setting the device context to
@@ -144,17 +120,6 @@ extern "C" {
 	ZCHECK_OBJ_PTR(obj);
 
 	return obj->gcairo_dev;
-    }
-
-    /* set and get line type */
-    inline int zgeneric_set_linttype(zgeneric* obj, zLineTypes var);
-    inline __attribute__ ((always_inline)) static zLineTypes zgeneric_get_linetype(zgeneric* obj)
-    {
-	/* check for NULL pointer */
-	if(obj == NULL)
-	    return zLTContinuous;
-	else
-	    return obj->gltype;
     }
 
     /* helper macros for setting function pointers */

@@ -3,10 +3,6 @@
 
 #include "zGeneric.h"
 
-
-/* private functions */
-inline static int zgeneric_set_lineweight(zGeneric* obj);
-
 /* constructor */
 zGeneric* zGeneric_New(zGeneric* obj)
 {
@@ -63,59 +59,6 @@ int zGeneric_Draw(zGeneric* obj)
     Z_CHECK_OBJ(obj->z_draw_func);
     return obj->z_draw_func(obj);
 }
-
-int zGeneric_Set_LineWeight(zGeneric* obj, zLineWeights var)
-{
-	/* check NULL pointer */
-	Z_CHECK_OBJ(obj);
-
-	obj->z_gline_weight = var;
-
-	/* set line weight to context */
-	zgeneric_set_lineweight(obj);
-	return 0;	
-}
-
-/* set line colour index */
-inline int zGeneric_Set_LineColour(zGeneric* obj,
-			     zLineColour var)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    obj->z_gline_color_ix = var;
-    switch(obj->z_gline_color_ix)
-	{
-	case zLRed:
-	    obj->z_gred_rgb = 255;
-	    obj->z_ggreen_rgb = 0;
-	    obj->z_gblue_rgb = 0;
-	    break;
-	case zLBlue:
-	    obj->z_gred_rgb = 0;
-	    obj->z_ggreen_rgb = 0;
-	    obj->z_gblue_rgb = 255;
-	    break;
-	case zLYellow:
-	    obj->z_gred_rgb = 255;
-	    obj->z_ggreen_rgb = 205;
-	    obj->z_gblue_rgb = 0;
-	    break;
-	case zLCyan:
-	    obj->z_gred_rgb = 0;
-	    obj->z_ggreen_rgb = 255;
-	    obj->z_gblue_rgb = 255;
-	    break;
-	default:
-	    obj->z_gred_rgb = 0;
-	    obj->z_ggreen_rgb = 0;
-	    obj->z_gblue_rgb = 0;
-	    break;
-	}
-
-    return 0;
-}
-
 
 /* create generic device context */
 inline int zGeneric_Create_Dev_Context(zGeneric* obj)
