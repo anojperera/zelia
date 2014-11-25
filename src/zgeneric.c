@@ -1,198 +1,83 @@
 /* implementation of generic object
    Sat Oct 16 17:51:25 BST 2010 */
 
-#include "zGeneric.h"
+#include "zgeneric.h"
 
 /* constructor */
-zGeneric* zGeneric_New(zGeneric* obj)
+zgeneric* zgeneric_new(zgeneric* obj)
 {
+	/* check for object and and create it */
+	ZCONSTRUCTOR(obj, zgeneric);
 
-    if(obj == NULL)
-	{
-	    obj = (zGeneric*) malloc(sizeof(zGeneric));
-	    Z_CHECK_OBJ_PTR(obj);
-	    obj->z_int_flg = 1;
-	}
-    else
-	obj->z_int_flg = 0;
+	obj->child = NULL;			/* set child pointer to NULL */
 
-    
-    obj->z_child = NULL;			/* set child pointer to NULL */
-	
-    obj->z_gdev = NULL;
-    obj->z_gcairo_dev = NULL;
+	obj->gdev = NULL;
+	obj->gcairo_dev = NULL;
 
-    obj->z_gline_color_ix = zLBlack;
-    obj->z_gline_weight = zLWeight4;
-    obj->z_gltype = zLTContinuous;
-    obj->z_def_dev_ctxt_flg = 0;
-    obj->z_obj_sz = sizeof(zGeneric);
-    return obj;
+	obj->def_dev_ctxt_flg = 0;
+
+	/* initialise the vtable */
+	ZGENERIC_INIT_VTABLE(obj);
+
+	return obj;
 
 }
 
 /* delete device */
-void zGeneric_Delete(zGeneric* obj)
+void zgeneric_delete(zgeneric* obj)
 {
+	/* check for NULL pointer */
+	ZCHECK_OBJ_VOID(obj);
 
-    /* check for NULL pointer */
-    Z_CHECK_OBJ_VOID(obj);
+	/*
+	 * If delete pointer was set call it first
+	 */
+	if(obj->vtable.zgeneric_delete)
+		obj->vtable.zgeneric_delete(obj);
 
-    /* delete cairo context */
-    if(obj->z_gcairo_dev && obj->z_def_dev_ctxt_flg == 0)
-	{
-	    cairo_destroy(obj->z_gcairo_dev);
-	    obj->z_gcairo_dev = NULL;
-	}
+	/* delete the device object */
+	zdevice_delete(obj->gdev);
+	obj->gdev = NULL;
+	obj->child = NULL;
+	obj->gcairo_dev = NULL;
 
-    obj->z_gdev = NULL;
-    
-    if(obj->z_int_flg)
-	free(obj);
+	/* if the object was created free it */
+	if(ZDESTRUCTOR_CHECK)
+		free(obj);
+
+	return;
 }
 
-/* Draw function */
-int zGeneric_Draw(zGeneric* obj)
+/*
+ * Draw method of the super class.
+ * This is equivalent to C++ virtual function
+ */
+int zgeneric_draw(zgeneric* obj)
 {
-    /* Check for object */
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(obj->z_draw_func);
-    return obj->z_draw_func(obj);
+	/* Check for object */
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(obj->vtable.zgeneric_draw);
+	return obj->vtable.zgeneric_draw(obj);
 }
 
 /* create generic device context */
-inline int zGeneric_Create_Dev_Context(zGeneric* obj)
+int zgeneric_create_dev_context(zgeneric* obj, zSheets sh)
 {
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
+	/* check for NULL pointer */
+	ZCHECK_OBJ_INT(obj);
 
-    /* check if device was assigned */
-    Z_CHECK_OBJ(obj->z_gdev);
+	/*
+	 * If the device object is already in use,
+	 * we delete it first.
+	 */
+	zdevice_delete(obj->gdev);
 
-    /* check if surface was created */
-    Z_CHECK_OBJ(obj->z_gdev->z_surface);
+	obj->gdev = zdevice_new2(sh,					/* sheet size */
+							 1,						/* create a device context */
+							 NULL);					/* no external device pointer */
 
-    /* if object exists, delete */
-    if(obj->z_gcairo_dev && obj->z_def_dev_ctxt_flg)
-	cairo_destroy(obj->z_gcairo_dev);
-    else if(obj->z_gcairo_dev)
-	obj->z_gcairo_dev = NULL;
-    
-    obj->z_gcairo_dev = cairo_create(obj->z_gdev->z_surface);
-    return 0;
-}
-
-
-/* set line type */
-inline int zGeneric_Set_LintType(zGeneric* obj, zLineTypes var)
-{
-    double _array[4];
-    
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-    obj->z_gltype = var;
-    Z_CHECK_OBJ(obj->z_gcairo_dev);
-    
-    switch(obj->z_gltype)
-	{
-	case zLTHidden:
-	    _array[0] = Z_LT_HIDDEN_ON;
-	    _array[1] = Z_LT_HIDDEN_OFF;
-	    cairo_set_dash(obj->z_gcairo_dev,
-			   _array,
-			   2,
-			   0.0);
-	    break;
-	case zLTCenter:
-	    _array[0] = Z_LT_CENTRE_ON;
-	    _array[1] = Z_LT_CENTRE_OFF;
-	    _array[2] = Z_LT_CENTRE_LONG;
-	    _array[3] = Z_LT_CENTRE_OFF;
-	    cairo_set_dash(obj->z_gcairo_dev,
-			   _array,
-			   4,
-			   0.0);	    
-	    break;
-	case zLTContinuous:
-	default:
-	    _array[0] = 0.0;
-	    cairo_set_dash(obj->z_gcairo_dev,
-			   _array,
-			   0,
-			   0.0);
-	    break;
-	}
-	    
-    return 0;
-}
-
-int zGeneric_Set_Defauts(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    /* check if device context was
-       created */
-    Z_CHECK_OBJ(obj->z_gcairo_dev);
-
-    /* set default joining */
-    cairo_set_line_join (obj->z_gcairo_dev,
-			 CAIRO_LINE_JOIN_MITER);
-
-    /* set default line weight */
-    zgeneric_set_lineweight(obj);
-    
-    return 0;
-
-}
-
-/* Private methods */
-/***********************************************************************/
-
-/* Set generic line weight helper function */
-inline int zgeneric_set_lineweight(zGeneric* obj)
-{
-    /* check for NULL pointer */
-    Z_CHECK_OBJ(obj);
-
-    /* check for cairo device
-       context */
-    Z_CHECK_OBJ(obj->z_gcairo_dev);
-
-    switch(obj->z_gline_weight)
-	{
-	case zLWeight1:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT1);
-	    break;
-	case zLWeight2:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT2);
-	    break;
-	case zLWeight3:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT3);
-	    break;
-	case zLWeight5:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT5);
-	    break;
-	case zLWeight6:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT6);
-	    break;
-	case zLWeight7:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT7);
-	    break;
-	case zLWeight8:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT8);
-	default:
-	    cairo_set_line_width(obj->z_gcairo_dev,
-				 Z_LINE_WEIGHT4);
-	    break;
-	}
-	    
-    return 0;
+	/* set flag to indicate context was created internally */
+	obj->def_dev_ctxt_flg = 1;
+	obj->gdev = zdevice_get_context(obj->gdev);
+	return ZELIA_OK;
 }
