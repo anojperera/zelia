@@ -28,9 +28,9 @@ typedef struct _zgeneric zgeneric;
 /* vtable for element classes */
 struct _zgeneric_vtable
 {
-	int (*zgeneric_draw)(zgeneric*);
-	int (*zgeneric_delete)(zgeneric*);
-	int (*zgeneric_new)(zgeneric*);
+	int (*zgeneric_draw)(void*);
+	int (*zgeneric_delete)(void*);
+	int (*zgeneric_new)(void*);
 };
 
 struct _zgeneric

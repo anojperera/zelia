@@ -33,7 +33,7 @@ void zgeneric_delete(zgeneric* obj)
 	 * If delete pointer was set call it first
 	 */
 	if(obj->vtable.zgeneric_delete)
-		obj->vtable.zgeneric_delete(obj);
+		obj->vtable.zgeneric_delete((void*) obj);
 
 	/* delete the device object */
 	zdevice_delete(obj->gdev);
@@ -57,7 +57,7 @@ int zgeneric_draw(zgeneric* obj)
 	/* Check for object */
 	ZCHECK_OBJ_INT(obj);
 	ZCHECK_OBJ_INT(obj->vtable.zgeneric_draw);
-	return obj->vtable.zgeneric_draw(obj);
+	return obj->vtable.zgeneric_draw((void*) obj);
 }
 
 /* create generic device context */
