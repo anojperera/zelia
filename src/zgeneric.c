@@ -10,10 +10,10 @@ zgeneric* zgeneric_new(zgeneric* obj)
 	ZCONSTRUCTOR(obj, zgeneric);
 
 	obj->child = NULL;			/* set child pointer to NULL */
-
+	obj->super_cls = obj;		/* pointer to itself */
 	obj->gdev = NULL;
 	obj->gcairo_dev = NULL;
-
+	
 	obj->def_dev_ctxt_flg = 0;
 
 	/* initialise the vtable */
@@ -39,6 +39,7 @@ void zgeneric_delete(zgeneric* obj)
 	zdevice_delete(obj->gdev);
 	obj->gdev = NULL;
 	obj->child = NULL;
+	obj->super_cls = NULL;
 	obj->gcairo_dev = NULL;
 
 	/* if the object was created free it */

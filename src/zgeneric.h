@@ -38,6 +38,7 @@ struct _zgeneric
 	unsigned int _int_flg;				/* internal flag */
 	unsigned int def_dev_ctxt_flg;		/* defulat device context set */
 	zdevice* gdev;						/* primary device */
+	zgeneric* super_cls;				/* pointer to itself */
 	void* child;						/* child sheet object */
 
 	cairo_t* gcairo_dev;				/* cairo device */
@@ -145,6 +146,9 @@ extern "C" {
 #define zgeneric_set_draw(obj, callback)			\
 	(obj)->parent.vtable.zgeneric_draw = (callback)
 
+	/* helper macro for setting the child pointer */
+#define zgeneric_set_child_pointer(obj)			\
+	(obj)->parent.child = (obj)
 #ifdef __cplusplus
 }
 #endif
