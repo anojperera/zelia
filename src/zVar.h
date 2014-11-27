@@ -108,6 +108,14 @@ typedef enum {
 #define Z_LT_CENTRE_OFF 5.0
 #define Z_LT_CENTRE_LONG 8.0
 
+/* Font sizes */
+#define Z_GRD_FONT_SZ 11
+#define Z_GRD_FONT_STYLE "Century Gothic"
+#define Z_GRD_GENERIC_SZ 4
+#define Z_GRD_SPECIAL_SZ 7
+#define Z_GRD_CUSTOMER_SZ 8
+#define Z_GRD_WOZ_SZ 11
+
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
     if((obj) == NULL)					\
