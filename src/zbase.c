@@ -4,7 +4,7 @@
 #include "zbase.h"
 
 /* Virtual function call back */
-static int zbase_draw_function(void* obj);
+static int _zbase_draw_function(void* obj);
 
 
 /* Constructor */
@@ -30,7 +30,7 @@ zgeneric* zbase_new(zbase* obj)
 	ZGENERIC_INIT_VTABLE(obj);
 	
 	/* set parent objects function pointers */
-	zgeneric_set_draw(obj, zbase_draw_function);
+	zgeneric_set_draw(obj, _zbase_draw_function);
 	
     /* set child pointer of parent object */
 	zgeneric_set_child_pointer(obj);
@@ -48,6 +48,7 @@ void zbase_delete(zbase* obj)
 		obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
 	obj->child = NULL;
+	obj->super_cls = NULL;
     zgeneric_delete(&obj->sgeneric);
 
 	/* check if the object was constructed */
@@ -60,7 +61,7 @@ void zbase_delete(zbase* obj)
 /*=================================== Private Methods ===================================*/
 
 /* draw function */
-static int zbase_draw_function(void* obj)
+static int _zbase_draw_function(void* obj)
 {
 	zgeneric* _zg = NULL;
     zbase* self = NULL;
