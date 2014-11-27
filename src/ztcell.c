@@ -53,6 +53,9 @@ void ztcell_delete(ztcell* obj)
 	
     obj->z_child = NULL;
 	obj->super_cls = NULL;
+
+	/* remove vtables */
+	ZGENERIC_INIT_VTABLE(obj);
 	
     /* If object was internally created,
      * destroy it */

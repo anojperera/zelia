@@ -13,30 +13,30 @@ zgeneric* zbase_new(zbase* obj)
 	/* call constructor helper */
 	ZCONSTRUCTOR(obj, zbase);
 
-    /* create parent object */
-    obj->super_cls = zgeneric_new(&obj->parent);
+	/* create parent object */
+	obj->super_cls = zgeneric_new(&obj->parent);
 
-    /* set properties */
-    obj->x = 0.0;
-    obj->y = 0.0;
-    obj->ang = 0.0;
-    obj->width = 0.0;
-    obj->height = 0.0;
-    obj->thk = 0.0;
-    obj->prj_flg = 0;
-    obj->child = NULL;
+	/* set properties */
+	obj->x = 0.0;
+	obj->y = 0.0;
+	obj->ang = 0.0;
+	obj->width = 0.0;
+	obj->height = 0.0;
+	obj->thk = 0.0;
+	obj->prj_flg = 0;
+	obj->child = NULL;
 
 	/* initialise vtable */
 	ZGENERIC_INIT_VTABLE(obj);
-	
+
 	/* set parent objects function pointers */
 	zgeneric_set_draw(obj, _zbase_draw_function);
-	
-    /* set child pointer of parent object */
+
+	/* set child pointer of parent object */
 	zgeneric_set_child_pointer(obj);
 
-    /* return base pointer */
-    return obj->super_cls;
+	/* return base pointer */
+	return obj->super_cls;
 }
 
 /* Destructor */
@@ -49,13 +49,16 @@ void zbase_delete(zbase* obj)
 
 	obj->child = NULL;
 	obj->super_cls = NULL;
-    zgeneric_delete(&obj->sgeneric);
+	zgeneric_delete(&obj->sgeneric);
+
+	/* remove vtables */
+	ZGENERIC_INIT_VTABLE(obj);
 
 	/* check if the object was constructed */
 	if(ZDESTRUCTOR_CHECK)
 		free(obj);
-	
-    return;
+
+	return;
 }
 
 /*=================================== Private Methods ===================================*/
@@ -64,16 +67,16 @@ void zbase_delete(zbase* obj)
 static int _zbase_draw_function(void* obj)
 {
 	zgeneric* _zg = NULL;
-    zbase* self = NULL;
+	zbase* self = NULL;
 
-    ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(obj);
 	_zg = (zgeneric*) obj;
-	
-    self = Z_BASE(_zg);
-	
-    if(self->vtable.zgeneric_draw)
-    	return self->vtable.zgeneric_draw(obj);
-    else
+
+	self = Z_BASE(_zg);
+
+	if(self->vtable.zgeneric_draw)
+		return self->vtable.zgeneric_draw(obj);
+	else
 		return ZELIA_OK;
 }
 

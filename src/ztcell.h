@@ -18,17 +18,17 @@ typedef struct _ztcell ztcell;
 
 struct _ztcell
 {
-    zbase parent;					/* Inherited parent object */
-    unsigned int int_flg;			/* Internal flag */
-    char content[TCELL_BUFF];		/* Content buffer */
-    unsigned int _row_ix;			/* Internal row index */
-    unsigned int _col_ix;			/* Internal column index */
-    unsigned int line_flg;			/* Line flag */
+	zbase parent;						/* Inherited parent object */
+	unsigned int _int_flg;				/* Internal flag */
+	char content[TCELL_BUFF];			/* Content buffer */
+	unsigned int _row_ix;				/* Internal row index */
+	unsigned int _col_ix;				/* Internal column index */
+	unsigned int line_flg;				/* Line flag */
 
-	struct _zgeneric_vtable vtable;	/* vtable for update draw, delete and new */
-	
+	struct _zgeneric_vtable vtable;		/* vtable for update draw, delete and new */
+
 	zgeneric* super_cls;
-    void* child;					/* Child pointer */
+	void* child;						/* Child pointer */
 };
 
 #ifdef __cplusplus

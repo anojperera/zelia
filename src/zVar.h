@@ -163,6 +163,7 @@ typedef enum {
 
 /* object conversion macros */
 #define Z_GENERIC(obj) (obj->super_cls)
+#define Z_GENERICS(obj) (obj->super_cls)
 #define Z_BASE(obj) ((zbase*) (obj)->child)
 #define Z_TCELL(obj) ((ztcell*) Z_BASE(obj)->child)
 

@@ -90,6 +90,9 @@ void zgenerics_delete(zgenerics* obj)
 	obj->child = NULL;
 	obj->usr_data = NULL;
 
+	/* remove vtables */
+	ZGENERIC_INIT_VTABLE(obj);
+
 	if(ZDESTRUCTOR_CHECK)
 		free(obj);
 
@@ -110,7 +113,7 @@ void zgenerics_clear(zgenerics* obj)
 			blist_set_usr_obj(&obj->generics_d, (void*) obj);
 			blist_set_option_del_callback(&obj->generics_d, _zgenerics_callback_delete);
 		}
-	
+
 	return;
 }
 

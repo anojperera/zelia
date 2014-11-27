@@ -13,7 +13,7 @@ zgeneric* zgeneric_new(zgeneric* obj)
 	obj->super_cls = obj;		/* pointer to itself */
 	obj->gdev = NULL;
 	obj->gcairo_dev = NULL;
-	
+
 	obj->def_dev_ctxt_flg = 0;
 
 	/* initialise the vtable */
@@ -41,6 +41,9 @@ void zgeneric_delete(zgeneric* obj)
 	obj->child = NULL;
 	obj->super_cls = NULL;
 	obj->gcairo_dev = NULL;
+
+	/* remove vtables */
+	ZGENERIC_INIT_VTABLE(obj);
 
 	/* if the object was created free it */
 	if(ZDESTRUCTOR_CHECK)

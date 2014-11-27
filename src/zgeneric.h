@@ -148,7 +148,7 @@ extern "C" {
 
 	/* helper macro for setting the child pointer */
 #define zgeneric_set_child_pointer(obj)			\
-	(obj)->parent.child = (obj)
+	(obj)->parent.child = (void*) (obj)
 #ifdef __cplusplus
 }
 #endif
