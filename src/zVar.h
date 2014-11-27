@@ -141,6 +141,9 @@ typedef enum {
 #define ZCHECK_OBJ_PTR(obj)			\
     if((obj) == NULL)				\
 	return NULL
+#define ZCHECK_OBJ_DOUBLE(obj)					\
+	if((obj)) == NULL)							\
+	   return 0.0
 
 #define ZELIA_LOG_MESSAGE(msg)			\
     fprintf(stdout, "%s\n", (msg))
@@ -148,4 +151,10 @@ typedef enum {
     fprintf(stdout, "%s%i\n", (msg), (val))
 #define ZELIA_LOG_MESSAGE_WITH_STR(msg, val)	\
     fprintf(stdout, "%s%s\n", (msg), (val))
+
+/* object conversion macros */
+#define Z_GENERIC(obj) (obj->super_cls)
+#define Z_BASE(obj) ((zbase*) (obj)->child)
+
+
 #endif /* __ZVAR__ */
