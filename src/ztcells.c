@@ -5,8 +5,8 @@
 #include "zVar.h"
 
 /* Virtual functions */
-static int _ztrow_delete(void* obj);									/* delete function */
-static int _ztrow_draw(void* obj);										/* draw function */
+static int _ztcell_delete(void* obj);									/* delete function */
+static int _ztcell_draw(void* obj);										/* draw function */
 
 /* Constructor */
 zgenerics* ztcells_new(ztcells* obj,									/* Optional argument */
@@ -76,8 +76,8 @@ zgenerics* ztcells_new(ztcells* obj,									/* Optional argument */
 		}
 
     /* Set parent properties */
-	zgeneric_set_delete_callback(obj, _ztrow_delete);
-	zgeneric_set_draw(obj, _ztrow_draw);
+	zgeneric_set_delete_callback(obj, _ztcell_delete);
+	zgeneric_set_draw(obj, _ztcell_draw);
 
     /* Parent user data set as self */
     obj->parent.usr_data = (void*) obj;
@@ -125,7 +125,7 @@ ztcell* ztcells_get_cell(ztcells* obj, unsigned int ix)
 /*=================================== Private Methods ===================================*/
 
 /* Virtual delete function */
-static int _ztrow_delete(void* obj)
+static int _ztcell_delete(void* obj)
 {
     zgeneric* _zg = NULL;
 	
@@ -139,7 +139,7 @@ static int _ztrow_delete(void* obj)
 
 
 /* Virtual draw function */
-static int _ztrow_draw(void* obj)
+static int _ztcell_draw(void* obj)
 {
     zgeneric* _zg;
     
