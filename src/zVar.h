@@ -89,6 +89,7 @@ typedef enum {
 #define ZELIA_ATTRIB_ERROR -4
 #define ZELIA_EMPTY_FILE -5
 #define ZELIA_TCELL_ERROR -6
+#define ZELIA_TROW_ERROR -7
 
 /* line weights */
 #define Z_LINE_WEIGHT1 0.25
@@ -166,5 +167,6 @@ typedef enum {
 #define Z_GENERICS(obj) (obj->super_cls)
 #define Z_BASE(obj) ((zbase*) (obj)->child)
 #define Z_TCELL(obj) ((ztcell*) Z_BASE(obj)->child)
-
+#define Z_TCELLS(obj) ((ztcell*) (obj)->child)
+#define Z_TROW(obj) ((ztrow*) Z_BASE(obj)->child)
 #endif /* __ZVAR__ */
