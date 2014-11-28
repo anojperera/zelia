@@ -22,7 +22,7 @@ zgenerics* ztcells_new(ztcells* obj,									/* Optional argument */
     ztcell* _tcell;
 
 	/* create object */
-	ZCONSTRUCTOR(obj);
+	ZCONSTRUCTOR(obj, ztcells);
 
     /* Create parent object */
     if(!obj->super_cls = zgenerics_new(&obj->_parent,

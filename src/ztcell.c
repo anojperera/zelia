@@ -18,7 +18,7 @@ zgeneric* ztcell_new(ztcell* obj)
 	zgeneric* _zg;
 
 	/* call constructor helper */
-	ZCONSTRUCTOR(obj);
+	ZCONSTRUCTOR(obj, ztcell);
 
 	/* call parent constructor */
 	_zg = zbase_new(&obj->parent);
