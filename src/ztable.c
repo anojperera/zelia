@@ -1,7 +1,7 @@
 /* Implementation of table class */
 /* Tue Mar  6 12:44:15 GMTST 2012 */
 
-#include "zTable.h"
+#include "ztable.h"
 #include "zVar.h"
 /* Virtual function */
 
@@ -11,13 +11,13 @@ static int _ztable_draw(void* obj);
 zgeneric* ztable_new(ztable* obj)
 {
 	ZCONSTRUCTOR(obj, ztable);
-	
+
     /* create parent object */
     if(!obj->super_cls = zbase_new(&obj->z_parent))
 	{
 		if(ZDESTRUCTOR_CHECK)
 		    free(obj);
-		
+
 	    return NULL;
 	}
 
@@ -28,230 +28,218 @@ zgeneric* ztable_new(ztable* obj)
     obj->col_widths = NULL;
     obj->child = NULL;
 
+    /* initialise vtable */
+    ZGENERIC_INIT_VTABLE(obj);
+
+    zgeneric_set_draw(obj, _ztable_draw);
 
     /* return top level parent object */
     return &obj->super_cls;
 }
 
 /* Destructor */
-void zTable_Delete(zTable* obj)
+void ztable_delete(ztable* obj)
 {
     /* Check object */
-    Z_CHECK_OBJ_VOID(obj);
+    ZCHECK_OBJ_VOID(obj);
+
+    if(obj->vtable.zgeneric_delete)
+	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
     /* delete parent */
-    zBase_Delete(&obj->z_parent);
+    zbase_delete(&obj->parent);
 
     /* call to delete row collection */
-    if(obj->z_arr_flg)
-	zTRows_Delete(&obj->z_rows);
+    if(obj->arr_flg)
+	ztrows_delete(&obj->rows);
 
-    obj->z_child = NULL;
-    obj->z_draw_func = NULL;
+    if(obj->col_widths)
+	free(obj->col_widths);
+
+    obj->child = NULL;
+
 
     /* if object was internally created
      * delete it */
-    if(obj->z_int_flg)
+    if(ZDESTRUCTOR_CHECK)
 	free(obj);
+
+    return;
 }
 
 /* Draw method */
-int zTable_Draw(zTable* obj)
+int ztable_draw(ztable* obj)
 {
     /* check object */
-    Z_CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
 
     /* check if array was created */
-    if(obj->z_arr_flg == 0)
-	return 1;
+    if(obj->arr_flg == 0)
+	return ZELIA_TABLE_ERROR;
 
     /* call draw function of row collection */
-    return zGenerics_Draw(&obj->z_rows.z_parent);
+    return zgenerics_draw(obj->rows->super_cls);
 }
 
 
-/* Property methods */
-/**************************************************************************************************************/
-
+/*=================================== Property Methods ===================================*/
 /* Set rows and columns */
-inline int zTable_Set_Rows_and_Cols(zTable* obj,
-				    unsigned int num_rows,
-				    unsigned int num_cols)
+int ztable_set_rows_and_cols(zTable* obj,
+			    unsigned int num_rows,
+			    unsigned int num_cols)
 {
-    int i;
-    zDevice* _dev;
-    Z_CHECK_OBJ(obj);
-    obj->z_num_rows = num_rows;
-    obj->z_num_cols = num_cols;
+    int _i;
+    zdevice* _dev;
+
+    ZCHECK_OBJ_INT(obj);
+
+    obj->num_rows = num_rows;
+    obj->num_cols = num_cols;
 
     /* Check if array was created */
-    if(obj->z_arr_flg == 0)
+    if(obj->arr_flg == 0)
 	{
 	    /* create an array of pointers to hold column width and
 	     * initialise to 0.0 */
-	    obj->z_col_widths = (double*) calloc(num_cols, sizeof(double));
-	    for(i = 0; i < num_cols; i++)
-		obj->z_col_widths[i] = 0.0;
-	    
-	    _dev = zGeneric_Get_Device(&obj->z_parent.z_sgeneric);
-	    
-	    zTRows_New(&obj->z_rows,						/* row object */
+	    obj->col_widths = (double*) calloc(num_cols, sizeof(double));
+	    for(_i=0; _i<num_cols; _i++)
+		obj->col_widths[_i] = 0.0;
+
+	    _dev = zgeneric_get_device(obj->super_cls);
+
+	    ztrows_new(&obj->rows,						/* row object */
 		       _dev,							/* device object */
-		       obj->z_num_rows,						/* number of rows */
-		       obj->z_num_cols,						/* number of columns */
-		       obj->z_parent.z_x,					/* origin x */
-		       obj->z_parent.z_y,					/* origin y */
-		       zBase_Get_Width(&obj->z_parent),				/* row width */
-		       zBase_Get_Height(&obj->z_parent) / (double) num_rows);	/* row height */
-	    obj->z_arr_flg = 1;
+		       obj->num_rows,						/* number of rows */
+		       obj->num_cols,						/* number of columns */
+		       obj->parent.x,						/* origin x */
+		       obj->parent.y,						/* origin y */
+		       zbase_get_width(&obj->parent),				/* row width */
+		       zbase_get_height(&obj->parent) / (double) num_rows);	/* row height */
+	    obj->arr_flg = 1;
 	}
-    return 0;
+
+    return ZELIA_OK;
 }
 
-/* Get number of rows */
-inline unsigned int zTable_Get_Rows(zTable* obj)
-{
-    if(obj == NULL)
-	return 0;
-    else
-	return obj->z_num_rows;
-}
-
-/* Get number of columns */
-inline unsigned int zTable_Get_Cols(zTable* obj)
-{
-    if(obj == NULL)
-	return 0;
-    else
-	return obj->z_num_cols;
-}
 
 /* Set content */
-inline int zTable_Set_Content(zTable* obj,
-			      unsigned int row_ix,
-			      unsigned int col_ix,
-			      const char* content)
+int ztable_set_content(ztable* obj,
+		      unsigned int row_ix,
+		      unsigned int col_ix,
+		      const char* content)
 {
-    zTRow* _trow;
+    ztrow* _trow;
+
     /* object check */
-    Z_CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
 
     /* check collection bounds */
-    if(row_ix >= obj->z_num_rows ||
-       col_ix >= obj->z_num_cols ||
-       obj->z_arr_flg == 0)
+    if(row_ix >= obj->num_rows ||
+       col_ix >= obj->num_cols ||
+       obj->arr_flg == 0)
 	return 1;
 
     /* get row specified by the index */
-    _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
-    Z_CHECK_OBJ(_trow);
-    return zTRow_Add_Content(_trow, col_ix, content);
+    _trow = ztrows_get_row(&obj->rows, row_ix);
+
+    /* check object */
+    ZCHECK_OBJ_INT(_trow);
+
+    return ztrow_add_content(_trow, col_ix, content);
 }
 
 /* Get content */
-inline const char* zTable_Get_Content(zTable* obj,
-				      unsigned int row_ix,
-				      unsigned int col_ix)
+const char* ztable_get_content(ztable* obj,
+			      unsigned int row_ix,
+			      unsigned int col_ix)
 {
-    zTCell* _tcell;
-    zTRow* _trow;
+    ztcell* _tcell;
+    ztrow* _trow;
 
     /* check object */
-    Z_CHECK_OBJ_PTR(obj);
+    ZCHECK_OBJ_PTR(obj);
 
     /* check collection bounds */
-    if(row_ix > obj->z_num_rows ||
-       col_ix > obj->z_num_cols)
+    if(row_ix > obj->num_rows || col_ix > obj->num_cols)
 	return NULL;
 
     /* get row specified by the index */
-    _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
-    Z_CHECK_OBJ_PTR(_trow);
+    _trow = zTRows_Get_Row(&obj->rows, row_ix);
+    ZCHECK_OBJ_PTR(_trow);
 
-    _tcell = zTRow_Get_Cell(_trow, col_ix);
-    Z_CHECK_OBJ_PTR(_tcell);
+    _tcell = ztrow_get_cell(_trow, col_ix);
+    ZCHECK_OBJ_PTR(_tcell);
 
-    return zTCell_Get_Content(_tcell);
+    return ztcell_get_content(_tcell);
 }
 
-
-/* Get row specified by the row index */
-inline const zTRow* zTable_Get_Row(zTable* obj,
-				       unsigned int row_ix)
-{
-    /* check row object */
-    Z_CHECK_OBJ_PTR(obj);
-
-    /* check number of rows */
-    if(row_ix > obj->z_num_rows)
-	return NULL;
-
-    return zTRows_Get_Row(&obj->z_rows, row_ix);
-}
 
 /* Get cell specified by row index and column index */
-inline const zTCell* zTable_Get_Cell(zTable* obj,
-					 unsigned int row_ix,
-					 unsigned int col_ix)
+const ztcell* ztable_get_cell(ztable* obj,
+				 unsigned int row_ix,
+				 unsigned int col_ix)
 {
-    zTRow* _trow;
+    ztrow* _trow;
 
     /* object check */
-    Z_CHECK_OBJ_PTR(obj);
-    
-    if(row_ix > obj->z_num_rows ||
-       col_ix > obj->z_num_cols)
+    ZCHECK_OBJ_PTR(obj);
+
+    if(row_ix > obj->num_rows || col_ix > obj->num_cols)
 	return NULL;
-    _trow = zTRows_Get_Row(&obj->z_rows, row_ix);
-    Z_CHECK_OBJ_PTR(_trow);
-    return zTRow_Get_Cell(_trow, col_ix);
+
+    _trow = ztrows_get_row(&obj->rows, row_ix);
+    ZCHECK_OBJ_PTR(_trow);
+
+    return ztrow_get_cell(_trow, col_ix);
 }
 
 /* Set column width */
-inline int zTable_Set_Column_Width(zTable* obj,
-				       unsigned int col_ix,
-				       double width)
-{   zTRow* _trow;
-    zTCell* _tcell;
-    int i, a;
+int ztable_set_column_width(ztable* obj,
+			    unsigned int col_ix,
+			    double width)
+{
+    ztrow* _trow;
+    ztcell* _tcell;
+    int _i, _a;
+    
     /* Check for object */
-    Z_CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
 
     /* check if column width array was created */
-    Z_CHECK_OBJ(obj->z_col_widths);
+    ZCHECK_OBJ_INT(obj->col_widths);
 
     /* check array bounds */
-    if(col_ix >= obj->z_num_cols)
-	return 1;
+    if(col_ix >= obj->num_cols)
+	return ZELIA_TABLE_ERROR;
 
-    obj->z_col_widths[col_ix] = width;
+    obj->col_widths[col_ix] = width;
 
     /* check if array created */
-    if(obj->z_arr_flg == 0)
-	return 1;
+    if(obj->arr_flg == 0)
+	return ZELIA_TABLE_ERROR;
 
     /* iterate through rows collection and set the width */
-    for(i=0; i<obj->z_num_rows; i++)
+    for(_i=0; _i<obj->num_rows; _i++)
 	{
-	    _trow = zTRows_Get_Row(&obj->z_rows, (unsigned int) i);
-	    _tcell = zTRow_Get_Cell(_trow, col_ix);
+	    _trow = ztrows_get_row(&obj->z_rows, (unsigned int) _i);
+	    _tcell = ztrow_get_cell(_trow, col_ix);
 
 	    /* set width */
-	    zBase_Set_Width(&_tcell->z_parent, width);
-	    for(a=col_ix+1; a<obj->z_num_cols; a++)
+	    zbase_set_width(&_tcell->parent, width);
+	    for(_a=col_ix+1; _a<obj->num_cols; _a++)
 		{
-		    _tcell = zTRow_Get_Cell(_trow, a);
+		    _tcell = ztrow_get_cell(_trow, _a);
 		    if(_tcell == NULL)
 			break;
-		    _tcell->z_parent.z_x += width - _tcell->z_parent.z_width;
+		    _tcell->parent.x += width - _tcell->parent.width;
 		}
 	}
 
-    return 0;
+    return ZELIA_OK;
 }
 
 /* Get column width */
-inline double zTable_Get_Column_Width(zTable* obj,
+double zTable_Get_Column_Width(zTable* obj,
 				      unsigned int col_ix)
 {
     /* check object */
@@ -267,12 +255,16 @@ inline double zTable_Get_Column_Width(zTable* obj,
     return obj->z_col_widths[col_ix];
     
 }
-/* Private functions */
-/*************************************************************************************************************/
+
+/*=================================== Private Methods ===================================*/
 
 /* Virtual draw method */
-static int _ztable_draw(zGeneric* obj)
+static int _ztable_draw(void* obj)
 {
-    Z_CHECK_OBJ(obj);
-    return zTable_Draw(Z_TABLE(obj));
+    zgeneric* _zg;
+    
+    ZCHECK_OBJ_INT(obj);
+
+    _zg = (zgeneric*) obj;
+     return ztable_draw(Z_TABLE(_zg));
 }
