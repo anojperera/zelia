@@ -15,18 +15,18 @@ typedef struct _zgenerics zgenerics;
 
 struct _zgenerics
 {
-	unsigned int _int_flg;				/* internal flag */
-	unsigned int count;					/* count of objects */
-	unsigned int expansion_flg;			/* expansion flag */
+    unsigned int _int_flg;				/* internal flag */
+    unsigned int count;					/* count of objects */
+    unsigned int expansion_flg;				/* expansion flag */
 
 
-	blist generics_d;					/* dynamically expandable collection */
-	zgeneric** generics_s;				/* static collection */
+    blist generics_d;					/* dynamically expandable collection */
+    zgeneric** generics_s;				/* static collection */
 
-	zdevice* device;					/* Device object */
-	struct _zgeneric_vtable vtable;		/* vtable for delete, draw and new function pointers */
-	void* usr_data;						/* User data */
-	void* child;						/* child object */
+    zdevice* device;					/* Device object */
+    struct _zgeneric_vtable vtable;			/* vtable for delete, draw and new function pointers */
+    void* usr_data;					/* User data */
+    void* child;					/* child object */
 };
 
 /* Following C functions are only to be called internally within the library */
@@ -34,47 +34,47 @@ struct _zgenerics
 extern "C" {
 #endif
 
-	/* Constructor and Destructor */
-	/* If static option was used, object count must be greater than
-	 * 1. The contructor shall fail if object count is less than 1
-	 * and static flag was specified */
-	int zgenerics_new(zgenerics* obj,
-					  unsigned int s_flg,			/* static or dynamic option */
-					  unsigned int g_count);		/* count of objects if static option was used */
+    /* Constructor and Destructor */
+    /* If static option was used, object count must be greater than
+     * 1. The contructor shall fail if object count is less than 1
+     * and static flag was specified */
+    int zgenerics_new(zgenerics* obj,
+		      unsigned int s_flg,			/* static or dynamic option */
+		      unsigned int g_count);			/* count of objects if static option was used */
 
-	void zgenerics_delete(zgenerics* obj);
+    void zgenerics_delete(zgenerics* obj);
 
-	/* Get object count */
-	inline __attribute__ ((always_inline)) static unsigned int zgenerics_get_count(zgenerics* obj)
-	{
-		if(obj == NULL)
-			return 0;
-		else
-			return obj->count;
-	}
+    /* Get object count */
+    inline __attribute__ ((always_inline)) static unsigned int zgenerics_get_count(zgenerics* obj)
+    {
+	if(obj == NULL)
+	    return 0;
+	else
+	    return obj->count;
+    }
 
-	/* Set and get device object */
-	inline __attribute__ ((always_inline)) static int zgenerics_set_device(zgenerics* obj, zdevice* dev)
-	{
-		ZCHECK_OBJ_INT(obj);
-		ZCHECK_OBJ_INT(dev);
+    /* Set and get device object */
+    inline __attribute__ ((always_inline)) static int zgenerics_set_device(zgenerics* obj, zdevice* dev)
+    {
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(dev);
 
-		obj->device = dev;
-		return 0;
-	}
+	obj->device = dev;
+	return 0;
+    }
 
-	/* Get device */
-	inline __attribute__ ((always_inline)) static zdevice* zgenerics_get_device(zgenerics* obj)
-	{
-		ZCHECK_OBJ_PTR(obj);
-		return obj->device;
-	}
+    /* Get device */
+    inline __attribute__ ((always_inline)) static zdevice* zgenerics_get_device(zgenerics* obj)
+    {
+	ZCHECK_OBJ_PTR(obj);
+	return obj->device;
+    }
 
-	/* Clear array */
-	void zgenerics_clear(zgenerics* obj);
+    /* Clear array */
+    void zgenerics_clear(zgenerics* obj);
 
-	/* Draw function */
-	int zgenerics_draw(zgenerics* obj);
+    /* Draw function */
+    int zgenerics_draw(zgenerics* obj);
 #ifdef __cplusplus
 }
 #endif

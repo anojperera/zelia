@@ -67,12 +67,12 @@ extern "C" {
 
     /* Set content of cell spcecified by row and column index */
     int ztable_set_content(ztable* obj,
-			  unsigned int row_ix,
-			  unsigned int col_ix,
-			  const char* content);
+			   unsigned int row_ix,
+			   unsigned int col_ix,
+			   const char* content);
     const char* ztable_get_content(ztable* obj,
-					  unsigned int row_ix,
-					  unsigned int col_ix);
+				   unsigned int row_ix,
+				   unsigned int col_ix);
 
     /* Get row object specified by row index */
     inline __attribute__ ((always_inline)) static const ztrow* ztable_get_row(ztable* obj, unsigned int row_ix)
@@ -89,8 +89,8 @@ extern "C" {
 
     /* Get cell object specified by column index */
     const ztcell* ztable_get_cell(ztable* obj,
-				 unsigned int row_ix,
-				 unsigned int col_ix);
+				  unsigned int row_ix,
+				  unsigned int col_ix);
 
     /* Set and get column width */
     inline int ztable_set_column_width(ztable* obj,

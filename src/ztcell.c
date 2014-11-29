@@ -15,14 +15,17 @@ static int _ztcell_draw(void* obj);
 /* Constructor */
 zgeneric* ztcell_new(ztcell* obj)
 {
-	zgeneric* _zg;
+    /* call constructor helper */
+    ZCONSTRUCTOR(obj, ztcell);
 
-	/* call constructor helper */
-	ZCONSTRUCTOR(obj, ztcell);
+    /* call parent constructor */
+    if(!obj->super_cls = zbase_new(&obj->parent))
+	{
+	    if(ZDESTRUCTOR_CHECK)
+		free(obj);
+	    return NULL;
+	}
 
-	/* call parent constructor */
-	_zg = zbase_new(&obj->parent);
-	
     /* Set properties */
     obj->_row_ix = 0;
     obj->_col_ix = 0;
@@ -31,15 +34,15 @@ zgeneric* ztcell_new(ztcell* obj)
 
     obj->line_flg = 1;
 
-	/* initialise vtable */
-	ZGENERIC_INIT_VTABLE(obj);
+    /* initialise vtable */
+    ZGENERIC_INIT_VTABLE(obj);
 
-	/* set parent objects function pointers */
-	zgeneric_set_draw(obj, _ztcell_draw);
-	
+    /* set parent objects function pointers */
+    zgeneric_set_draw(obj, _ztcell_draw);
+
     /* set child pointer of parent object */
-	zgeneric_set_child_pointer(obj);
-    return _zg;
+    zgeneric_set_child_pointer(obj);
+    return obj->super_cls;
 }
 
 /* Destructor */
@@ -47,22 +50,25 @@ void ztcell_delete(ztcell* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-	/* if the destruct pointer was set we call it */
-	if(obj->vtable.zgeneric_delete)
-		obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	
-    obj->z_child = NULL;
-	obj->super_cls = NULL;
+    /* if the destruct pointer was set we call it */
+    if(obj->vtable.zgeneric_delete)
+	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
-	/* remove vtables */
-	ZGENERIC_INIT_VTABLE(obj);
-	
+    /* delete parent object */
+    zbase_delete(&obj->z_parent);
+
+    obj->z_child = NULL;
+    obj->super_cls = NULL;
+
+    /* remove vtables */
+    ZGENERIC_INIT_VTABLE(obj);
+
     /* If object was internally created,
      * destroy it */
-	if(ZDESTRUCTOR_CHECK)
-		free(obj);
+    if(ZDESTRUCTOR_CHECK)
+	free(obj);
 
-	return;
+    return;
 }
 
 /* Draw function */
@@ -73,7 +79,7 @@ int ztcell_draw(ztcell* obj)
     PangoLayout* _layout;
     PangoFontDescription* _desc;
     double _x, _y;
-    
+
     /* check object */
     ZCHECK_OBJ_INT(obj);
 
@@ -91,7 +97,7 @@ int ztcell_draw(ztcell* obj)
     /* Check width and height */
     if(_base->width <= 0.0 &&
        _base->height <= 0.0)
-		return ZELIA_TCELL_ERROR;
+	return ZELIA_TCELL_ERROR;
 
     /* Save context */
     cairo_save(_dev_c);
@@ -114,15 +120,15 @@ int ztcell_draw(ztcell* obj)
     	    /* Translate to coordinates */
     	    _x = _base->x + ZTCELL_TEXT_LEFT;
     	    _y = _base->y + ZTCELL_TEXT_TOP;
-    
+
     	    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
 
     	    /* Create pango layout */
     	    _layout = pango_cairo_create_layout(_dev_c);
-    
+
     	    /* Add text to layout */
     	    pango_layout_set_text(_layout, obj->content, -1);
-    
+
     	    /* Create font description and add to layout */
     	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
     	    pango_layout_set_font_description(_layout, _desc);
@@ -133,26 +139,35 @@ int ztcell_draw(ztcell* obj)
     	    /* Free layout object */
     	    g_object_unref(_layout);
     	}
-    
+
     /* Restore cairo context */
     cairo_restore(_dev_c);
-    
+
     _dev_c = NULL;
     _base = NULL;
     _layout = NULL;
     _desc = NULL;
 
-	return ZELIA_OK;
+    return ZELIA_OK;
 }
 
 /*=================================== Private Methods ===================================*/
 /* Virtual draw function */
 static int _ztcell_draw(void* obj)
 {
-	zgeneric* _zg = NULL;
-	
-    ZCHECK_OBJ_INT(obj);
-	_zg = (zgeneric*) obj;
+    zgeneric* _zg = NULL;
+    ztcell* _self = NULL;
+    int _rt = ZELIA_OK;
 
-    return ztcell_draw(Z_TCELL(_zg));
+    ZCHECK_OBJ_INT(obj);
+    _zg = (zgeneric*) obj;
+    _self = Z_TCELL(_zg);
+
+    _rt = ztcell_draw();
+
+    /* if child pointer draw callback was set, call it */
+    if(_self->vtable.vtable.zgeneric_draw)
+	return _self->vtable.vtable.zgeneric_draw(obj);
+
+    return _rt;
 }

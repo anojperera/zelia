@@ -14,13 +14,13 @@ typedef struct _ztrows ztrows;
 
 struct _ztrows
 {
-    zgenerics parent;							/* Inherited parent object */
-    unsigned int _int_flg;						/* Internal flag */
-
-	struct _zgeneric_vtable vtable;				/* vtable */
-	
-	zgenerics* super_cls;						/* super class */
-    void* child;								/* Child pointer */
+    zgenerics parent;					/* Inherited parent object */
+    unsigned int _int_flg;				/* Internal flag */
+    
+    struct _zgeneric_vtable vtable;			/* vtable */
+    
+    zgenerics* super_cls;				/* super class */
+    void* child;					/* Child pointer */
 };
 
 #ifdef __cplusplus
@@ -29,25 +29,25 @@ extern "C" {
 
     /* Constructor & destructor */
     zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
-			  zdevice* dev,						/* device object */
-			  unsigned int num_rows,			/* number of rows */
-			  unsigned int num_cols,			/* number of columns */
-			  double x,							/* origin x */
-			  double y,							/* origin y */
-			  double width,						/* width */
-			  double height);					/* height */
+			  zdevice* dev,			/* device object */
+			  unsigned int num_rows,	/* number of rows */
+			  unsigned int num_cols,	/* number of columns */
+			  double x,			/* origin x */
+			  double y,			/* origin y */
+			  double width,			/* width */
+			  double height);		/* height */
     void ztrows_delete(ztrows* obj);
 
     /* Readonly property method */
     /* Get return row object of index ix */
     inline __attribute__ ((always_inline)) static ztrow* ztrows_get_row(ztrows* obj, unsigned int ix)
-	{
-		ZCHECK_OBJ_PTR(obj);
-		if(ix >= obj->parent.count)
-			return NULL;
+    {
+	ZCHECK_OBJ_PTR(obj);
+	if(ix >= obj->parent.count)
+	    return NULL;
 
-		return Z_TROW(obj->super_cls->generics_s[ix]);
-	}
+	return Z_TROW(obj->super_cls->generics_s[ix]);
+    }
     
 
 #ifdef __cplusplus

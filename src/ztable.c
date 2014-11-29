@@ -10,13 +10,13 @@ static int _ztable_draw(void* obj);
 /* Constructor */
 zgeneric* ztable_new(ztable* obj)
 {
-	ZCONSTRUCTOR(obj, ztable);
+    ZCONSTRUCTOR(obj, ztable);
 
     /* create parent object */
     if(!obj->super_cls = zbase_new(&obj->parent))
 	{
-		if(ZDESTRUCTOR_CHECK)
-		    free(obj);
+	    if(ZDESTRUCTOR_CHECK)
+		free(obj);
 
 	    return NULL;
 	}
@@ -36,7 +36,7 @@ zgeneric* ztable_new(ztable* obj)
 
     /* set child pointer */
     zgeneric_set_child_pointer(obj);
-    
+
     /* return top level parent object */
     return obj->super_cls;
 }
@@ -61,7 +61,8 @@ void ztable_delete(ztable* obj)
 	free(obj->col_widths);
 
     obj->child = NULL;
-
+    obj->super_cls = NULL;
+    ZGENERIC_INIT_VTABLE(obj);
 
     /* if object was internally created
      * delete it */
@@ -74,6 +75,7 @@ void ztable_delete(ztable* obj)
 /* Draw method */
 int ztable_draw(ztable* obj)
 {
+    
     /* check object */
     ZCHECK_OBJ_INT(obj);
 
@@ -89,8 +91,8 @@ int ztable_draw(ztable* obj)
 /*=================================== Property Methods ===================================*/
 /* Set rows and columns */
 int ztable_set_rows_and_cols(zTable* obj,
-			    unsigned int num_rows,
-			    unsigned int num_cols)
+			     unsigned int num_rows,
+			     unsigned int num_cols)
 {
     int _i;
     zdevice* _dev;
@@ -128,9 +130,9 @@ int ztable_set_rows_and_cols(zTable* obj,
 
 /* Set content */
 int ztable_set_content(ztable* obj,
-		      unsigned int row_ix,
-		      unsigned int col_ix,
-		      const char* content)
+		       unsigned int row_ix,
+		       unsigned int col_ix,
+		       const char* content)
 {
     ztrow* _trow;
 
@@ -154,8 +156,8 @@ int ztable_set_content(ztable* obj,
 
 /* Get content */
 const char* ztable_get_content(ztable* obj,
-			      unsigned int row_ix,
-			      unsigned int col_ix)
+			       unsigned int row_ix,
+			       unsigned int col_ix)
 {
     ztcell* _tcell;
     ztrow* _trow;
@@ -180,8 +182,8 @@ const char* ztable_get_content(ztable* obj,
 
 /* Get cell specified by row index and column index */
 const ztcell* ztable_get_cell(ztable* obj,
-				 unsigned int row_ix,
-				 unsigned int col_ix)
+			      unsigned int row_ix,
+			      unsigned int col_ix)
 {
     ztrow* _trow;
 
@@ -205,7 +207,7 @@ int ztable_set_column_width(ztable* obj,
     ztrow* _trow;
     ztcell* _tcell;
     int _i, _a;
-    
+
     /* Check for object */
     ZCHECK_OBJ_INT(obj);
 
@@ -244,11 +246,11 @@ int ztable_set_column_width(ztable* obj,
 
 /* Get column width */
 double zTable_Get_Column_Width(zTable* obj,
-				      unsigned int col_ix)
+			       unsigned int col_ix)
 {
     /* check object */
     Z_CHECK_OBJ_DOUBLE(obj);
-    
+
     /* check if column width array was created */
     Z_CHECK_OBJ_DOUBLE(obj->z_col_widths);
 
@@ -257,7 +259,7 @@ double zTable_Get_Column_Width(zTable* obj,
 	return 0.0;
 
     return obj->z_col_widths[col_ix];
-    
+
 }
 
 /*=================================== Private Methods ===================================*/
@@ -265,10 +267,20 @@ double zTable_Get_Column_Width(zTable* obj,
 /* Virtual draw method */
 static int _ztable_draw(void* obj)
 {
+    int _rt = ZELIA_OK;
     zgeneric* _zg;
+    ztable* _self;
     
     ZCHECK_OBJ_INT(obj);
 
     _zg = (zgeneric*) obj;
-     return ztable_draw(Z_TABLE(_zg));
+    _self = Z_TABLE(_zg);
+    
+    _rt = ztable_draw(_self);
+
+    /* if the callback pointer of child class set, call it */
+    if(_self->vtable.zgeneric_draw)
+	return _self->vtable.zgeneric_draw(obj);
+
+    return _rt;
 }

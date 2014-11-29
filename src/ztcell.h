@@ -18,17 +18,17 @@ typedef struct _ztcell ztcell;
 
 struct _ztcell
 {
-	zbase parent;						/* Inherited parent object */
-	unsigned int _int_flg;				/* Internal flag */
-	char content[TCELL_BUFF];			/* Content buffer */
-	unsigned int _row_ix;				/* Internal row index */
-	unsigned int _col_ix;				/* Internal column index */
-	unsigned int line_flg;				/* Line flag */
+    zbase parent;					/* Inherited parent object */
+    unsigned int _int_flg;				/* Internal flag */
+    char content[TCELL_BUFF];				/* Content buffer */
+    unsigned int _row_ix;				/* Internal row index */
+    unsigned int _col_ix;				/* Internal column index */
+    unsigned int line_flg;				/* Line flag */
 
-	struct _zgeneric_vtable vtable;		/* vtable for update draw, delete and new */
+    struct _zgeneric_vtable vtable;			/* vtable for update draw, delete and new */
 
-	zgeneric* super_cls;
-	void* child;						/* Child pointer */
+    zgeneric* super_cls;
+    void* child;					/* Child pointer */
 };
 
 #ifdef __cplusplus
@@ -47,44 +47,44 @@ extern "C" {
     /* Set and get cell content */
     inline __attribute__ ((always_inline)) static int ztcell_set_content(ztcell* obj, const char* content)
     {
-		ZCHECK_OBJ_INT(obj);
-		ZCHECK_OBJ_INT(content);
-		memset(obj->content, 0, Z_TCELL_BUFF);
-		strncpy(obj->content, content, Z_TCELL_BUFF-1);
-		obj->content[Z_TCELL_BUFF-1] = '\0';
-		return 0;
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(content);
+	memset(obj->content, 0, Z_TCELL_BUFF);
+	strncpy(obj->content, content, Z_TCELL_BUFF-1);
+	obj->content[Z_TCELL_BUFF-1] = '\0';
+	return 0;
     }
     inline __attribute__ ((always_inline)) static const char* ztcell_get_content(ztcell* obj)
     {
-		ZCHECK_OBJ_PTR(obj);
-		return obj->content;
+	ZCHECK_OBJ_PTR(obj);
+	return obj->content;
     }
 
     /* Get row and column index */
     inline __attribute__ ((always_inline)) static unsigned int ztcell_get_row_ix(ztcell* obj)
     {
-		ZCHECK_OBJ_INT(obj);
-		return obj->_row_ix;
+	ZCHECK_OBJ_INT(obj);
+	return obj->_row_ix;
     }
     inline __attribute__ ((always_inline)) static unsigned int ztcell_get_col_ix(ztcell* obj)
     {
-		ZCHECK_OBJ_INT(obj);
-		return obj->_col_ix;
+	ZCHECK_OBJ_INT(obj);
+	return obj->_col_ix;
     }
 
     /* Set and get line flag */
     inline __attribute__ ((always_inline)) static int ztcell_set_line_flg(ztcell* obj, unsigned int flg)
     {
-		ZCHECK_OBJ_INT(obj);
-		obj->line_flg = flg;
-		return ZELIA_OK;
+	ZCHECK_OBJ_INT(obj);
+	obj->line_flg = flg;
+	return ZELIA_OK;
     }
     inline __attribute__ ((always_inline)) static unsigned int ztcell_get_line_flg(ztcell* obj)
     {
-		if(obj == NULL)
-			return 0;
-		else
-			return obj->line_flg;
+	if(obj == NULL)
+	    return 0;
+	else
+	    return obj->line_flg;
     }
 
 #ifdef __cplusplus

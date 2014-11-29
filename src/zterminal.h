@@ -16,9 +16,9 @@ struct _zterminal
 {
     zbase parent;			/* parent class */
     unsigned int _int_flg;		/* internal flag */
-    
+
     zTerminalType term_type;		/* terminal type */
-    
+
     double term_height;			/* terminal height - projected */
 
     char term_num[5];			/* terminal number */
@@ -86,5 +86,5 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif    
+#endif
 #endif /* _ZTERMINAL_H_ */

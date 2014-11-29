@@ -9,14 +9,14 @@ static int _ztrow_draw(void* obj);
 /* Constructor */
 zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
 {
-	/* call constructor helper */
-	ZCONSTRUCTOR(obj, ztrow);
-	
+    /* call constructor helper */
+    ZCONSTRUCTOR(obj, ztrow);
+
     /* Create base object */
     if(!obj->super_cls = zbase_new(&obj->z_parent))
 	{
-		if(ZDESTRUCTOR_CHECK)
-			free(obj);
+	    if(ZDESTRUCTOR_CHECK)
+		free(obj);
 	    return NULL;
 	}
 
@@ -25,17 +25,17 @@ zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
     obj->num_cols = 0;				/* number of columns */
     obj->child = NULL;
     obj->ix = ix;
-    
-    /* Set function and child pointer of parent object */
-	/* initialise vtable */
-	ZGENERIC_INIT_VTABLE(obj);
 
-	/* set parent objects function pointers */
-	zgeneric_set_draw(obj, _ztrow_draw);
-	
+    /* Set function and child pointer of parent object */
+    /* initialise vtable */
+    ZGENERIC_INIT_VTABLE(obj);
+
+    /* set parent objects function pointers */
+    zgeneric_set_draw(obj, _ztrow_draw);
+
     /* set child pointer of parent object */
-	zgeneric_set_child_pointer(obj);
-	
+    zgeneric_set_child_pointer(obj);
+
     /* Return top level object */
     return obj->super_cls;
 }
@@ -45,23 +45,26 @@ void ztrow_delete(ztrow* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-	/* if the destructor callback was set call it */
-	if(obj->vtable.zgeneric_delete)
-		obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	
-	obj->super_cls = NULL;
-    obj->child = NULL;
-	ZGENERIC_INIT_VTABLE(obj);
-	
+    /* if the destructor callback was set call it */
+    if(obj->vtable.zgeneric_delete)
+	obj->vtable.zgeneric_delete((void*) obj->super_cls);
+
     /* delete parent object */
     zbase_delete(&obj->z_parent);
-	
+
+    obj->super_cls = NULL;
+    obj->child = NULL;
+
+    ZGENERIC_INIT_VTABLE(obj);
+
     /* if tcells was created destroy */
     if(obj->z_arr_flg)
-		ztcells_delete(&obj->z_tcells);
+	ztcells_delete(&obj->z_tcells);
 
-	if(ZDESTRUCTOR_CHECK)
-		free(obj);
+    if(ZDESTRUCTOR_CHECK)
+	free(obj);
+
+    return;
 }
 
 /* Draw function */
@@ -71,33 +74,33 @@ int ztrow_draw(ztrow* obj)
     zgeneric* _zg;
     zgenerics* _zgs;
     zbase* _base;
-    
+
     /* check for object */
     ZCHECK_OBJ_INT(obj);
 
     /* if number of columns were not set exit */
     if(obj->num_cols == 0)
-		return ZELIA_TROW_ERROR;
-    
+	return ZELIA_TROW_ERROR;
+
     _zg = Z_GENERIC(obj);
     _base = &obj->parent;
     _dev = zgeneric_get_device(_zg);
 
     /* check if tcell collection was created or not */
     if(obj->arr_flg == 0)
-		{
-			ztcells_new(&obj->tcells,
-						_dev,
-						obj->ix,
-						obj->num_cols,
-						_base->x,
-						_base->y,
-						_base->width / (double) obj->num_cols,
-						_base->height);
-			obj->arr_flg = 1;
-		}
+	{
+	    ztcells_new(&obj->tcells,
+			_dev,
+			obj->ix,
+			obj->num_cols,
+			_base->x,
+			_base->y,
+			_base->width / (double) obj->num_cols,
+			_base->height);
+	    obj->arr_flg = 1;
+	}
     _zgs = Z_GENERICS(&obj->tcells);
-    
+
     return zgenerics_draw(_zgs);
 }
 
@@ -108,13 +111,13 @@ inline int ztrow_add_content(ztrow* obj,
 {
     zgenerics* _zg;
     zdevice* _dev;
-	
+
     /* check object */
     ZCHECK_OBJ_INT(obj);
 
     /* check index is over bound */
     if(ix > obj->num_cols)
-		return ZELIA_TROW_ERROR;
+	return ZELIA_TROW_ERROR;
 
     /* check if tcell collection was created or not */
     if(obj->arr_flg == 0)
@@ -135,21 +138,20 @@ inline int ztrow_add_content(ztrow* obj,
     return ztcell_set_content(Z_TCELL(_zg->generics_s[ix]), content);
 }
 
-/* Property methods */
-/*********************************************************************/
+/*=================================== Property Methods ===================================*/
 
 /* Get Cell */
 ztcell* ztrow_get_cell(ztrow* obj, unsigned int ix)
 {
     zgenerics* _zg;
     zdevice* _dev;
-    
+
     ZCHECK_OBJ_PTR(obj);
 
     /* check array bounds */
     if(ix > obj->num_cols)
-		return NULL;
-    
+	return NULL;
+
     if(obj->arr_flg == 0)
 	{
 	    _dev = zgeneric_get_device(Z_GENERIC(obj));
@@ -173,10 +175,19 @@ ztcell* ztrow_get_cell(ztrow* obj, unsigned int ix)
 /* Virtual draw method */
 static int _ztrow_draw(void* obj)
 {
-	zgeneric* _zg = NULL;
-	
+    int _rt = ZELIA_OK;
+    zgeneric* _zg = NULL;
+    ztrow* _self = NULL;
+
     ZCHECK_OBJ_INT(obj);
-	
-	_zg = (zgeneric*) obj;
-    return ztrow_draw(Z_TROW(_zg));
+
+    _zg = (zgeneric*) obj;
+    _self = Z_TROW(_zg);
+    _rt =  ztrow_draw(_self);
+
+    /* if child pointer draw callback was set we call it */
+    if(_self->vtable.zgeneric_draw)
+	return _self->vtable.zgeneric_draw(obj);
+
+    return _rt;
 }
