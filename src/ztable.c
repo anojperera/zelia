@@ -13,7 +13,7 @@ zgeneric* ztable_new(ztable* obj)
 	ZCONSTRUCTOR(obj, ztable);
 
     /* create parent object */
-    if(!obj->super_cls = zbase_new(&obj->z_parent))
+    if(!obj->super_cls = zbase_new(&obj->parent))
 	{
 		if(ZDESTRUCTOR_CHECK)
 		    free(obj);
@@ -31,10 +31,14 @@ zgeneric* ztable_new(ztable* obj)
     /* initialise vtable */
     ZGENERIC_INIT_VTABLE(obj);
 
+    /* set drawing pointer */
     zgeneric_set_draw(obj, _ztable_draw);
 
+    /* set child pointer */
+    zgeneric_set_child_pointer(obj);
+    
     /* return top level parent object */
-    return &obj->super_cls;
+    return obj->super_cls;
 }
 
 /* Destructor */
