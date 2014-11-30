@@ -35,13 +35,15 @@ struct _zgeneric_vtable
 
 struct _zgeneric
 {
-    unsigned int _int_flg;				/* internal flag */
+    unsigned int _int_flg;			/* internal flag */
     unsigned int def_dev_ctxt_flg;		/* defulat device context set */
-    zdevice* gdev;						/* primary device */
-    zgeneric* super_cls;				/* pointer to itself */
-    void* child;						/* child sheet object */
+    zdevice* gdev;				/* primary device */
+    
+    zgeneric* super_cls;			/* pointer to itself */
+    void* cols;					/* pointer this objects collection */
+    void* child;				/* child sheet object */
 
-    cairo_t* gcairo_dev;				/* cairo device */
+    cairo_t* gcairo_dev;			/* cairo device */
 
     struct _zgeneric_vtable vtable;		/* vtable for element object classes */
 };
@@ -125,6 +127,7 @@ extern "C" {
 	return obj->gcairo_dev;
     }
 
+
     /*
      * Helper macros for setting colour and line types.
      * These wrap device objects methods.
@@ -149,6 +152,11 @@ extern "C" {
     /* helper macro for setting the child pointer */
 #define zgeneric_set_child_pointer(obj)		\
     (obj)->parent.child = (void*) (obj)
+
+#define zgeneric_set_collection_pointer(obj, collection)	\
+    (obj)->cols = (collection)
+#define zgeneric_get_collection_pointer(obj)	\
+    ((obj)? (obj)->cols : NULL)
 #ifdef __cplusplus
 }
 #endif

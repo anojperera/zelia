@@ -11,6 +11,7 @@ zgeneric* zgeneric_new(zgeneric* obj)
 
     obj->child = NULL;			/* set child pointer to NULL */
     obj->super_cls = obj;		/* pointer to itself */
+    obj->cols = NULL;
     obj->gdev = NULL;
     obj->gcairo_dev = NULL;
 
@@ -38,6 +39,7 @@ void zgeneric_delete(zgeneric* obj)
     /* delete the device object */
     zdevice_delete(obj->gdev);
     obj->gdev = NULL;
+    obj->cols = NULL;
     obj->child = NULL;
     obj->super_cls = NULL;
     obj->gcairo_dev = NULL;
