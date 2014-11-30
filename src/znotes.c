@@ -12,12 +12,11 @@
 #include "znotes.h"
 
 
-static int _znotes_counter = 0;
 static int _znotes_draw_helper(znotes* obj);
 
 /* Virtual functions */
-static int _znotes_draw(void* obj, void* usr_data);
-static int _znotes_delete(void* obj, void* usr_data);
+static int _znotes_draw(void* obj);
+static int _znotes_delete(void* obj);
 static int _znotes_get_note_height(zGeneric* obj, void* usr_data, int height);
 
 /* Constructor */
@@ -48,6 +47,7 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
     obj->title[0] = '\0';
     obj->uline_flg = 1;
     obj->counter = 0;
+    obj->_znotes_counter = 0;
 
     obj->child = NULL;
     ZGENERIC_INIT_VTABLE(obj);
@@ -108,11 +108,6 @@ int znotes_add(znotes* obj, const char* note)
 
     _note = Z_NOTE(_zg);
     
-    /* Set the internal flag to true as the struct
-     * shall be copied to internal memory of alist
-     * and it needs freed */
-    _note->int_flg = 1;
-
     zgeneric_set_device(_zg, zgenerics_get_device(&obj->parent));
     zgeneric_set_default_dev_context(_zg);
 
@@ -177,84 +172,86 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
 /* Virtual draw function */
 static int _znotes_draw(void* obj) 
 {
-    zNotes* _zns;
-    zNote* _zn;
-    zNote* _zn_prev;			/* previous note */
-    aNode* _node;
+    znotes* _zns;
+    znote* _zn;
+    znote* _zn_prev;			/* previous note */
+    blist* _node;
     
     /* check for object */
     Z_CHECK_OBJ(obj);
-    _zn = (zNote*) obj;
-    _zns = (zNotes*) usr_data;
+    _zn = (znote*) obj;
+    _zns = (znotes*) zgeneric_get_collection_pointer(_zn);
     
     /* Reset counter */
-    if(_znotes_counter > _zns->z_parent.z_count)
-	_znotes_counter = 0;
+    if(_zns->_znotes_counter > _zns->parent.count)
+	_zns->_znotes_counter = 0;
     
-    if(_znotes_counter == 0)
+    if(_zns->_znotes_counter == 0)
 	_znotes_draw_helper(_zns);
 
     /* Get previous object and set height if required */
-    _node = aList_Item(&_zns->z_parent.z_generics_d, _znotes_counter);
-    if(_node)
+    _zn_prev = znotes_get_note(_zns, _zns->_znotes_counter);
+    if(_zn_prev)
 	{
-	    _zn_prev = (zNote*) _node->data;
-	    if((_zns->_z_note_height +_zn_prev->z_parent.z_y - _zn->z_parent.z_y) > Z_NOTE_LINE_HEIGHT)
-		_zn->z_parent.z_y = _zn_prev->z_parent.z_y + _zns->_z_note_height * 2;
+	    if((_zns->_note_height +_zn_prev->parent.y - _zn->parent.y) > Z_NOTE_LINE_HEIGHT)
+		_zn->parent.y = _zn_prev->parent.y + _zns->_note_height * 2;
 	}
-    _znotes_counter++;
+    
+    _zns->_znotes_counter++;
     return znote_draw(_zn);
 }
 
 /* Virtual delete function */
-static int _znotes_delete(void* obj, void* usr_data)
+static int _znotes_delete(void* obj)
 {
-    zNote* _zn;
-    if(obj)
-	{
-	    _zn = (zNote*) obj;
-	    zNote_Delete(_zn);
-	}
-    return 0;
+    zgeneric* _zg = NULL;
+
+    /* check object */
+    ZCHECK_OBJ_INT(obj);
+    _zg = (zgeneric*) obj;
+    
+    znote_delete(Z_NOTE(_zg));
+    return ZELIA_OK;
 }
 
 /* Draw helper function draws the title */
-static int _znotes_draw_helper(zNotes* obj)
+static int _znotes_draw_helper(znotes* obj)
 {
-    zDevice* _device;
+    zdevice* _device;
     cairo_t* _dev_c;
     PangoLayout* _layout;
     PangoFontDescription* _desc;
     PangoAttrList* _attr_list;
     PangoAttribute* _attr;
     
-    Z_CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
 
     /* check if title was set */
-    if(obj->z_title[0] == '\0')
-	return 1;
+    if(obj->title[0] == '\0')
+	return ZELIA_NOTES_ERROR;
 
     /* Get device object */
-    _device = zGenerics_Get_Device(&obj->z_parent);
-    Z_CHECK_OBJ(_device);
-    _dev_c = zDevice_Get_Context(_device);
-    Z_CHECK_OBJ(_dev_c);
+    _device = zgenerics_get_device(obj->super_cls);
+    ZCHECK_OBJ_INT(_device);
+    
+    _dev_c = zdevice_get_context(_device);
+    ZCHECK_OBJ_INT(_dev_c);
     
     /* save cairo context */
     cairo_save(_dev_c);
 
     /* translate cairo context */
     cairo_translate(_dev_c,
-		    CONV_TO_POINTS(obj->z_x),
-		    CONV_TO_POINTS(obj->z_y));
+		    CONV_TO_POINTS(obj->x),
+		    CONV_TO_POINTS(obj->y));
 
     /* Create layout object */
     _layout = pango_cairo_create_layout(_dev_c);
-    if(obj->z_width > 0)
-	pango_layout_set_width(_layout, CONV_TO_PANGO(obj->z_width));
+    if(obj->width > 0)
+	pango_layout_set_width(_layout, CONV_TO_PANGO(obj->width));
 
     /* set text */
-    pango_layout_set_text(_layout, obj->z_title, -1);
+    pango_layout_set_text(_layout, obj->title, -1);
 
     /* create font description */
     _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
@@ -262,7 +259,7 @@ static int _znotes_draw_helper(zNotes* obj)
     pango_font_description_free(_desc);
 
     /* Create attribute list */
-    if(obj->z_uline_flg)
+    if(obj->uline_flg)
 	{
 	    _attr_list = pango_attr_list_new();
 	    _attr = pango_attr_underline_new(PANGO_UNDERLINE_SINGLE);
@@ -274,7 +271,7 @@ static int _znotes_draw_helper(zNotes* obj)
     pango_cairo_show_layout(_dev_c, _layout);
     
     /* pango_attribute_destroy(_attr); */
-    if(obj->z_uline_flg)
+    if(obj->uline_flg)
 	pango_attr_list_unref(_attr_list);
 
     g_object_unref(_layout);
@@ -293,20 +290,21 @@ static int _znotes_draw_helper(zNotes* obj)
 }
 
 /* Virtual inform height function */
-static int _znotes_get_note_height(zGeneric* obj, void* usr_data, int height)
+static int _znotes_get_note_height(zgeneric* obj, void* usr_data, int height)
 {
-    zNotes* _notes;
+    znotes* _notes;
     
     /* Check objects */
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(usr_data);
-    _notes = (zNotes*) usr_data;
+    ZCHECK_OBJ_INT(obj);
+    ZCHECK_OBJ_INT(usr_data);
+    
+    _notes = (znotes*) usr_data;
     if(height <= 0)
 	{
-	    _notes->_z_note_height = Z_NOTE_LINE_HEIGHT * fabs((double) height);;
+	    _notes->_note_height = Z_NOTE_LINE_HEIGHT * fabs((double) height);;
 	    return 1;
 	}
 
-    _notes->_z_note_height = pango_units_to_double(height);
+    _notes->_note_height = pango_units_to_double(height);
     return 0;	
 }

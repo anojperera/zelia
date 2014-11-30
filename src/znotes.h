@@ -26,6 +26,7 @@ struct _znotes
     double _note_height;			/* Note height */
     char title[NOTES_TITLE_BUFF];		/* Title buffer */
     unsigned int uline_flg;			/* Underline flag */
+    unsigned int _znotes_counter;
     unsigned int counter;			/* Counter */
 
     struct _zgeneric_vtable vtable;		/* vtable */
