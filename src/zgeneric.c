@@ -84,6 +84,6 @@ int zgeneric_create_dev_context(zgeneric* obj, zSheets sh)
 
     /* set flag to indicate context was created internally */
     obj->def_dev_ctxt_flg = 1;
-    obj->gdev = zdevice_get_context(obj->gdev);
+    zdevice_get_context(obj->gdev);
     return ZELIA_OK;
 }

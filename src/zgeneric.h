@@ -113,8 +113,8 @@ extern "C" {
     inline __attribute__ ((always_inline)) static int zgeneric_set_defauts(zgeneric* obj)
     {
 	/* check for NULL pointer */
-	Z_CHECK_OBJ(obj);
-	obj->gdev = zdevice_get_context(obj->gdev);
+	ZCHECK_OBJ_INT(obj);
+	zdevice_get_context(obj->gdev);
 	return ZELIA_OK;
     }
 
