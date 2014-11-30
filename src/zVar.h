@@ -93,6 +93,7 @@ typedef enum {
 #define ZELIA_TABLE_ERROR -8
 #define ZELIA_TERINALS_ERROR -9
 #define ZELIA_JB_ERROR -10
+#define ZELIA_NOTE_ERROR -11
 
 /* line weights */
 #define Z_LINE_WEIGHT1 0.25
@@ -179,4 +180,5 @@ typedef enum {
 #define Z_GLAND(obj) (zgland*) Z_BASE(obj)->child)
 #define Z_GLANDS(obj) ((zglands*) (obj)->child)
 #define Z_JB(obj) ((zjb*) Z_BASE(obj)->child)
+#define Z_NOTE(obj) ((znote*) Z_BASE(obj)->child)
 #endif /* __ZVAR__ */
