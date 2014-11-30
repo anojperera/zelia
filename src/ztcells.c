@@ -48,6 +48,9 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
 	{
 	    obj->parent.generics_s[_i] = ztcell_new(NULL);
 
+	    /* set collection pointer to element */
+	    zgeneric_set_collection_pointer(obj->parent.generics_s[_i], (void*) obj);
+	    
 	    _tcell = Z_TCELL(obj->parent.z_generics_s[_i]);
 
 	    /* Set index, width and height */

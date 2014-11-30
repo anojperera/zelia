@@ -2,7 +2,7 @@
  * Sat Jan 21 18:06:55 GMT 2012 */
 
 #include <stdio.h>
-#include "zTerminal.h"
+#include "zterminal.h"
 
 /* Virtual draw function */
 static int _zterminal_draw_function(void* obj);
@@ -12,7 +12,7 @@ static int _zterminal_draw_function(void* obj);
 zgeneric* zterminal_new(zterminal* obj)
 {
 
-    ZCONSTRUCTOR(obj);
+    ZCONSTRUCTOR(obj, zterminal);
     
     /* Create base object */
     if(!obj->super_cls = zbase_new(&obj->parent))

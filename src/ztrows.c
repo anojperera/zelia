@@ -1,7 +1,7 @@
 /* Implementation zTRows collection */
 /* Mon Mar  5 21:16:27 GMT 2012 */
 
-#include "zTRows.h"
+#include "ztrows.h"
 
 /* Virtual functions */
 static int _ztrows_delete(void* obj);			/* delete function */
@@ -44,6 +44,9 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
 	    /* create object */
 	    obj->parent.generics_s[i] = ztrow_new(NULL, _i);
 
+	    /* set collection pointer */
+	    zgeneric_set_collection_pointer(obj->parent.generics_s[i], (void*) obj);
+	    
 	    /* set width and height */
 	    zbase_set_width_and_height(Z_BASE(obj->super_cls->generics_s[_i]),
 				       width,
