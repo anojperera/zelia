@@ -21,7 +21,7 @@ struct _ztable
     zbase parent;					/* Inherited parent object */
     ztrows rows;					/* Rows collection */
 
-    unsigned int _int_flg;				/* Internal flag */
+    unsigned int _init_flg;				/* Internal flag */
     unsigned int arr_flg;				/* Flag to indicate array created */
     unsigned int num_rows;				/* Number of rows */
     unsigned int num_cols;				/* Number of colums */

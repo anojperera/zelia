@@ -35,7 +35,7 @@ struct _zgeneric_vtable
 
 struct _zgeneric
 {
-    unsigned int _int_flg;			/* internal flag */
+    unsigned int _init_flg;			/* internal flag */
     unsigned int def_dev_ctxt_flg;		/* defulat device context set */
     zdevice* gdev;				/* primary device */
     

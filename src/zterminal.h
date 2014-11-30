@@ -15,7 +15,7 @@ typedef struct _zterminal zterminal;
 struct _zterminal
 {
     zbase parent;			/* parent class */
-    unsigned int _int_flg;		/* internal flag */
+    unsigned int _init_flg;		/* internal flag */
 
     zTerminalType term_type;		/* terminal type */
 

@@ -23,7 +23,7 @@ struct zfile_attrib_field
 
 struct _zfile_attrib
 {
-    unsigned int _int_flg;						/* internal flag */
+    unsigned int _init_flg;						/* internal flag */
     unsigned int field_cr_flg;						/* flag to indicate field array was created */
     
     size_t field_count;							/* number of fields */

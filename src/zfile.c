@@ -19,12 +19,12 @@ zfile* zfile_new(zfile* obj)
     if(obj == NULL)
 	{
 	    obj = (zfile*) malloc(sizeof(zfile));
-	    obj->_int_flg = ZELIA_CONSTRUCTED;
+	    obj->_init_flg = ZELIA_CONSTRUCTED;
 	    ZELIA_LOG_MESSAGE("zfile object created");
 	}
     else
 	{
-	    obj->_int_flg = ZELIA_INITIALISED;
+	    obj->_init_flg = ZELIA_INITIALISED;
 	    ZELIA_LOG_MESSAGE("zfile object is initialised");
 	}
 
@@ -80,7 +80,7 @@ void zfile_delete(zfile* obj)
     obj->ext_ptr = NULL;
     
     /* if created destroy it */
-    if(obj->_int_flg == ZELIA_CONSTRUCTED)
+    if(obj->_init_flg == ZELIA_CONSTRUCTED)
 	free(obj);
 
     ZELIA_LOG_MESSAGE("zfile object deleted successfully");

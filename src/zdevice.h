@@ -24,11 +24,11 @@ typedef struct _zdevice zdevice;
 
 struct _zdevice
 {
-    unsigned int _int_flg;					/* internal flag */
+    unsigned int _init_flg;					/* internal flag */
     unsigned int ref_cnt;					/* reference counter */
 
     int _fd;							/* file descriptor read / write */
-    char _fname[ZDEVICE_TEMP_FILE_SZ 256];			/* file name buffer */
+    char _fname[ZDEVICE_TEMP_FILE_SZ];				/* file name buffer */
     size_t _buff_sz;						/* buffer size */
     char* _buff;						/* temporary buffer contets */
 
@@ -39,7 +39,7 @@ struct _zdevice
     zLineTypes line_type_ix;					/* line type index */
     zSheets page_sz;						/* page size */
 
-    doubl red_rgb;						/* rgb red */
+    double red_rgb;						/* rgb red */
     double green_rgb;						/* rgb green */
     double blue_rgb;						/* rgb blue */
 
@@ -69,7 +69,7 @@ extern "C" {
 	if(obj == NULL)
 	    return zSheetA3_Landscape;
 	else
-	    return obj->z_page_sz;
+	    return obj->page_sz;
     }
 
 
@@ -80,13 +80,13 @@ extern "C" {
     int zdevice_set_linecolourix(zdevice* obj, zLineColour var);
 
     /* get line color index */
-    inline __attribute__ ((always_inline)) static zlinecolour zdevice_get_linecolourix(zdevice* obj)
+    inline __attribute__ ((always_inline)) static zLineColour zdevice_get_linecolourix(zdevice* obj)
     {
 	/* check for NULL pointer */
 	if(obj == NULL)
 	    return zLBlack;
 	else
-	    return obj->z_line_color_ix;
+	    return obj->line_color_ix;
     }
 
     /* get temporary buffer */

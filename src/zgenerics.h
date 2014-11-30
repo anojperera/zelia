@@ -15,7 +15,7 @@ typedef struct _zgenerics zgenerics;
 
 struct _zgenerics
 {
-    unsigned int _int_flg;				/* internal flag */
+    unsigned int _init_flg;				/* internal flag */
     unsigned int count;					/* count of objects */
     unsigned int expansion_flg;				/* expansion flag */
 

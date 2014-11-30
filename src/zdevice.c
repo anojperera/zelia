@@ -3,13 +3,15 @@
 */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <error.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <string.h>
 #include "zdevice.h"
 
+/* #define _GNU_SOURCE		/\* this is for mkostemp *\/ */
 #define ZDEVICE_TEMP_FILE_NAME "fileXXXXXX"
 
 /* private functions */
@@ -17,7 +19,7 @@ static int zdevice_rgb(zdevice* obj);
 static int zdevice_page_dims(zdevice* obj);
 static int zdevice_create_context(zdevice* obj);
 static int zdevice_open_temp_file(zdevice* obj);
-static cairo_status_t zdevice_write_callback(void* obj, unsigned char* data, unsigned int sz);
+static cairo_status_t zdevice_write_callback(void* obj, const unsigned char* data, unsigned int sz);
 
 #define ZDEVICE_TEMP_FILE_ERROR						\
     _err_no = errno;							\
@@ -130,7 +132,7 @@ void zdevice_delete(zdevice* obj)
 	close(obj->_fd);
 
     /* delete object if it was created */
-    if(obj->_int_flg == ZELIA_CONSTRUCTED)
+    if(obj->_init_flg == ZELIA_CONSTRUCTED)
 	free(obj);
 
     return;
@@ -175,8 +177,8 @@ const char* zdevice_get_temp_buff(zdevice* obj)
 {
     int _err_no = 0;					/* error no */
     struct stat _fstat;					/* file stats */
-    off_t _c_offset;					/* offset */
-    ssisze_t _r_sz = 0;					/* read buffer size */
+    /* off_t _c_offset;					/\* offset *\/ */
+    ssize_t _r_sz = 0;					/* read buffer size */
 
     ZCHECK_OBJ_PTR(obj);
 
@@ -185,10 +187,10 @@ const char* zdevice_get_temp_buff(zdevice* obj)
     if(obj->_fd == ZELIA_EMPTY_FILE)
 	return NULL;
 
-    if(fstat(_obj->_fd, &_fstat))
+    if(fstat(obj->_fd, &_fstat))
 	{
 	    /* temporary file error */
-	    ZDEVICE_TEMP_FILE_ERROR
+	    ZDEVICE_TEMP_FILE_ERROR;
 		return NULL;
 	}
 
@@ -206,7 +208,7 @@ const char* zdevice_get_temp_buff(zdevice* obj)
     ZELIA_LOG_MESSAGE("zdevice reading file");
 
     /* get current file offset */
-    _c_offset = lseek(obj->_fd, 0, SEEK_CUR);
+    /* _c_offset = lseek(obj->_fd, 0, SEEK_CUR); */
 
     /* rewind to get every thing */
     ZELIA_LOG_MESSAGE("zdevice rewinding temp file");
@@ -236,9 +238,9 @@ int zdevice_set_linettype(zdevice* obj, zLineTypes var)
     double _array[4] = {0, 0, 0, 0};
 
     /* check for NULL pointer */
-    ZCHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
     obj->line_type_ix = var;
-    ZCHECK_OBJ(obj->device);
+    ZCHECK_OBJ_INT(obj->device);
 
     switch(obj->line_type_ix)
 	{
@@ -322,6 +324,14 @@ static int zdevice_page_dims(zdevice* obj)
 	    obj->page_width = Z_A4_WIDTH;
 	    obj->page_height = Z_A4_HEIGHT;
 	    break;
+	case zSheetA4_Landscape:
+	    obj->page_width = Z_A4_HEIGHT;
+	    obj->page_height = Z_A4_WIDTH;
+	    break;
+	case zSheetA3_Portrait:
+	    obj->page_width = Z_A3_HEIGHT;
+	    obj->page_height = Z_A3_WIDTH;
+	    break;
 	}
 
     /* if surface is not created we create it here */
@@ -389,7 +399,7 @@ static int zdevice_open_temp_file(zdevice* obj)
 }
 
 /* callback method for writing to file */
-static cairo_status_t zdevice_write_callback(void* obj, unsigned char* data, unsigned int sz)
+static cairo_status_t zdevice_write_callback(void* obj, const unsigned char* data, unsigned int sz)
 {
     zdevice* _obj = NULL;
     struct stat _fstat;

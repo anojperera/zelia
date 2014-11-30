@@ -135,7 +135,7 @@ typedef enum {
 	return NULL
 
 #define ZDESTRUCTOR_CHECK							\
-	((obj->_int_flg == ZELIA_CONSTRUCTED)? 1 : 0)
+	((obj->_init_flg == ZELIA_CONSTRUCTED)? 1 : 0)
 #define ZCONV_TO_POINTS(val) \
     (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val
 

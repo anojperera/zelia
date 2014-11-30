@@ -20,7 +20,7 @@ struct zfile_string
 
 struct _zfile
 {
-    unsigned int _int_flg;						/* internal flag */
+    unsigned int _init_flg;						/* internal flag */
     unsigned int force_flg;						/* force to overwrite the file */
     const char* tmp_file;						/* template path */
     char new_file_path[Z_FILE_PATH_SZ];					/* new file path */

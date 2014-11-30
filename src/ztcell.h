@@ -19,7 +19,7 @@ typedef struct _ztcell ztcell;
 struct _ztcell
 {
     zbase parent;					/* Inherited parent object */
-    unsigned int _int_flg;				/* Internal flag */
+    unsigned int _init_flg;				/* Internal flag */
     char content[TCELL_BUFF];				/* Content buffer */
     unsigned int _row_ix;				/* Internal row index */
     unsigned int _col_ix;				/* Internal column index */

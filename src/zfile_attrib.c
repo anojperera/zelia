@@ -24,12 +24,12 @@ zfile_attrib* zfile_attrib_new(zfile_attrib* obj, xmlDocPtr doc)
     if(obj == NULL)
 	{
 	    obj = (zfile_attrib*) malloc(sizeof(zfile_attrib));
-	    obj->_int_flg = ZELIA_CONSTRUCTED;
+	    obj->_init_flg = ZELIA_CONSTRUCTED;
 	    ZELIA_LOG_MESSAGE("zfile_attrib object created");
 	}
     else
 	{
-	    obj->_int_flg = ZELIA_INITIALISED;
+	    obj->_init_flg = ZELIA_INITIALISED;
 	    ZELIA_LOG_MESSAGE("zfile_attrib object is initialised");
 	}
 
@@ -62,7 +62,7 @@ void zfile_attrib_delete(zfile_attrib* obj)
     _zfile_attrib_delete_field_array(obj);
     
     /* free object if it was created */
-    if(obj->_int_flg == ZELIA_CONSTRUCTED)
+    if(obj->_init_flg == ZELIA_CONSTRUCTED)
 	free(obj);
 
     return;

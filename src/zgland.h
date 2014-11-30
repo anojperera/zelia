@@ -16,7 +16,7 @@ typedef	struct _zgland zgland;
 struct _zgland
 {
     zbase parent;				/* inherited parent object */
-    unsigned int _int_flg;			/* internal flag */
+    unsigned int _init_flg;			/* internal flag */
     unsigned int hex_flg;			/* flag draw hex */
     double dia;					/* diameter */
     zGlandSize gland_size;			/* gland size */

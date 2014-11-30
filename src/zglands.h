@@ -16,7 +16,7 @@ typedef struct _zglands zglands;
 struct _zglands
 {
     zgenerics parent;
-    unsigned int _int_flg;
+    unsigned int _init_flg;
 
     struct _zgeneric_vtable vtable;			/* vtable */
     zgenerics* super_cls;				/* super class pointer */

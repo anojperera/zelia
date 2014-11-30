@@ -22,7 +22,7 @@ typedef struct _zterminals zterminals;
 struct _zterminals
 {
     zgenerics parent;					/* inherited parent object */
-    unsigned int _int_flg;				/* internal flag */
+    unsigned int _init_flg;				/* internal flag */
     unsigned int links_flg;				/* links flag */
 
     int _d_counter;					/* terminal counter */

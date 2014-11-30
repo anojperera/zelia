@@ -22,7 +22,7 @@ typedef int (*znote_fptr)(zgeneric* obj, void* usr_data, int height);
 struct _zNote
 {
     zbase z_parent;			/* Inherited parent object */
-    unsigned int z_int_flg;		/* Internal flag */
+    unsigned int z_init_flg;		/* Internal flag */
     int z_ix;				/* Note index */
     char z_note[Z_NOTE_BUFF];		/* Note content buffer */
     char* z_fnote;			/* Note and index */

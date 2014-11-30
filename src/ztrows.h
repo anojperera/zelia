@@ -15,7 +15,7 @@ typedef struct _ztrows ztrows;
 struct _ztrows
 {
     zgenerics parent;					/* Inherited parent object */
-    unsigned int _int_flg;				/* Internal flag */
+    unsigned int _init_flg;				/* Internal flag */
     
     struct _zgeneric_vtable vtable;			/* vtable */
     

@@ -13,7 +13,7 @@ typedef struct _zbase zbase;
 struct _zbase
 {
     zgeneric parent;				/* inherited parent object */
-    unsigned int _int_flg;			/* internal flag */
+    unsigned int _init_flg;			/* internal flag */
 
 
     /* base coordinates */

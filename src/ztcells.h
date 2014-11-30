@@ -19,7 +19,7 @@ typedef struct _ztcells ztcells;
 struct _ztcells
 {
     zgenerics parent;					/* Inherited parent object */
-    unsigned int _int_flg;				/* Internal flag */
+    unsigned int _init_flg;				/* Internal flag */
     unsigned int row_ix;				/* Row index */
 
     double width;					/* Column width */

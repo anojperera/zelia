@@ -19,7 +19,7 @@ typedef struct _zjb zjb;
 struct _zjb
 {
     zbase parent;				/* Inherited parent object */
-    unsigned int _int_flg;			/* Internal flag */
+    unsigned int _init_flg;			/* Internal flag */
     unsigned int terms_ext;			/* Flag to indicate terminal collection
 						 * externally set */
     unsigned int glands_ext;			/* Flag to indicate glads collection external */
