@@ -38,7 +38,7 @@ extern "C" {
     /* If static option was used, object count must be greater than
      * 1. The contructor shall fail if object count is less than 1
      * and static flag was specified */
-    int zgenerics_new(zgenerics* obj,
+    zgenerics* zgenerics_new(zgenerics* obj,
 		      unsigned int s_flg,			/* static or dynamic option */
 		      unsigned int g_count);			/* count of objects if static option was used */
 
