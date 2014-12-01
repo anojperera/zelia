@@ -26,9 +26,9 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
     ZCONSTRUCTOR(obj, ztrows);
 
     /* create parent */
-    if(!obj->super_cls = zgenerics_new(&obj->parent,
-				       0,
-				       num_rows))
+    if(!(obj->super_cls = zgenerics_new(&obj->parent,
+					0,
+					num_rows)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -42,11 +42,11 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
     for(_i=0; _i<num_rows; _i++)
 	{
 	    /* create object */
-	    obj->parent.generics_s[i] = ztrow_new(NULL, _i);
+	    obj->parent.generics_s[_i] = ztrow_new(NULL, _i);
 
 	    /* set collection pointer */
-	    zgeneric_set_collection_pointer(obj->parent.generics_s[i], (void*) obj);
-	    
+	    zgeneric_set_collection_pointer(obj->parent.generics_s[_i], (void*) obj);
+
 	    /* set width and height */
 	    zbase_set_width_and_height(Z_BASE(obj->super_cls->generics_s[_i]),
 				       width,
@@ -56,7 +56,7 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
 				  y + (double) _i * height);
 	    ztrow_set_num_cols(Z_TROW(obj->super_cls->generics_s[_i]),
 			       num_cols);
-	    zgeneric_set_device(obj->super_cls->generics_s[i], dev);
+	    zgeneric_set_device(obj->super_cls->generics_s[_i], dev);
 	    /* Default device context is set by TCells */
 	}
 
@@ -87,7 +87,7 @@ void ztrows_delete(ztrows* obj)
     /* call delete method of parent object */
     zgenerics_delete(obj->super_cls);
 
-    obj->z_child = NULL;
+    obj->child = NULL;
     obj->super_cls = NULL;
 
     /* remove callbacks */

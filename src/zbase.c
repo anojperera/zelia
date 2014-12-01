@@ -49,7 +49,7 @@ void zbase_delete(zbase* obj)
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    zgeneric_delete(&obj->sgeneric);
+    zgeneric_delete(&obj->parent);
 
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
@@ -75,7 +75,7 @@ static int _zbase_draw_function(void* obj)
     _self = Z_BASE(_zg);
 
     if(_self->vtable.zgeneric_draw)
-	return self->vtable.zgeneric_draw(obj);
+	return _self->vtable.zgeneric_draw(obj);
     else
 	return ZELIA_OK;
 }

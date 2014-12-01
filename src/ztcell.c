@@ -19,7 +19,7 @@ zgeneric* ztcell_new(ztcell* obj)
     ZCONSTRUCTOR(obj, ztcell);
 
     /* call parent constructor */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -55,9 +55,9 @@ void ztcell_delete(ztcell* obj)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
     /* delete parent object */
-    zbase_delete(&obj->z_parent);
+    zbase_delete(&obj->parent);
 
-    obj->z_child = NULL;
+    obj->child = NULL;
     obj->super_cls = NULL;
 
     /* remove vtables */
@@ -107,10 +107,10 @@ int ztcell_draw(ztcell* obj)
 	{
 	    cairo_save(_dev_c);
 	    cairo_rectangle(_dev_c,
-	    		    CONV_TO_POINTS(_base->x),
-	    		    CONV_TO_POINTS(_base->y),
-	    		    CONV_TO_POINTS(_base->width),
-	    		    CONV_TO_POINTS(_base->height));
+	    		    ZCONV_TO_POINTS(_base->x),
+	    		    ZCONV_TO_POINTS(_base->y),
+	    		    ZCONV_TO_POINTS(_base->width),
+	    		    ZCONV_TO_POINTS(_base->height));
 	    cairo_stroke(_dev_c);
 	    cairo_restore(_dev_c);
 	}
@@ -121,7 +121,7 @@ int ztcell_draw(ztcell* obj)
     	    _x = _base->x + ZTCELL_TEXT_LEFT;
     	    _y = _base->y + ZTCELL_TEXT_TOP;
 
-    	    cairo_translate(_dev_c, CONV_TO_POINTS(_x), CONV_TO_POINTS(_y));
+    	    cairo_translate(_dev_c, ZCONV_TO_POINTS(_x), ZCONV_TO_POINTS(_y));
 
     	    /* Create pango layout */
     	    _layout = pango_cairo_create_layout(_dev_c);
@@ -163,11 +163,11 @@ static int _ztcell_draw(void* obj)
     _zg = (zgeneric*) obj;
     _self = Z_TCELL(_zg);
 
-    _rt = ztcell_draw();
+    _rt = ztcell_draw(_self);
 
     /* if child pointer draw callback was set, call it */
-    if(_self->vtable.vtable.zgeneric_draw)
-	return _self->vtable.vtable.zgeneric_draw(obj);
+    if(_self->vtable.zgeneric_draw)
+	return _self->vtable.zgeneric_draw(obj);
 
     return _rt;
 }

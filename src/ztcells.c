@@ -1,7 +1,7 @@
 /* Implementation of zTCells class */
 /* Sun Mar  4 12:57:34 GMT 2012 */
 
-#include "zTCells.h"
+#include "ztcells.h"
 #include "zVar.h"
 
 /* Virtual functions */
@@ -25,9 +25,9 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
     ZCONSTRUCTOR(obj, ztcells);
 
     /* Create parent object */
-    if(!obj->super_cls = zgenerics_new(&obj->_parent,
+    if(!(obj->super_cls = zgenerics_new(&obj->parent,
 				       0,
-				       num_col))
+					num_col)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -35,7 +35,7 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
 	}
 
     /* Set device */
-    zgenerics_set_device(&obj->z_parent, dev);
+    zgenerics_set_device(&obj->parent, dev);
 
     /* Set properties */
     obj->width = col_width;
@@ -51,7 +51,7 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
 	    /* set collection pointer to element */
 	    zgeneric_set_collection_pointer(obj->parent.generics_s[_i], (void*) obj);
 	    
-	    _tcell = Z_TCELL(obj->parent.z_generics_s[_i]);
+	    _tcell = Z_TCELL(obj->parent.generics_s[_i]);
 
 	    /* Set index, width and height */
 	    _tcell->_row_ix = row_ix;
@@ -103,7 +103,7 @@ void ztcells_delete(ztcells* obj)
     /* call delete method of parent object */
     zgenerics_delete(&obj->parent);
 
-    obj->z_child = NULL;
+    obj->child = NULL;
     obj->super_cls = NULL;
     ZGENERIC_INIT_VTABLE(obj);
 

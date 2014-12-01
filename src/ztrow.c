@@ -13,7 +13,7 @@ zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
     ZCONSTRUCTOR(obj, ztrow);
 
     /* Create base object */
-    if(!obj->super_cls = zbase_new(&obj->z_parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -50,7 +50,7 @@ void ztrow_delete(ztrow* obj)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
     /* delete parent object */
-    zbase_delete(&obj->z_parent);
+    zbase_delete(&obj->parent);
 
     obj->super_cls = NULL;
     obj->child = NULL;
@@ -58,8 +58,8 @@ void ztrow_delete(ztrow* obj)
     ZGENERIC_INIT_VTABLE(obj);
 
     /* if tcells was created destroy */
-    if(obj->z_arr_flg)
-	ztcells_delete(&obj->z_tcells);
+    if(obj->arr_flg)
+	ztcells_delete(&obj->tcells);
 
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
@@ -99,8 +99,8 @@ int ztrow_draw(ztrow* obj)
 			_base->height);
 	    obj->arr_flg = 1;
 	}
-    _zgs = Z_GENERICS(&obj->tcells);
 
+    _zgs = Z_GENERICS(&obj->tcells);
     return zgenerics_draw(_zgs);
 }
 
@@ -109,7 +109,7 @@ inline int ztrow_add_content(ztrow* obj,
 			     unsigned int ix,						/* Column index */
 			     const char* content)					/* Content */
 {
-    zgenerics* _zg;
+    zgenerics* _zgs;
     zdevice* _dev;
 
     /* check object */
@@ -134,8 +134,8 @@ inline int ztrow_add_content(ztrow* obj,
 	    obj->arr_flg = 1;
 	}
 
-    _zg = Z_GENERICS(&obj->tcells);
-    return ztcell_set_content(Z_TCELL(_zg->generics_s[ix]), content);
+    _zgs = Z_GENERICS(&obj->tcells);
+    return ztcell_set_content(Z_TCELL(_zgs->generics_s[ix]), content);
 }
 
 /*=================================== Property Methods ===================================*/
@@ -163,7 +163,7 @@ ztcell* ztrow_get_cell(ztrow* obj, unsigned int ix)
 			obj->parent.y,
 			obj->parent.width / (double) obj->num_cols,
 			obj->parent.height);
-	    obj->z_arr_flg = 1;
+	    obj->arr_flg = 1;
 	}
     _zg = Z_GENERICS(&obj->tcells);
     return Z_TCELL(_zg->generics_s[ix]);

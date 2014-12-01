@@ -13,7 +13,7 @@ zgeneric* ztable_new(ztable* obj)
     ZCONSTRUCTOR(obj, ztable);
 
     /* create parent object */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -22,7 +22,6 @@ zgeneric* ztable_new(ztable* obj)
 	}
 
     /* Set properties */
-    obj->int_flg = 0;
     obj->num_rows = 0;
     obj->num_cols = 0;
     obj->col_widths = NULL;
@@ -84,13 +83,13 @@ int ztable_draw(ztable* obj)
 	return ZELIA_TABLE_ERROR;
 
     /* call draw function of row collection */
-    return zgenerics_draw(obj->rows->super_cls);
+    return zgenerics_draw(obj->rows.super_cls);
 }
 
 
 /*=================================== Property Methods ===================================*/
 /* Set rows and columns */
-int ztable_set_rows_and_cols(zTable* obj,
+int ztable_set_rows_and_cols(ztable* obj,
 			     unsigned int num_rows,
 			     unsigned int num_cols)
 {
@@ -170,7 +169,7 @@ const char* ztable_get_content(ztable* obj,
 	return NULL;
 
     /* get row specified by the index */
-    _trow = zTRows_Get_Row(&obj->rows, row_ix);
+    _trow = ztrows_get_row(&obj->rows, row_ix);
     ZCHECK_OBJ_PTR(_trow);
 
     _tcell = ztrow_get_cell(_trow, col_ix);
@@ -227,7 +226,7 @@ int ztable_set_column_width(ztable* obj,
     /* iterate through rows collection and set the width */
     for(_i=0; _i<obj->num_rows; _i++)
 	{
-	    _trow = ztrows_get_row(&obj->z_rows, (unsigned int) _i);
+	    _trow = ztrows_get_row(&obj->rows, (unsigned int) _i);
 	    _tcell = ztrow_get_cell(_trow, col_ix);
 
 	    /* set width */
@@ -244,23 +243,6 @@ int ztable_set_column_width(ztable* obj,
     return ZELIA_OK;
 }
 
-/* Get column width */
-double zTable_Get_Column_Width(zTable* obj,
-			       unsigned int col_ix)
-{
-    /* check object */
-    Z_CHECK_OBJ_DOUBLE(obj);
-
-    /* check if column width array was created */
-    Z_CHECK_OBJ_DOUBLE(obj->z_col_widths);
-
-    /* check array bounds */
-    if(col_ix >= obj->z_num_cols)
-	return 0.0;
-
-    return obj->z_col_widths[col_ix];
-
-}
 
 /*=================================== Private Methods ===================================*/
 

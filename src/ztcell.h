@@ -20,7 +20,7 @@ struct _ztcell
 {
     zbase parent;					/* Inherited parent object */
     unsigned int _init_flg;				/* Internal flag */
-    char content[TCELL_BUFF];				/* Content buffer */
+    char content[Z_TCELL_BUFF];				/* Content buffer */
     unsigned int _row_ix;				/* Internal row index */
     unsigned int _col_ix;				/* Internal column index */
     unsigned int line_flg;				/* Line flag */

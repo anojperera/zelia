@@ -52,7 +52,7 @@ extern "C" {
     {
 	ZCHECK_OBJ_PTR(obj);
 
-	if(ix >= obj->z_parent.z_count)
+	if(ix >= obj->parent.count)
 	    return NULL;
 
 	return Z_TCELL(obj->parent.generics_s[ix]);

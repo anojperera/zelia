@@ -20,7 +20,7 @@ struct _ztrow
 {
     zbase parent;					/* inherited parent object */
     ztcells tcells;					/* Cells collection */
-    unsigned int int_flg;				/* Internal flag */
+    unsigned int _init_flg;				/* Internal flag */
     unsigned int num_cols;			   	/* Number of columns */
     unsigned int arr_flg;				/* Array created flag */
     unsigned int ix;					/* Row index */

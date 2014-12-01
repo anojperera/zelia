@@ -49,7 +49,7 @@ extern "C" {
     int ztable_set_rows_and_cols(ztable* obj,
 				 unsigned int num_rows,
 				 unsigned int num_cols);
-    inline __attributes__ ((always_inline)) static unsigned int ztable_get_rows(ztable* obj)
+    inline __attribute__ ((always_inline)) static unsigned int ztable_get_rows(ztable* obj)
     {
 	if(obj == NULL)
 	    return 0;
@@ -57,7 +57,7 @@ extern "C" {
 	    return obj->num_rows;
     }
 
-    inline __attributes__ ((always_inline)) static unsigned int ztable_get_cols(ztable* obj)
+    inline __attribute__ ((always_inline)) static unsigned int ztable_get_cols(ztable* obj)
     {
 	if(obj == NULL)
 	    return 0;
