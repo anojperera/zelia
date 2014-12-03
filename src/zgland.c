@@ -2,6 +2,7 @@
 /* Fri Feb  3 14:35:35 GMTST 2012 */
 
 #include <math.h>
+#include "zVar.h"
 #include "zgland.h"
 
 #define ZGLAND_COORDS 6
@@ -20,7 +21,7 @@ zgeneric* zgland_new(zgland* obj,		/* optional object */
     ZCONSTRUCTOR(obj, zgland);
 
     /* Create base object */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -40,16 +41,16 @@ zgeneric* zgland_new(zgland* obj,		/* optional object */
     switch(sz)
 	{
 	case zM16:
-	    obj->dia = M16_GLAND;
+	    obj->dia = Z_M16_GLAND;
 	    break;
 	case zM20:
-	    obj->dia = M20_GLAND;
+	    obj->dia = Z_M20_GLAND;
 	    break;
 	case zM25:
-	    obj->dia = M25_GLAND;
+	    obj->dia = Z_M25_GLAND;
 	    break;
 	default:
-	    obj->dia = M20_GLAND;
+	    obj->dia = Z_M20_GLAND;
 	}
 
     obj->child = NULL;
@@ -91,7 +92,7 @@ void zgland_delete(zgland* obj)
 }
 
 /* Draw method */
-int zGland_Draw(zGland* obj)
+int zgland_draw(zgland* obj)
 {
 
     zbase* _base;			/* base object pointer*/
@@ -101,23 +102,23 @@ int zGland_Draw(zGland* obj)
     double _x1[ZGLAND_COORDS], _y1[ZGLAND_COORDS], _x2[ZGLAND_COORDS], _y2[ZGLAND_COORDS];
 
     /* Check object */
-    CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
 
     _base = &obj->parent;
 
     /* Check object pointers */
-    CHECK_OBJ(_base);
+    ZCHECK_OBJ_INT(_base);
 
     /* Get cairo device context */
     _dev_c = zgeneric_get_dev_context(obj->super_cls);
-    CHECK_OBJ(_dev_c);
+    ZCHECK_OBJ_INT(_dev_c);
 
     /* draw outer circles */
     _rad = obj->dia / 2;
     cairo_arc(_dev_c,
-	      CONV_TO_POINTS(_base->x),
-	      CONV_TO_POINTS(_base->y),
-	      CONV_TO_POINTS(_rad),
+	      ZCONV_TO_POINTS(_base->x),
+	      ZCONV_TO_POINTS(_base->y),
+	      ZCONV_TO_POINTS(_rad),
 	      0.0,
 	      2 * M_PI);
 
@@ -154,10 +155,10 @@ int zGland_Draw(zGland* obj)
 
     if(obj->hex_flg)
 	{
-	    for(_i=0; _i<ZGLAND_COORDS; i++)
+	    for(_i=0; _i<ZGLAND_COORDS; _i++)
 		{
-		    cairo_move_to(_dev_c, CONV_TO_POINTS(_x1[i]), CONV_TO_POINTS(_y1[i]));
-		    cairo_line_to(_dev_c, CONV_TO_POINTS(_x2[i]), CONV_TO_POINTS(_y2[i]));
+		    cairo_move_to(_dev_c, ZCONV_TO_POINTS(_x1[_i]), ZCONV_TO_POINTS(_y1[_i]));
+		    cairo_line_to(_dev_c, ZCONV_TO_POINTS(_x2[_i]), ZCONV_TO_POINTS(_y2[_i]));
 		}
 	}
     cairo_stroke(_dev_c);
@@ -169,13 +170,13 @@ int zGland_Draw(zGland* obj)
 /*=================================== Private Methods ===================================*/
 static int _zgland_draw(void* obj)
 {
-    int _rt;
+    int _rt = ZELIA_OK;
     zgeneric* _zg = NULL;
     zgland* _self = NULL;
 
     ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;
-    _self = Z_GLAND(obj);
+    _self = Z_GLAND(_zg);
 
     _rt = zgland_draw(_self);
 

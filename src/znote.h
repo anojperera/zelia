@@ -19,21 +19,22 @@ typedef struct _znote znote;
  * text height */
 typedef int (*znote_fptr)(zgeneric* obj, void* usr_data, int height);
 
-struct _zNote
+struct _znote
 {
-    zbase z_parent;			/* Inherited parent object */
-    unsigned int z_init_flg;		/* Internal flag */
-    int z_ix;				/* Note index */
-    char z_note[Z_NOTE_BUFF];		/* Note content buffer */
-    char* z_fnote;			/* Note and index */
-    double z_indent;			/* Indent */
-    size_t z_note_sz;			/* Note length */
-    size_t z_obj_sz;			/* Object size */
+    zbase parent;			/* Inherited parent object */
+    unsigned int _init_flg;		/* Internal flag */
+    int ix;				/* Note index */
+    char note[Z_NOTE_BUFF];		/* Note content buffer */
+    char* fnote;			/* Note and index */
+    double indent;			/* Indent */
+    size_t note_sz;			/* Note length */
+    size_t obj_sz;			/* Object size */
 
     struct _zgeneric_vtable vtable;	/* vtable */
-    znote_fptr z_height_func;		/* Inform function pointer */
-    void* z_usr_data;			/* User data */
-    void* z_child;			/* Child pointer */
+    znote_fptr height_func;		/* Inform function pointer */
+    void* usr_data;			/* User data */
+    void* cols;				/* collection object pointer */
+    void* child;			/* Child pointer */
     zgeneric* super_cls;	       	/* super class pointer */
 };
 
@@ -80,7 +81,7 @@ extern "C" {
     inline __attribute__ ((always_inline)) static double znote_get_indent(znote* obj)
     {
 	ZCHECK_OBJ_DOUBLE(obj);
-	return obj->z_indent;
+	return obj->indent;
     }
 
 #ifdef __cplusplus

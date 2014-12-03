@@ -76,6 +76,20 @@ typedef enum {
     zLTHidden
 } zLineTypes;
 
+/* Terminal types */
+typedef enum {
+    zSAK2pt5,
+    zEK4
+} zTerminalType;
+
+
+/* Gable Gland Sizes */
+typedef enum {
+    zM16,
+    zM20,
+    zM25
+} zGlandSize;
+
 /* error codes */
 #define ZELIA_CONSTRUCTED 1
 #define ZELIA_INITIALISED 2
@@ -125,6 +139,12 @@ typedef enum {
 #define Z_NOTE_INDENT 10.0
 #define Z_NOTE_LINE_HEIGHT 8.0
 #define Z_NOTE_FONT_STYLE "Century Gothic 10"
+
+/* Diameters */
+#define Z_M16_GLAND 16.0
+#define Z_M20_GLAND 20.0
+#define Z_M25_GLAND 25.0
+
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
@@ -182,7 +202,7 @@ typedef enum {
 #define Z_TABLE(obj) ((ztable*) Z_BASE(obj)->child)
 #define Z_TERMINAL(obj) ((zterminal*) Z_BASE(obj)->child)
 #define Z_TERMINALS(obj) ((zterminals*) (obj)->child)
-#define Z_GLAND(obj) (zgland*) Z_BASE(obj)->child)
+#define Z_GLAND(obj) ((zgland*) Z_BASE(obj)->child)
 #define Z_GLANDS(obj) ((zglands*) (obj)->child)
 #define Z_JB(obj) ((zjb*) Z_BASE(obj)->child)
 #define Z_NOTE(obj) ((znote*) Z_BASE(obj)->child)

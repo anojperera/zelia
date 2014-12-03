@@ -17,7 +17,7 @@ zgenerics* zglands_new(zglands* obj)
     ZCONSTRUCTOR(obj, zglands);
 
     /* Create parent object */
-    if(!obj->super_cls = zgenerics_new(&obj->parent, 1, 0))
+    if(!(obj->super_cls = zgenerics_new(&obj->parent, 1, 0)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -42,7 +42,7 @@ zgenerics* zglands_new(zglands* obj)
 /* Destructor */
 void zglands_delete(zglands* obj)
 {
-    CHECK_OBJ_VOID(obj);
+    ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
@@ -68,8 +68,8 @@ int zglands_add(zglands* obj,
 		zGlandSize sz,				/* gland size */
 		unsigned int hex_flg)			/* hex flag */
 {
-    zgland* _gland = NULL;
-    zGeneric* _zg = NULL;
+
+    zgeneric* _zg = NULL;
 
     /* check for objects */
     ZCHECK_OBJ_INT(obj);
@@ -98,7 +98,7 @@ int zglands_add(zglands* obj,
 /* Virtual delete function */
 static int _zglands_delete(void* obj)
 {
-    zgland* _zg;
+    zgeneric* _zg;
 
     ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;
@@ -112,7 +112,7 @@ static int _zglands_delete(void* obj)
 /* Virtual draw function */
 static int _zglands_draw(void* obj)
 {
-    zgland* _zg = NULL;
+    zgeneric* _zg = NULL;
 
     ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;

@@ -6,9 +6,9 @@
 #include <string.h>
 #include <cairo/cairo.h>
 #include <pango/pangocairo.h>
-#include <glist.h>
+#include <blist.h>
 
-#include "zvar.h"
+#include "zVar.h"
 #include "znotes.h"
 
 
@@ -17,7 +17,7 @@ static int _znotes_draw_helper(znotes* obj);
 /* Virtual functions */
 static int _znotes_draw(void* obj);
 static int _znotes_delete(void* obj);
-static int _znotes_get_note_height(zGeneric* obj, void* usr_data, int height);
+static int _znotes_get_note_height(zgeneric* obj, void* usr_data, int height);
 
 /* Constructor */
 zgenerics* znotes_new(znotes* obj,		/* optional argument */
@@ -30,7 +30,7 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
     ZCONSTRUCTOR(obj, znotes);
 
     /* Create parent object */
-    if(!obj->super_cls = zgenerics_new(&obj->parent, 1, 0))
+    if(!(obj->super_cls = zgenerics_new(&obj->parent, 1, 0)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -74,11 +74,11 @@ void znotes_delete(znotes* obj)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
     /* Call delete method of parent object */
-    zgenerics_delete(&obj->z_parent);
+    zgenerics_delete(&obj->parent);
 
     ZGENERIC_INIT_VTABLE(obj);
     obj->super_cls = NULL;
-    obj->z_child = NULL;
+    obj->child = NULL;
 
     /* Check if object internally created and
      * free */
@@ -95,8 +95,8 @@ int znotes_add(znotes* obj, const char* note)
     zgeneric* _zg;
     
     /* Check object and arguments */
-    Z_CHECK_OBJ(obj);
-    Z_CHECK_OBJ(note);
+    ZCHECK_OBJ_INT(obj);
+    ZCHECK_OBJ_INT(note);
 
     /* Check if title of the notes were set if
      * not return it */
@@ -113,12 +113,12 @@ int znotes_add(znotes* obj, const char* note)
 
     /* increment counter and set note content */
     znote_set_content(_note, note, ++obj->counter);
-    obj->_height = (double) (obj->counter + 1) * NOTE_LINE_HEIGHT;
+    obj->_height = (double) (obj->counter + 1) * Z_NOTE_LINE_HEIGHT;
     
     /* Set base coordinates */
     zbase_set_base_coords(Z_BASE(_zg),
 			  obj->x,
-			  obj->y + (double) obj->counter * NOTE_LINE_HEIGHT);
+			  obj->y + (double) obj->counter * Z_NOTE_LINE_HEIGHT);
     zbase_set_width(Z_BASE(_zg), obj->width);
 
     /* Set inform function pointer */
@@ -140,7 +140,7 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
     void* _obj;
     zgeneric* _zg;
     unsigned int _count = 0;
-    blist* _head;
+    struct _blist_elm* _head;
     /* check object */
     ZCHECK_OBJ_PTR(obj);
 
@@ -149,7 +149,7 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
 	return NULL;
 
     /* Get node */
-    _head = blist_get_head(&obj->super_cls->z_generics_d);
+    _head = blist_get_head(&obj->super_cls->generics_d);
     while(_head)
 	{
 	    if(++_count == ix)
@@ -175,10 +175,9 @@ static int _znotes_draw(void* obj)
     znotes* _zns;
     znote* _zn;
     znote* _zn_prev;			/* previous note */
-    blist* _node;
     
     /* check for object */
-    Z_CHECK_OBJ(obj);
+    ZCHECK_OBJ_INT(obj);
     _zn = (znote*) obj;
     _zns = (znotes*) zgeneric_get_collection_pointer(_zn);
     
@@ -242,13 +241,13 @@ static int _znotes_draw_helper(znotes* obj)
 
     /* translate cairo context */
     cairo_translate(_dev_c,
-		    CONV_TO_POINTS(obj->x),
-		    CONV_TO_POINTS(obj->y));
+		    ZCONV_TO_POINTS(obj->x),
+		    ZCONV_TO_POINTS(obj->y));
 
     /* Create layout object */
     _layout = pango_cairo_create_layout(_dev_c);
     if(obj->width > 0)
-	pango_layout_set_width(_layout, CONV_TO_PANGO(obj->width));
+	pango_layout_set_width(_layout, ZCONV_TO_PANGO(obj->width));
 
     /* set text */
     pango_layout_set_text(_layout, obj->title, -1);

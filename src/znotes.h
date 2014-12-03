@@ -18,13 +18,13 @@ typedef struct _znotes znotes;
 struct _znotes
 {
     zgenerics parent;				/* Parent object */
-    unsigned int int_flg;			/* Internal flag */
+    unsigned int _init_flg;			/* Internal flag */
     double _height;				/* Height */
     double width;				/* Width */
     double x;					/* x coord */
     double y;					/* y coord */
     double _note_height;			/* Note height */
-    char title[NOTES_TITLE_BUFF];		/* Title buffer */
+    char title[Z_NOTES_TITLE_BUFF];		/* Title buffer */
     unsigned int uline_flg;			/* Underline flag */
     unsigned int _znotes_counter;
     unsigned int counter;			/* Counter */
@@ -56,9 +56,9 @@ extern "C" {
     znote* znotes_get_note(znotes* obj, unsigned int ix);
 
     /* Get Height */
-    inline __attribute__ ((always_inline)) static double znoets_get_height(zNotes* obj)
+    inline __attribute__ ((always_inline)) static double znoets_get_height(znotes* obj)
     {
-	Z_OBJ_DOUBLE(obj);
+	ZCHECK_OBJ_DOUBLE(obj);
 	return obj->_height;
     }
 

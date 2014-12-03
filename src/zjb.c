@@ -9,7 +9,7 @@
 #define ZJB_COORDS 4
 
 /* Virtual function */
-static int _zjb_draw(zGeneric* obj);
+static int _zjb_draw(void* obj);
 
 
 /* Constructor */
@@ -26,7 +26,7 @@ zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
     ZCONSTRUCTOR(obj, zjb);
 
     /* Create parent object, if failed return NULL */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -104,7 +104,6 @@ int zjb_draw(zjb* obj)
 {
 
     zbase* _base;				/* base object pointer */
-    zgeneric* _genric;				/* generic object pointer */
     cairo_t* _dev_c;				/* cairo context */
     int _i;
 
@@ -120,11 +119,11 @@ int zjb_draw(zjb* obj)
     _base = &obj->parent;
 
     /* Check all objects */
-    CHECK_OBJ(_base);
+    ZCHECK_OBJ_INT(_base);
 
     /* Device context pointer */
     _dev_c = zgeneric_get_dev_context(obj->super_cls);
-    CHECK_OBJ(_dev_c);
+    ZCHECK_OBJ_INT(_dev_c);
 
     /* move device context to the base coordinates and
      * draw outside rectangle */
@@ -171,10 +170,10 @@ int zjb_draw(zjb* obj)
     _a_ang_s[3] = M_PI / 2;
     _a_ang_e[3] = M_PI;
 
-    for(i = 0; i < COORDS; i++)
+    for(_i = 0; _i < ZJB_COORDS; _i++)
 	{
-	    cairo_move_to(_dev_c, CONV_TO_POINTS(_x1[i]), CONV_TO_POINTS(_y1[i]));
-	    cairo_line_to(_dev_c, CONV_TO_POINTS(_x2[i]), CONV_TO_POINTS(_y2[i]));
+	    cairo_move_to(_dev_c, ZCONV_TO_POINTS(_x1[_i]), ZCONV_TO_POINTS(_y1[_i]));
+	    cairo_line_to(_dev_c, ZCONV_TO_POINTS(_x2[_i]), ZCONV_TO_POINTS(_y2[_i]));
 	}
 
     cairo_stroke(_dev_c);
@@ -184,9 +183,9 @@ int zjb_draw(zjb* obj)
     	    for(_i=0; _i<ZJB_COORDS; _i++)
     		{
     		    cairo_arc(_dev_c,
-    			      CONV_TO_POINTS(_ax[_i]),
-    			      CONV_TO_POINTS(_ay[_i]),
-    			      CONV_TO_POINTS(obj->rad),
+    			      ZCONV_TO_POINTS(_ax[_i]),
+    			      ZCONV_TO_POINTS(_ay[_i]),
+    			      ZCONV_TO_POINTS(obj->rad),
     			      _a_ang_s[_i],
     			      _a_ang_e[_i]);
 		    cairo_stroke(_dev_c);
@@ -221,7 +220,7 @@ int zjb_add_terminals(zjb* obj,
     /* Get base object */
     _base = &obj->parent;
 
-    CHECK_OBJ(_base);
+    ZCHECK_OBJ_INT(_base);
 
     _w = (obj->ang == 0.0? width * (double) num_term : height);
     _h = (obj->ang == 0.0? height : width * (double) num_term);
@@ -230,7 +229,7 @@ int zjb_add_terminals(zjb* obj,
     _bh = (obj->ang == 0.0? _base->height : _base->width);
 
     /* Create internal terminals collection */
-    obj->terms = zTerminals_New(NULL,				/* object pointer */
+    obj->terms = zterminals_new(NULL,				/* object pointer */
 				zgeneric_get_device(obj->super_cls),
 				num_term,
 				_base->x + (_bw - _w) / 2,
@@ -260,7 +259,7 @@ int zjb_add_glands(zjb* obj,
 		   unsigned int hex_flg)				/* hex flag */
 {
     zdevice* _dev;
-    zBase* _base;
+    zbase* _base;
 
     /* check for object */
     ZCHECK_OBJ_INT(obj);
@@ -274,7 +273,7 @@ int zjb_add_glands(zjb* obj,
 
     obj->glands_ext = 0;
     /* Adds a gland into the collection */
-    return zglands_add(GLANDS(obj->glands),
+    return zglands_add(Z_GLANDS(obj->glands),
 		       _dev,
 		       _base->x + x,
 		       _base->y + y,
@@ -285,7 +284,7 @@ int zjb_add_glands(zjb* obj,
 
 /*=================================== Private Methods ===================================*/
 
-static int _zjb_draw(zGeneric* obj)
+static int _zjb_draw(void* obj)
 {
     int _rt;
     zgeneric* _zg = NULL;

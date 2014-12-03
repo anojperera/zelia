@@ -35,9 +35,9 @@ zgenerics* zterminals_new(zterminals* obj,
     ZCONSTRUCTOR(obj, zterminals);
 
     /* create parent object */
-    if(!obj->super_cls = zgenerics_new(&obj->parent,
+    if(!(obj->super_cls = zgenerics_new(&obj->parent,
 				       0,
-				       num_term))
+					num_term)))
 	{
 	    /* If the object was created internally, delete it */
 	    if(ZDESTRUCTOR_CHECK)
@@ -84,7 +84,7 @@ zgenerics* zterminals_new(zterminals* obj,
 	    /* Set terminal number */
 	    zterminal_set_terminal_number(Z_TERMINAL(obj->parent.generics_s[_i]), _i+1);
 
-	    zbase_set_base_coords(Z_BASE(obj->parent.generics_s[i]),
+	    zbase_set_base_coords(Z_BASE(obj->parent.generics_s[_i]),
 				  ang==90.0? x : x + (double) _i * width,
 				  ang==90.0? y + (double) _i * width : y);
 	    zbase_set_width_and_height(Z_BASE(obj->parent.generics_s[_i]),
@@ -151,7 +151,7 @@ static int _zterminals_delete(void* obj)
 {
     zgeneric* _zg;
 
-    ZCHECK_OBJ_VOID(obj);
+    ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;
 
     zterminal_delete(Z_TERMINAL(_zg));
@@ -171,12 +171,12 @@ static int _zterminals_draw(void* obj)
     _zg = (zgeneric*) obj;
 
     _zts = (zterminals*) zgeneric_get_collection_pointer(_zg);
-    zterminal_draw(TERMINAL(_zg));
+    zterminal_draw(Z_TERMINAL(_zg));
 
     /* if counter is reached max, draw links if required */
-    if(_zts->_d_counter == zts->parent.count)
+    if(_zts->_d_counter == _zts->parent.count)
 	{
-	    _zterminals_parser(zts);
+	    _zterminals_parser(_zts);
 	    _zts->_d_counter = 0;
 	}
 
@@ -215,19 +215,19 @@ static int _zterminals_parser(zterminals* obj)
 	{
 	    if(_j >= _b)
 		break;
-	    _tok[j] = (char*) malloc(sizeof(char) * (strlen(_tok2) + 1));
+	    _tok[_j] = (char*) malloc(sizeof(char) * (strlen(_tok2) + 1));
 	    strcpy(_tok[_j], _tok2);
 	    _j++;
 	    _tok2 = strtok(NULL, ZTERMINALS_SPLIT_TOKEN);
 	}
 
     /* split the string into tokens */
-    for(_j=0; _j<b; _j++)
+    for(_j=0; _j<_b; _j++)
 	{
 	    _i = 0;				/* initialise counter */
 	    _tnum[0] = -1;			/* reset to -1 */
 	    _tnum[1] = -1;			/* reset to -1 */
-	    _val = strtok(_tok[j], ZTERMINALS_RANGE_TOKEN);
+	    _val = strtok(_tok[_j], ZTERMINALS_RANGE_TOKEN);
 	    while(_val != NULL)
 	    	{
 	    	    /* break out of loop if max is reached */
@@ -253,11 +253,11 @@ static int _zterminals_parser(zterminals* obj)
 
 	    /* Draw link line */
 	    cairo_move_to(zdevice_get_context(_dev),
-	    		  CONV_TO_POINTS(obj->x_links[st]),
-	    		  CONV_TO_POINTS(obj->y_links[st]));
+	    		  ZCONV_TO_POINTS(obj->x_links[_st]),
+	    		  ZCONV_TO_POINTS(obj->y_links[_st]));
 	    cairo_line_to(zdevice_get_context(_dev),
-	    		  CONV_TO_POINTS(obj->x_links[ed]),
-	    		  CONV_TO_POINTS(obj->y_links[ed]));
+	    		  ZCONV_TO_POINTS(obj->x_links[_ed]),
+	    		  ZCONV_TO_POINTS(obj->y_links[_ed]));
 
 	    cairo_stroke(zdevice_get_context(_dev));
 
@@ -265,12 +265,12 @@ static int _zterminals_parser(zterminals* obj)
 	    for(_a=_st; _a<_ed+1; _a++)
 	    	{
 	    	    cairo_move_to(zdevice_get_context(_dev),
-	    			  CONV_TO_POINTS(obj->x_links[_a]),
-	    			  CONV_TO_POINTS(obj->y_links[_a]));
+	    			  ZCONV_TO_POINTS(obj->x_links[_a]),
+	    			  ZCONV_TO_POINTS(obj->y_links[_a]));
 	    	    cairo_arc(zdevice_get_context(_dev),
-	    		      CONV_TO_POINTS(obj->x_links[_a]),
-	    		      CONV_TO_POINTS(obj->y_links[_a]),
-	    		      CONV_TO_POINTS(2),
+	    		      ZCONV_TO_POINTS(obj->x_links[_a]),
+	    		      ZCONV_TO_POINTS(obj->y_links[_a]),
+	    		      ZCONV_TO_POINTS(2),
 	    		      0.0,
 	    		      2 * M_PI);
 	    	    cairo_fill(zdevice_get_context(_dev));

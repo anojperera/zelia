@@ -19,7 +19,7 @@ zgeneric* znote_new(znote* obj)
     ZCONSTRUCTOR(obj, znote);
 
     /* Create parent object */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
@@ -30,12 +30,13 @@ zgeneric* znote_new(znote* obj)
     obj->ix = 0;			/* index set to nothing */
     obj->note[0] = '\0';
     obj->fnote = NULL;
-    obj->indent = ZNOTE_INDENT;		/* default note index */
+    obj->indent = Z_NOTE_INDENT;		/* default note index */
     obj->note_sz = 0;
 
 
     obj->height_func = NULL;
     obj->usr_data = NULL;
+    obj->cols = NULL;
     obj->child = NULL;
     ZGENERIC_INIT_VTABLE(obj);
 
@@ -62,6 +63,7 @@ void znote_delete(znote* obj)
 
     obj->super_cls = NULL;
     obj->child = NULL;
+    obj->cols = NULL;
     obj->usr_data = NULL;
     obj->height_func = NULL;
     ZGENERIC_INIT_VTABLE(obj);
@@ -103,17 +105,17 @@ int znote_draw(znote* obj)
 
     /* translate to coordinates */
     cairo_translate(_dev_c,
-		    CONV_TO_POINTS(obj->parent.x),
-		    CONV_TO_POINTS(obj->parent.y));
+		    ZCONV_TO_POINTS(obj->parent.x),
+		    ZCONV_TO_POINTS(obj->parent.y));
 
     _layout = pango_cairo_create_layout(_dev_c);
-    pango_layout_set_width(_layout, CONV_TO_PANGO(obj->indent));
+    pango_layout_set_width(_layout, ZCONV_TO_PANGO(obj->indent));
 
     /* add text to layout */
     pango_layout_set_text(_layout, _ix_buff, -1);
 
     /* create font description and add to layout */
-    _desc = pango_font_description_from_string(ZNOTE_FONT_STYLE);
+    _desc = pango_font_description_from_string(Z_NOTE_FONT_STYLE);
     pango_layout_set_font_description(_layout, _desc);
     pango_font_description_free(_desc);
 
@@ -122,7 +124,7 @@ int znote_draw(znote* obj)
 
     /* offset cairo context for the text */
     cairo_translate(_dev_c,
-		    CONV_TO_POINTS(obj->indent),
+		    ZCONV_TO_POINTS(obj->indent),
 		    0.0);
     /* update pango layout */
     pango_cairo_update_layout(_dev_c, _layout);
@@ -130,7 +132,7 @@ int znote_draw(znote* obj)
     /* if width was set, tell pango to wrap */
     _box_width = obj->parent.width - obj->indent;
     if(obj->parent.width > 0.0)
-	pango_layout_set_width(_layout, CONV_TO_PANGO(_box_width));
+	pango_layout_set_width(_layout, ZCONV_TO_PANGO(_box_width));
     
     /* update text */
     pango_layout_set_text(_layout, obj->note, -1);
@@ -140,7 +142,7 @@ int znote_draw(znote* obj)
 
     /* If height inform function was set call it */
     if(obj->height_func)
-	obj->height_func(_generic, obj->usr_data, pango_layout_get_height(_layout));
+	obj->height_func(obj->super_cls, obj->usr_data, pango_layout_get_height(_layout));
 
     /* free layout object */
     g_object_unref(_layout);
@@ -149,7 +151,6 @@ int znote_draw(znote* obj)
     /* restore cairo context */
     cairo_restore(_dev_c);
 
-    _generic = NULL;
     _dev_c = NULL;
     _ix_buff = NULL;
     _layout = NULL;
@@ -175,7 +176,7 @@ int znote_set_content(znote* obj, const char* content, int ix)
 	    obj->fnote = NULL;
 	}
     /* if length exceeds buffer size, return fail */
-    if(obj->note_sz < NOTE_BUFF)
+    if(obj->note_sz < Z_NOTE_BUFF)
 	strcpy(obj->note, content);
     else
 	return ZELIA_NOTE_ERROR;
@@ -198,7 +199,7 @@ const char* znote_get_note_with_ix(znote* obj)
     if(obj->fnote)
 	return obj->fnote;
 
-    _t = sizeof(int) + sizeof(char) * 2 + NOTE_BUFF;
+    _t = sizeof(int) + sizeof(char) * 2 + Z_NOTE_BUFF;
     obj->fnote = (char*) malloc(_t);
     
     /* copy index to buffer */
@@ -211,7 +212,7 @@ const char* znote_get_note_with_ix(znote* obj)
 
 /*=================================== Private Methods ===================================*/
 /* Virtual draw method */
-static int _znote_draw(zGeneric* obj)
+static int _znote_draw(void* obj)
 {
     zgeneric* _zg = NULL;
     

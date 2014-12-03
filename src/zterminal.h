@@ -50,7 +50,7 @@ extern "C" {
 	sprintf(obj->term_num, "%i", num);
 	return ZELIA_OK;
     }
-    inline __attribute__ ((always_inline)) static int zterminal_get_terminal_number(zTerminal* obj)
+    inline __attribute__ ((always_inline)) static int zterminal_get_terminal_number(zterminal* obj)
     {
 	if(obj == NULL)
 	    return 0;
@@ -78,7 +78,7 @@ extern "C" {
 	obj->term_height = height;
 	return 0;
     }
-    inline __attribute__ ((always_inline)) static double zterminal_get_projected_Height(zTerminal* obj)
+    inline __attribute__ ((always_inline)) static double zterminal_get_projected_Height(zterminal* obj)
     {
 	ZCHECK_OBJ_DOUBLE(obj);
 	return obj->term_height;

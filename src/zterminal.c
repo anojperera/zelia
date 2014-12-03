@@ -13,33 +13,33 @@ zgeneric* zterminal_new(zterminal* obj)
 {
 
     ZCONSTRUCTOR(obj, zterminal);
-    
+
     /* Create base object */
-    if(!obj->super_cls = zbase_new(&obj->parent))
+    if(!(obj->super_cls = zbase_new(&obj->parent)))
 	{
 	    if(ZDESTRUCTOR_CHECK)
 		free(obj);
-	    
+
 	    return NULL;
 	}
-    
+
     /* set properties */
     obj->term_type = zSAK2pt5;
     obj->term_height = 0.0;
-    obj->draw_func = NULL;
+
     obj->term_cnt = 1;					/* set terminal count to 1 */
     obj->term_num[0] = '1';				/* set terminal number to 1 */
     obj->term_num[1] = '\0';
 
     /* initialise the vtable */
     ZGENERIC_INIT_VTABLE(obj);
-    
+
     /* set drawing pointer */
     zgeneric_set_draw(obj, _zterminal_draw_function);
-    
+
     /* set child pointer */
     zgeneric_set_child_pointer(obj);
-    
+
     /* Return base pointer */
     return obj->super_cls;
 }
@@ -53,7 +53,7 @@ void zterminal_delete(zterminal* obj)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
     /* delete parent object */
-    zbase_delete(&obj->sbase);
+    zbase_delete(&obj->parent);
 
 
     obj->child = NULL;
@@ -70,16 +70,15 @@ void zterminal_delete(zterminal* obj)
 int zterminal_draw(zterminal* obj)
 {
     zbase* _base;
-    zgeneric* _genric;
     cairo_t* _dev_c;
     double x, y;
     cairo_text_extents_t _te;
-    
+
     /* Check for object */
     ZCHECK_OBJ_INT(obj);
 
     /* Get base and generic object */
-    _base = &obj->sbase;
+    _base = &obj->parent;
 
     /* Device context pointer */
     _dev_c = zgeneric_get_dev_context(obj->super_cls);
@@ -91,30 +90,30 @@ int zterminal_draw(zterminal* obj)
 
     /* move device context to base coordinates */
     cairo_rectangle(_dev_c,
-		    ConvToPoints(&_base->x),
-		    ConvToPoints(&_base->y),
-		    ConvToPoints(&_base->width),
-		    ConvToPoints(&_base->height));
-    
+		    ZCONV_TO_POINTS(_base->x),
+		    ZCONV_TO_POINTS(_base->y),
+		    ZCONV_TO_POINTS(_base->width),
+		    ZCONV_TO_POINTS(_base->height));
+
     /* cairo stroke to draw */
     cairo_stroke(_dev_c);
-    
+
     /* add terminal number */
     cairo_select_font_face(_dev_c,
-			   GRD_FONT_STYLE,
+			   Z_GRD_FONT_STYLE,
 			   CAIRO_FONT_SLANT_NORMAL,
 			   CAIRO_FONT_WEIGHT_BOLD);
-    
-    cairo_set_font_size(_dev_c, GRD_FONT_SZ);
-    
+
+    cairo_set_font_size(_dev_c, Z_GRD_FONT_SZ);
+
     cairo_text_extents(_dev_c,
 		       obj->term_num,
 		       &_te);
     x = _base->x + (_base->width - _te.width) / 2 + _te.x_bearing;
     y = _base->y + _base->height / 2;
     cairo_move_to(_dev_c,
-		  CONV_TO_POINTS(x),
-		  CONV_TO_POINTS(y));
+		  ZCONV_TO_POINTS(x),
+		  ZCONV_TO_POINTS(y));
     cairo_show_text(_dev_c, obj->term_num);
 
     return ZELIA_OK;
@@ -123,19 +122,19 @@ int zterminal_draw(zterminal* obj)
 
 /*=====================================================================*/
 /* Virtual function implementation */
-static int zterminal_draw_function(void* obj)
+static int _zterminal_draw_function(void* obj)
 {
     zgeneric* _zg;
     zterminal* _self;
-    
+
     int _rt = ZELIA_OK;
-    
+
     ZCHECK_OBJ_INT(obj);
 
     _zg = (zgeneric*) obj;
-    
+
     _self = Z_TERMINAL(_zg);
-    
+
     /* call draw function */
     _rt = zterminal_draw(_self);
 
