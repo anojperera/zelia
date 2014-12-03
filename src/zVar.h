@@ -122,6 +122,10 @@ typedef enum {
 #define Z_GRD_CUSTOMER_SZ 8
 #define Z_GRD_WOZ_SZ 11
 
+#define Z_NOTE_INDENT 10.0
+#define Z_NOTE_LINE_HEIGHT 8.0
+#define Z_NOTE_FONT_STYLE "Century Gothic 10"
+
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
     if((obj) == NULL)					\
