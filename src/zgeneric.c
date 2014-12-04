@@ -36,8 +36,9 @@ void zgeneric_delete(zgeneric* obj)
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj);
 
-    /* delete the device object */
+    /* delete the device object if it was internally created */
     zdevice_delete(obj->gdev);
+    
     obj->gdev = NULL;
     obj->cols = NULL;
     obj->child = NULL;
@@ -87,7 +88,6 @@ int zgeneric_create_dev_context(zgeneric* obj, zSheets sh)
 
     /* set flag to indicate context was created internally */
     obj->def_dev_ctxt_flg = 1;
-    zdevice_get_context(obj->gdev);
     ZELIA_LOG_MESSAGE("zgeneric default context created");
     return ZELIA_OK;
 }

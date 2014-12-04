@@ -70,7 +70,8 @@ zdevice* zdevice_new2(zSheets sh,
 		      zdevice* obj)
 {
 
-    ZCHECK_OBJ_PTR(zdevice_new(obj));
+    obj = zdevice_new(obj);
+    ZCHECK_OBJ_PTR(obj);
 
     /* set page size and dims */
     ZELIA_LOG_MESSAGE("zdevice setting page size");
@@ -105,7 +106,8 @@ void zdevice_delete(zdevice* obj)
      * When objects are no longer referenced to this
      * we remove it.
      */
-    if(obj->ref_cnt-- > 0)
+    ZELIA_LOG_MESSAGE_WITH_INT("zdevice ref count ", obj->ref_cnt);
+    if(obj->ref_cnt-- >= 1)
 	return;
 
     /* destroy surface */
@@ -135,6 +137,7 @@ void zdevice_delete(zdevice* obj)
     if(obj->_init_flg == ZELIA_CONSTRUCTED)
 	free(obj);
 
+    ZELIA_LOG_MESSAGE("zdevice deleted");
     return;
 }
 

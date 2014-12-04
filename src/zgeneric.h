@@ -102,8 +102,8 @@ extern "C" {
 	   device object */
 	if(obj->gdev->device)
 	    {
-		obj->gcairo_dev = obj->gdev->device;
-		obj->def_dev_ctxt_flg = 1;
+		obj->gcairo_dev = zdevice_get_context(obj->gdev);
+		obj->def_dev_ctxt_flg = 0;
 	    }
 
 	return ZELIA_OK;
@@ -114,7 +114,6 @@ extern "C" {
     {
 	/* check for NULL pointer */
 	ZCHECK_OBJ_INT(obj);
-	zdevice_get_context(obj->gdev);
 	return ZELIA_OK;
     }
 
