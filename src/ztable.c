@@ -36,6 +36,7 @@ zgeneric* ztable_new(ztable* obj)
     /* set child pointer */
     zgeneric_set_child_pointer(obj);
 
+    ZELIA_LOG_MESSAGE("ztable object created");
     /* return top level parent object */
     return obj->super_cls;
 }
@@ -68,6 +69,7 @@ void ztable_delete(ztable* obj)
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
 
+    ZELIA_LOG_MESSAGE("ztable object deleted");
     return;
 }
 

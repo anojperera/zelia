@@ -395,6 +395,7 @@ static int zdevice_open_temp_file(zdevice* obj)
     /* create a temporay file for read write */
     obj->_fd = mkostemp(obj->_fname, O_CREAT | O_APPEND | O_RDWR | O_SYNC);
 
+    ZELIA_LOG_MESSAGE("temporary file created");
     return ZELIA_OK;
 }
 
@@ -425,7 +426,7 @@ static cairo_status_t zdevice_write_callback(void* obj, const unsigned char* dat
     _w_sz = write(_obj->_fd, (void*) data, (size_t) sz);
 
     if(_w_sz > 0)
-	ZELIA_LOG_MESSAGE_WITH_INT("zdevice succesfully written", (int) _w_sz);
+	ZELIA_LOG_MESSAGE_WITH_INT("zdevice succesfully written ", (int) _w_sz);
 
     /* return to indicate there were no errors */
     return CAIRO_STATUS_SUCCESS;

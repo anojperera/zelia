@@ -19,7 +19,7 @@ zgeneric* zgeneric_new(zgeneric* obj)
 
     /* initialise the vtable */
     ZGENERIC_INIT_VTABLE(obj);
-
+    ZELIA_LOG_MESSAGE("zgeneric object created");
     return obj;
 
 }
@@ -51,6 +51,7 @@ void zgeneric_delete(zgeneric* obj)
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
 
+    ZELIA_LOG_MESSAGE("zgeneric object deleted");
     return;
 }
 
@@ -63,6 +64,7 @@ int zgeneric_draw(zgeneric* obj)
     /* Check for object */
     ZCHECK_OBJ_INT(obj);
     ZCHECK_OBJ_INT(obj->vtable.zgeneric_draw);
+    ZELIA_LOG_MESSAGE("zgeneric checking for child pointer and calling it");
     return obj->vtable.zgeneric_draw((void*) obj);
 }
 
@@ -72,6 +74,7 @@ int zgeneric_create_dev_context(zgeneric* obj, zSheets sh)
     /* check for NULL pointer */
     ZCHECK_OBJ_INT(obj);
 
+    ZELIA_LOG_MESSAGE("zgeneric creating default context");
     /*
      * If the device object is already in use,
      * we delete it first.
@@ -85,5 +88,6 @@ int zgeneric_create_dev_context(zgeneric* obj, zSheets sh)
     /* set flag to indicate context was created internally */
     obj->def_dev_ctxt_flg = 1;
     zdevice_get_context(obj->gdev);
+    ZELIA_LOG_MESSAGE("zgeneric default context created");
     return ZELIA_OK;
 }

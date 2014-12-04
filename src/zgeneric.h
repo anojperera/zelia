@@ -156,7 +156,7 @@ extern "C" {
 #define zgeneric_set_collection_pointer(obj, collection)	\
     (obj)->cols = (collection)
 #define zgeneric_get_collection_pointer(obj)	\
-    ((obj)? (obj)->cols : NULL)
+    ((obj)? (obj)->super_cls->cols : NULL)
 #ifdef __cplusplus
 }
 #endif

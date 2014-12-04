@@ -137,10 +137,10 @@ int znotes_add(znotes* obj, const char* note)
 /* Get Note */
 znote* znotes_get_note(znotes* obj, unsigned int ix)
 {
-    void* _obj;
-    zgeneric* _zg;
+    void* _obj = NULL;
+    zgeneric* _zg = NULL;
     unsigned int _count = 0;
-    struct _blist_elm* _head;
+    struct _blist_elm* _head = NULL;
     /* check object */
     ZCHECK_OBJ_PTR(obj);
 
@@ -152,13 +152,13 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
     _head = blist_get_head(&obj->super_cls->generics_d);
     while(_head)
 	{
-	    if(++_count == ix)
+	    if(_count++ == ix)
 		break;
 
 	    _head = blist_next(_head);
 	}
-    _obj = blist_data(_head);
-    if(_obj == NULL)
+    
+    if(_head == NULL || (_obj = blist_data(_head)) == NULL)
 	return NULL;
 
     _zg = (zgeneric*) _obj;

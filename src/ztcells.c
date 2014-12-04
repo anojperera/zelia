@@ -42,7 +42,8 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
     obj->height = row_height;
 	
     obj->child = NULL;
-
+    ZGENERIC_INIT_VTABLE(obj);
+    
     /* Create object array */
     for(_i=0; _i<num_col; _i++)
 	{

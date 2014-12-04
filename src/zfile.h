@@ -14,8 +14,8 @@ typedef struct _zfile zfile;
 
 struct zfile_string
 {
-    const char* z_buff;
-    const size_t* z_buff_sz_ptr;
+    const char* buff;
+    const size_t* buff_sz_ptr;
 };
 
 struct _zfile
