@@ -24,6 +24,7 @@ zgeneric* ztable_new(ztable* obj)
     /* Set properties */
     obj->num_rows = 0;
     obj->num_cols = 0;
+    obj->arr_flg = 0;
     obj->col_widths = NULL;
     obj->child = NULL;
 

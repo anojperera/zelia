@@ -88,6 +88,7 @@ void zgenerics_delete(zgenerics* obj)
     obj->device = NULL;
     obj->child = NULL;
     obj->usr_data = NULL;
+    obj->count = 0;
 
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
@@ -112,7 +113,8 @@ void zgenerics_clear(zgenerics* obj)
 	    blist_set_usr_obj(&obj->generics_d, (void*) obj);
 	    blist_set_option_del_callback(&obj->generics_d, _zgenerics_callback_delete);
 	}
-
+    obj->count = 0;
+    
     return;
 }
 
@@ -181,7 +183,8 @@ static void _zgenerics_callback_delete(void* usr_obj, void* obj)
     _zg = (zgenerics*) usr_obj;
 
     /* Call delete function pointer of child pointer */
-    _zg->vtable.zgeneric_delete(obj);
+    if(_zg->vtable.zgeneric_delete)
+	_zg->vtable.zgeneric_delete(obj);
 
     return;
 }

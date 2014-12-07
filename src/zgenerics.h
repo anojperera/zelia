@@ -75,6 +75,12 @@ extern "C" {
 
     /* Draw function */
     int zgenerics_draw(zgenerics* obj);
+
+    /* increment and decrement counter */
+#define zgenerics_increment_counter(obj)	\
+    (obj)->count++
+#define zgenerics_decrement_counter(obj)	\
+    (obj)->count--    
 #ifdef __cplusplus
 }
 #endif

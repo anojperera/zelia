@@ -6,11 +6,6 @@
 /* Virtual function */
 static int _ztrow_draw(void* obj);
 
-/*
- * Callback to indicate setting the default context should not be
- * authorised on this object as this is simply a wrapper of tcell collection.
- */
-static int _ztrow_unathorise_default(void* obj);
 
 /* Constructor */
 zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
@@ -38,7 +33,6 @@ zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
 
     /* set parent objects function pointers */
     zgeneric_set_draw(obj, _ztrow_draw);
-    zgeneric_set_device_auth_default_callback(obj, _ztrow_unathorise_default);
     
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
@@ -197,10 +191,4 @@ static int _ztrow_draw(void* obj)
 	return _self->vtable.zgeneric_draw(obj);
 
     return _rt;
-}
-
-/* Virtual authorise method */
-static int _ztrow_unathorise_default(void* obj)
-{
-    return ZELIA_UNAUTHORISE;
 }

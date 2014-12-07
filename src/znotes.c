@@ -73,6 +73,9 @@ void znotes_delete(znotes* obj)
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
+    /* delete device object */
+    zdevice_delete(obj->super_cls->device);
+    
     /* Call delete method of parent object */
     zgenerics_delete(&obj->parent);
 
@@ -127,6 +130,9 @@ int znotes_add(znotes* obj, const char* note)
 
     /* set collection pointer */
     zgeneric_set_collection_pointer(_zg, obj);
+
+    /* increment counter of parent */
+    zgenerics_increment_counter(Z_GENERICS(obj));
 
     /* add to collection */
     blist_add_from_end(&obj->parent.generics_d, _zg);
