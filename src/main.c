@@ -13,6 +13,7 @@
 #include "zterminal.h"
 #include "zterminals.h"
 #include "zjb.h"
+#include "zgland.h"
 #include "zglands.h"
 #include "ztable.h"
 #include "znote.h"
@@ -31,6 +32,8 @@
     }
 
 int create_drawing(int argc, char** argv);
+int create_gland(int argc, char** argv);
+int create_glands(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -38,13 +41,13 @@ int main(int argc, char** argv)
     zfile_attrib _attrib;
 
     int stat = 0;
-    
+
     if(zfile_new(&_file) == NULL)
 	return -1;
 
     /* toggle the force overwrite mode */
     zfile_toggle_overwrite(&_file);
-    
+
     stat = zfile_create_file_from_template(&_file, Z_FILE_PATH, Z_FILE_SAVE_PATH);
     if(stat != ZELIA_OK)
 	ZELIA_LOG_MESSAGE("errors occured while creating a new file");
@@ -56,17 +59,16 @@ int main(int argc, char** argv)
     zfile_attrib_parse_attrib_xml(&_attrib, Z_FILE_XML_ATTRIB_PATH);
     zfile_attrib_set_field_array(&_attrib, NULL, 0);
 
-    create_drawing(argc, argv);
 
     /* clean up */
     zfile_attrib_delete(&_attrib);
     zfile_delete(&_file);
+
+    /* create_gland(argc, argv); */
+    /* create_glands(argc, argv); */
+    create_drawing(argc, argv);
     return 0;
 }
-
-
-
-
 
 int create_drawing(int argc, char** argv)
 {
@@ -83,7 +85,8 @@ int create_drawing(int argc, char** argv)
 
     table = ztable_new(NULL);
     zgeneric_set_device(table, &dev);
-
+    zgeneric_set_default_dev_context(table);
+    
     zbase_set_base_coords(Z_BASE(table), 40.0, 120.0);
     zbase_set_width_and_height(Z_BASE(table), 160.0, 30.0);
     ztable_set_rows_and_cols(Z_TABLE(table), 3, 4);
@@ -105,7 +108,82 @@ int create_drawing(int argc, char** argv)
     ztable_delete(Z_TABLE(table));
     znotes_delete(Z_NOTES(notes));
 
-    
+
+    zdevice_delete(&dev);
+
+    return 0;
+}
+
+/* creates a gland for testing */
+int create_gland(int argc, char** argv)
+{
+    zdevice dev;
+    zgeneric* gland =  NULL;
+
+    zdevice_new2(zSheetA3_Landscape,
+		 0,
+		 &dev);
+
+
+    gland = zgland_new(NULL,
+		       &dev,
+		       50.0,
+		       60.0,
+		       zM20);
+
+    zgland_draw(Z_GLAND(gland));
+
+    zgland_delete(Z_GLAND(gland));
+    zdevice_delete(&dev);
+
+    return 0;
+}
+
+/* creates a gland for testing */
+int create_glands(int argc, char** argv)
+{
+    zdevice dev;
+    zgenerics* glands =  NULL;
+
+    zdevice_new2(zSheetA3_Landscape,
+		 0,
+		 &dev);
+
+
+    glands = zglands_new(NULL);
+
+    /* add glands */
+    zglands_add(Z_GLANDS(glands),
+		&dev,
+		60.0,
+		50.0,
+		zM20,
+		1);
+
+    zglands_add(Z_GLANDS(glands),
+		&dev,
+		100.0,
+		50.0,
+		zM20,
+		1);
+
+    zglands_add(Z_GLANDS(glands),
+		&dev,
+		130.0,
+		50.0,
+		zM20,
+		1);
+
+    zglands_add(Z_GLANDS(glands),
+		&dev,
+		130.0,
+		100.0,
+		zM20,
+		1);
+
+    zgenerics_draw(glands);
+
+    zglands_delete(Z_GLANDS(glands));
     zdevice_delete(&dev);
 
     return 0;
