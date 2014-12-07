@@ -5,7 +5,7 @@
 
 /* Virtual function call back */
 static int _zbase_draw_function(void* obj);
-
+static int _zbase_default_device_auth(void* obj);
 
 /* Constructor */
 zgeneric* zbase_new(zbase* obj)
@@ -31,7 +31,8 @@ zgeneric* zbase_new(zbase* obj)
 
     /* set parent objects function pointers */
     zgeneric_set_draw(obj, _zbase_draw_function);
-
+    zgeneric_set_device_auth_default_callback(obj, _zbase_default_device_auth);
+    
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
 
@@ -78,4 +79,20 @@ static int _zbase_draw_function(void* obj)
 	return _self->vtable.zgeneric_draw(obj);
     else
 	return ZELIA_OK;
+}
+
+/* authorisation for setting the default context */
+static int _zbase_default_device_auth(void* obj)
+{
+    zgeneric* _zg = NULL;
+    zbase* _self = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+    _zg = (zgeneric*) obj;
+
+    _self = Z_BASE(_zg);
+    if(_self->vtable.zgeneric_auth_default_device)
+	return _self->vtable.zgeneric_auth_default_device(obj);
+
+    return ZELIA_OK;
 }
