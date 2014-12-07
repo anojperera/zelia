@@ -109,6 +109,7 @@ typedef enum {
 #define ZELIA_JB_ERROR -10
 #define ZELIA_NOTE_ERROR -11
 #define ZELIA_NOTES_ERROR -12
+#define ZELIA_UNAUTHORISE -13
 
 /* line weights */
 #define Z_LINE_WEIGHT1 0.25
@@ -158,15 +159,15 @@ typedef enum {
     if((obj) == NULL)					\
 	return NULL
 
-#define ZDESTRUCTOR_CHECK							\
-	((obj->_init_flg == ZELIA_CONSTRUCTED)? 1 : 0)
-#define ZCONV_TO_POINTS(val) \
+#define ZDESTRUCTOR_CHECK				\
+    ((obj->_init_flg == ZELIA_CONSTRUCTED)? 1 : 0)
+#define ZCONV_TO_POINTS(val)			\
     (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val
 
-#define ZCONV_TO_RADIANS(val) \
+#define ZCONV_TO_RADIANS(val)			\
     (M_PI * val / 180.0)
 
-#define ZCONV_TO_PANGO(val) \
+#define ZCONV_TO_PANGO(val)					\
     (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val * PANGO_SCALE
 
 
@@ -180,9 +181,9 @@ typedef enum {
 #define ZCHECK_OBJ_PTR(obj)			\
     if((obj) == NULL)				\
 	return NULL
-#define ZCHECK_OBJ_DOUBLE(obj)					\
-	if((obj) == NULL)							\
-	   return 0.0
+#define ZCHECK_OBJ_DOUBLE(obj)			\
+    if((obj) == NULL)				\
+	return 0.0
 
 #define ZELIA_LOG_MESSAGE(msg)			\
     fprintf(stdout, "%s\n", (msg))
