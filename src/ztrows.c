@@ -42,10 +42,10 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
     for(_i=0; _i<num_rows; _i++)
 	{
 	    /* create object */
-	    obj->parent.generics_s[_i] = ztrow_new(NULL, _i);
+	    obj->super_cls->generics_s[_i] = ztrow_new(NULL, _i);
 
 	    /* set collection pointer */
-	    zgeneric_set_collection_pointer(obj->parent.generics_s[_i], (void*) obj);
+	    zgeneric_set_collection_pointer(obj->super_cls->generics_s[_i], (void*) obj);
 
 	    /* set width and height */
 	    zbase_set_width_and_height(Z_BASE(obj->super_cls->generics_s[_i]),
@@ -57,7 +57,7 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
 	    ztrow_set_num_cols(Z_TROW(obj->super_cls->generics_s[_i]),
 			       num_cols);
 	    zgeneric_set_device(obj->super_cls->generics_s[_i], dev);
-	    /* Default device context is set by TCells */
+	    zgeneric_set_default_dev_context(obj->super_cls->generics_s[_i]);
 	}
 
     /* initialise function pointers */
