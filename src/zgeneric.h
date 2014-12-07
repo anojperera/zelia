@@ -16,10 +16,11 @@
 #include "zdevice.h"
 
 /* initialise vtable */
-#define ZGENERIC_INIT_VTABLE(obj)		\
-    (obj)->vtable.zgeneric_draw = NULL;		\
-    (obj)->vtable.zgeneric_delete = NULL;	\
-    (obj)->vtable.zgeneric_new = NULL
+#define ZGENERIC_INIT_VTABLE(obj)			\
+    (obj)->vtable.zgeneric_draw = NULL;			\
+    (obj)->vtable.zgeneric_delete = NULL;		\
+    (obj)->vtable.zgeneric_new = NULL;			\
+    (obj)->vtable.zgeneric_auth_default_device = NULL
 
 
 /* forward declaration of generic object */
@@ -31,6 +32,7 @@ struct _zgeneric_vtable
     int (*zgeneric_draw)(void*);
     int (*zgeneric_delete)(void*);
     int (*zgeneric_new)(void*);
+    int (*zgeneric_auth_default_device)(void*);
 };
 
 struct _zgeneric
@@ -98,6 +100,16 @@ extern "C" {
 	/* check for device context */
 	ZCHECK_OBJ_INT(obj->gdev);
 
+	/*
+	 * First check if authorise callback was assigned.
+	 * We call it to check it returns ZELIA_OK.
+	 * If it doesn't that means the ref count shouldn't be incremented
+	 */
+	if(obj->vtable.zgeneric_auth_default_device &&
+	   obj->vtable.zgeneric_auth_default_device((void*) obj) != ZELIA_OK)
+	    return ZELIA_UNAUTHORISE;
+
+
 	/* check if device context was set in
 	   device object */
 	if(obj->gdev->device)
@@ -147,7 +159,8 @@ extern "C" {
     (obj)->parent.vtable.zgeneric_delete = (callback)
 #define zgeneric_set_draw(obj, callback)		\
     (obj)->parent.vtable.zgeneric_draw = (callback)
-
+#define zgeneric_set_device_auth_default_callback(obj, callback)	\
+    (obj)->parent.vtable.zgeneric_auth_default_device = (callback)
     /* helper macro for setting the child pointer */
 #define zgeneric_set_child_pointer(obj)		\
     (obj)->parent.child = (void*) (obj)
