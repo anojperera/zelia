@@ -34,6 +34,7 @@
 int create_drawing(int argc, char** argv);
 int create_gland(int argc, char** argv);
 int create_glands(int argc, char** argv);
+int create_note(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -66,7 +67,8 @@ int main(int argc, char** argv)
 
     /* create_gland(argc, argv); */
     /* create_glands(argc, argv); */
-    create_drawing(argc, argv);
+    /* create_drawing(argc, argv); */
+    /* create_note(argc, argv); */
     return 0;
 }
 
@@ -86,7 +88,7 @@ int create_drawing(int argc, char** argv)
     table = ztable_new(NULL);
     zgeneric_set_device(table, &dev);
     zgeneric_set_default_dev_context(table);
-    
+
     zbase_set_base_coords(Z_BASE(table), 40.0, 120.0);
     zbase_set_width_and_height(Z_BASE(table), 160.0, 30.0);
     ztable_set_rows_and_cols(Z_TABLE(table), 3, 4);
@@ -100,7 +102,7 @@ int create_drawing(int argc, char** argv)
     znotes_add(Z_NOTES(notes), "DAMPER BLADES TO BE HOT DIP GALVANISED.");
     znotes_add(Z_NOTES(notes), "BLADES ARE WELDED TO SHAFTS.");
 
-    /* zGeneric_Draw(table); */
+
     zgenerics_draw(notes);
     zgeneric_draw(table);
 
@@ -184,6 +186,29 @@ int create_glands(int argc, char** argv)
     zgenerics_draw(glands);
 
     zglands_delete(Z_GLANDS(glands));
+    zdevice_delete(&dev);
+
+    return 0;
+}
+
+int create_note(int argc, char** argv)
+{
+    zdevice dev;
+    zgeneric* note;
+
+    zdevice_new2(zSheetA3_Landscape,
+		 0,
+		 &dev);
+
+    note = znote_new(NULL);
+    zgeneric_set_device(note, &dev);
+    zgeneric_set_default_dev_context(note);
+    zbase_set_base_coords(Z_BASE(note), 100.0, 200.0);
+
+    znote_set_content(Z_NOTE(note), "TESTING", 0);
+    znote_draw(Z_NOTE(note));
+
+    znote_delete(Z_NOTE(note));
     zdevice_delete(&dev);
 
     return 0;
