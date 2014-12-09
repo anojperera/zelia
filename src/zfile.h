@@ -49,6 +49,12 @@ extern "C" {
     /* updates the internal cache */
     int zfile_update_file(zfile* obj);
     int zfile_update_cache(zfile* obj);
+
+    /*
+     * Parse elements and add to the file.
+     * This method parses NULL terminated buffer pointed by buff
+     */
+    int zfile_parse_and_insert_elements(zfile* obj, const char* buff);
     
     /* property macros */
 #define zfile_toggle_overwrite(obj)			\

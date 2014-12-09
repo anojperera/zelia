@@ -13,6 +13,12 @@
 
 static int _zfile_parse_xml(zfile* obj);
 static int _zfile_callback_hook(void* obj);
+static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr* node);
+
+#define ZFILE_DEF_NAME "defs"
+#define ZFILE_G_NAME "g"
+#define ZFILE_SVG_NAME "svg"
+
 /* constructor */
 zfile* zfile_new(zfile* obj)
 {
@@ -64,7 +70,7 @@ void zfile_delete(zfile* obj)
     obj->read_buff = NULL;
     obj->read_buff_sz = 0;
 
-    obj->callback_hook = NULL;    
+    obj->callback_hook = NULL;
 
     /* set struct to NULL */
     obj->_string.buff = NULL;
@@ -75,10 +81,10 @@ void zfile_delete(zfile* obj)
 	    xmlFreeDoc(obj->xml_doc);
 	    xmlCleanupParser();
 	}
-    
+
     obj->child = NULL;
     obj->ext_ptr = NULL;
-    
+
     /* if created destroy it */
     if(obj->_init_flg == ZELIA_CONSTRUCTED)
 	free(obj);
@@ -93,7 +99,7 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
     int r_fd = 0, w_fd = 0;								/* read and write file descriptors */
     struct stat tmp_stat;								/* struct for holding the template file stat */
     mode_t prev_mode, current_mode;							/* previous file mode */
-    
+
     if(obj == NULL || tmp_file == NULL || file_path == NULL)
 	return ZELIA_NULL;
 
@@ -123,7 +129,7 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
     if(access(obj->tmp_file, F_OK))
 	{
 	    ZELIA_LOG_MESSAGE("zfile template does not exist, bailing out");
-	    return ZELIA_FILE_COPY_ERROR;	    
+	    return ZELIA_FILE_COPY_ERROR;
 	}
 
     /* reading file and copy to new location */
@@ -134,23 +140,23 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
 	{
 	    ZELIA_LOG_MESSAGE("zfile errors occured while reading the template");
 
-	    return ZELIA_FILE_COPY_ERROR;	    
+	    return ZELIA_FILE_COPY_ERROR;
 	}
 
     /* set the umask mode for the file creation */
     current_mode = S_IXOTH | S_IWOTH | S_IWGRP | S_IXGRP | S_IXUSR;
     prev_mode = umask(current_mode);
     w_fd = open(obj->new_file_path, O_RDWR | O_CREAT);
-    
-    /* once open reset the file mask */    
+
+    /* once open reset the file mask */
     umask(prev_mode);
-    
+
     if(w_fd == -1)
 	{
 	    /* write file descriptor failed, so we bail */
 	    ZELIA_LOG_MESSAGE("zfile write file descriptor failed");
 	    ZELIA_LOG_MESSAGE("zfile closing template file");
-	    
+
 	    /* close template file */
 	    close(r_fd);
 
@@ -158,13 +164,13 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
 	}
 
     fchmod(w_fd, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    
+
     /* check stat for file size */
     if(fstat(r_fd, &tmp_stat))
 	{
 	    ZELIA_LOG_MESSAGE("zfile unable to get tempalate file size");
 	    ZELIA_LOG_MESSAGE("zfile unable closing template file and write file");
-	    
+
 	    close(r_fd);
 	    close(w_fd);
 
@@ -177,7 +183,7 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
 
     /* read contents of the the tempalate file */
     /* create buffer */
-    obj->read_buff_sz = tmp_stat.st_size + 1;    
+    obj->read_buff_sz = tmp_stat.st_size + 1;
     obj->read_buff = (char*) malloc((size_t) obj->read_buff_sz);
 
     if(!read(r_fd, (void*) obj->read_buff, tmp_stat.st_size))
@@ -189,7 +195,7 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
 
 	    unlink(obj->new_file_path);
 	    ZELIA_LOG_MESSAGE("zfile created file deleted due to errors");
-	    
+
 	    return ZELIA_FILE_COPY_ERROR;
 	}
 
@@ -203,8 +209,8 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
 
 	    unlink(obj->new_file_path);
 	    ZELIA_LOG_MESSAGE("zfile created file deleted due to errors");
-	    
-	    return ZELIA_FILE_COPY_ERROR;	    
+
+	    return ZELIA_FILE_COPY_ERROR;
 	}
 
     fsync(w_fd);
@@ -214,7 +220,7 @@ int zfile_create_file_from_template(zfile* obj, const char* tmp_file, const char
     close(w_fd);
 
     /* call to parse the xml document */
-    _zfile_parse_xml(obj);    
+    _zfile_parse_xml(obj);
 
     return ZELIA_OK;
 }
@@ -227,7 +233,7 @@ int zfile_update_file(zfile* obj)
     if(obj->xml_doc == NULL)
 	return ZELIA_NULL;
 
-    
+
     /* check if the file exists */
     if(access(obj->new_file_path, F_OK))
 	{
@@ -250,7 +256,7 @@ int zfile_update_cache(zfile* obj)
     int r_fd = 0;
     char* read_buff = NULL, *old_buff = NULL;
     ssize_t read_buff_sz = 0;
-    
+
     if(obj == NULL)
 	return ZELIA_NULL;
 
@@ -307,13 +313,107 @@ int zfile_update_cache(zfile* obj)
     return ZELIA_OK;
 }
 
+/* parse elements */
+int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
+{
+    xmlDocPtr _p_doc = NULL;							/* document pointer of parsed buffer */
+    xmlNodePtr _m_itr = NULL;
+    xmlNodePtr _p_def_itr = NULL;						/* parsed document iterator */
+    xmlNodePtr _p_g_itr = NULL;							/* iterator for elements */
+
+    xmlNodePtr _p_def_copy = NULL;						/* copy of def object */
+    xmlNodePtr _p_g_copy = NULL;						/* copy of g object */
+    xmlNodePtr _itr = NULL;
+
+    /* check arguments */
+    ZCHECK_OBJ_INT(obj);
+    ZCHECK_OBJ_INT(buff);
+
+    /* parse buffer */
+    ZELIA_LOG_MESSAGE("zfile begin parsing buffer");
+
+    /* parse document */
+    _p_doc = xmlParseDoc((const xmlChar*) buff);
+
+    /* check if we find the correct node */
+    if(_zfile_find_node_by_name(obj->xml_doc, ZFILE_DEF_NAME, &_m_itr) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+
+    if(_zfile_find_node_by_name(_p_doc, ZFILE_DEF_NAME, &_p_def_itr) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in parsed document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+
+    /* copy definitions object recursively in as child into the main document */
+    _p_def_copy = xmlCopyNode(_p_def_itr, 1);
+    _itr = xmlFirstElementChild(_p_def_copy);
+    while(_itr) {
+
+	if(xmlAddChild(_m_itr, _itr) == NULL)
+	    {
+		ZELIA_LOG_MESSAGE("zfile copying of definitions element to the main document failed");
+		xmlFreeDoc(_p_doc);
+		return ZELIA_FILE_COPY_ERROR;
+	    }
+
+	_itr = xmlNextElementSibling(_itr);
+    }
+
+
+    /* check if we find the correct node */
+    if(_zfile_find_node_by_name(obj->xml_doc, ZFILE_SVG_NAME, &_m_itr) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+    if(_zfile_find_node_by_name(_p_doc, ZFILE_SVG_NAME, &_p_g_itr) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+    _p_g_copy = xmlCopyNode(_p_g_itr, 1);
+    _itr = xmlFirstElementChild(_p_g_copy);
+    while(_itr) {
+	if(xmlAddChild(_m_itr, _itr) == NULL)
+	    {
+		ZELIA_LOG_MESSAGE("zfile copying of drawing elements to the main document failed");
+		xmlFreeDoc(_p_doc);
+		return ZELIA_FILE_COPY_ERROR;
+	    }
+
+	_itr = xmlNextElementSibling(_itr);
+    }
+
+    /* call to update the buffer */
+    zfile_update_file(obj);
+    zfile_update_cache(obj);
+
+    /* free document */
+    xmlFreeDoc(_p_doc);
+    return ZELIA_OK;
+}
+
+/*=================================== Private Methods ===================================*/
+
 /* parse the xml document */
 static int _zfile_parse_xml(zfile* obj)
 {
 
     if(obj->read_buff == NULL || obj->read_buff_sz <= 0)
 	return ZELIA_NULL;
-    
+
     if(!obj->xml_doc)
 	xmlInitParser();
     else
@@ -328,7 +428,7 @@ static int _zfile_parse_xml(zfile* obj)
 	ZELIA_LOG_MESSAGE("xml parsed successfully");
     else
 	ZELIA_LOG_MESSAGE("xml parsing failed, document pointer set to NULL");
-    
+
     return ZELIA_OK;
 }
 
@@ -336,11 +436,66 @@ static int _zfile_parse_xml(zfile* obj)
 static int _zfile_callback_hook(void* obj)
 {
     zfile* _obj;
-    
+
     if(obj == NULL)
 	return ZELIA_NULL;
 
     /* cast object */
     _obj = (zfile*) obj;
     return zfile_update_file(_obj);
+}
+
+/* find element named */
+static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr* node)
+{
+    xmlNodePtr _root = NULL;
+    xmlNodePtr _child = NULL;
+    unsigned int _found = 0;
+
+    /* check for arguments */
+    ZCHECK_OBJ_INT(doc);
+    ZCHECK_OBJ_INT(name);
+    ZCHECK_OBJ_INT(node);
+
+    /* get root node */
+    ZELIA_LOG_MESSAGE_WITH_STR("zfile finding node ", name);
+    
+    *node = NULL;
+    _root = xmlDocGetRootElement(doc);
+    while(_root)
+	{
+	    ZELIA_LOG_MESSAGE("zfile looking in main child");
+	    if(strcmp((const char*) _root->name, name) == 0)
+		{
+		    ZELIA_LOG_MESSAGE("zfile element found exiting loop");
+		    *node = _root;
+		    break;
+		}
+
+	    /* get the child node */
+	    ZELIA_LOG_MESSAGE("zfile looking in child node");
+	    _child = xmlFirstElementChild(_root);
+	    while(_child)
+		{
+		    if(strcmp((const char*) _child->name, name) == 0)
+			{
+			    ZELIA_LOG_MESSAGE("zfile element found in child exiting inner loop");
+			    *node = _child;
+			    _found = 1;
+			    break;
+			}
+		    _child = xmlNextElementSibling(_child);
+		}
+
+	    /* if found break out of main loop */
+	    if(_found > 0)
+		break;
+
+	    _root = xmlNextElementSibling(_root);
+	}
+
+    if(*node == NULL)
+	return ZELIA_NULL;
+    else
+	return ZELIA_OK;
 }

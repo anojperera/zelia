@@ -22,7 +22,7 @@
 
 #define Z_FILE_PATH "/home/pyrus/Prog/C++/zelia/resources/wozair_border_a4.svg"
 #define Z_FILE_SAVE_PATH "/home/pyrus/temp.svg"
-#define Z_FILE_XML_ATTRIB_PATH "/home/pyrus/Prog/C++/zelia/src/attrib.xml"
+#define Z_FILE_XML_ATTRIB_PATH "/home/pyrus/Prog/C++/zelia/resources/attrib.xml"
 
 #define Z_FILE_ATTRIB_ARRAY			\
     {						\
@@ -31,7 +31,7 @@
 	{NULL, NULL}				\
     }
 
-int create_drawing(int argc, char** argv);
+int create_drawing(zfile* obj);
 int create_gland(int argc, char** argv);
 int create_glands(int argc, char** argv);
 int create_note(int argc, char** argv);
@@ -60,25 +60,26 @@ int main(int argc, char** argv)
     zfile_attrib_parse_attrib_xml(&_attrib, Z_FILE_XML_ATTRIB_PATH);
     zfile_attrib_set_field_array(&_attrib, NULL, 0);
 
+    /* create_gland(argc, argv); */
+    /* create_glands(argc, argv); */
+    create_drawing(&_file);
+    /* create_note(argc, argv); */    
 
     /* clean up */
     zfile_attrib_delete(&_attrib);
     zfile_delete(&_file);
 
-    /* create_gland(argc, argv); */
-    /* create_glands(argc, argv); */
-    /* create_drawing(argc, argv); */
-    /* create_note(argc, argv); */
     return 0;
 }
 
-int create_drawing(int argc, char** argv)
+int create_drawing(zfile* obj)
 {
     zdevice dev;		/* device object */
 
     zgeneric* table;		/* table */
     zgenerics* notes;		/* note */
 
+    const char* _buff = NULL;
 
     zdevice_new2(zSheetA3_Landscape,
 		 0,
@@ -105,6 +106,12 @@ int create_drawing(int argc, char** argv)
 
     zgenerics_draw(notes);
     zgeneric_draw(table);
+
+    /* get buffer */
+    _buff = zdevice_get_temp_buff(&dev);
+
+    /* add to the file object */
+    zfile_parse_and_insert_elements(obj, _buff);
 
     /* delete objects */
     ztable_delete(Z_TABLE(table));

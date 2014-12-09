@@ -291,7 +291,7 @@ static char* _zfile_attrib_read_contents(const char* file_path, char** buff, siz
     int r_fd = 0;
     struct stat tmp_stat;								/* struct for holding the template file stat */    
     
-    ZELIA_LOG_MESSAGE_WITH_STR("zfile_attrib check file exist", file_path);
+    ZELIA_LOG_MESSAGE_WITH_STR("zfile_attrib check file exist ", file_path);
     if(access(file_path, F_OK))
 	{
 	    ZELIA_LOG_MESSAGE("zfile_attrib file does not exist");

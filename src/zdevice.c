@@ -194,7 +194,7 @@ const char* zdevice_get_temp_buff(zdevice* obj)
 	{
 	    /* temporary file error */
 	    ZDEVICE_TEMP_FILE_ERROR;
-		return NULL;
+	    return NULL;
 	}
 
     /* get size */
