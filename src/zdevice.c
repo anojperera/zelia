@@ -110,18 +110,18 @@ void zdevice_delete(zdevice* obj)
     if(obj->ref_cnt-- >= 1)
 	return;
 
-    /* destroy surface */
-    if(obj->surface != NULL)
-	{
-	    cairo_surface_destroy(obj->surface);
-	    obj->surface = NULL;
-	}
-
     /* destroy device context */
     if(obj->device != NULL)
 	{
 	    cairo_destroy(obj->device);
 	    obj->device = NULL;
+	}
+
+    /* destroy surface */
+    if(obj->surface != NULL)
+	{
+	    cairo_surface_destroy(obj->surface);
+	    obj->surface = NULL;
 	}
 
     /* delete the temporary buffer */
@@ -180,10 +180,17 @@ const char* zdevice_get_temp_buff(zdevice* obj)
 {
     int _err_no = 0;					/* error no */
     struct stat _fstat;					/* file stats */
-    /* off_t _c_offset;					/\* offset *\/ */
+    off_t _c_offset;					/* offset */
     ssize_t _r_sz = 0;					/* read buffer size */
 
     ZCHECK_OBJ_PTR(obj);
+
+    if(obj->surface)
+	{
+	    ZELIA_LOG_MESSAGE("zdevice flushing surface to write any outsanding to file");
+	    cairo_surface_finish(obj->surface);
+	    cairo_surface_flush(obj->surface);
+	}
 
     ZELIA_LOG_MESSAGE("zdevice reading temp file to get content");
     /* check if the file descriptor was opened */
@@ -211,7 +218,7 @@ const char* zdevice_get_temp_buff(zdevice* obj)
     ZELIA_LOG_MESSAGE("zdevice reading file");
 
     /* get current file offset */
-    /* _c_offset = lseek(obj->_fd, 0, SEEK_CUR); */
+    _c_offset = lseek(obj->_fd, 0, SEEK_CUR);
 
     /* rewind to get every thing */
     ZELIA_LOG_MESSAGE("zdevice rewinding temp file");
@@ -230,7 +237,7 @@ const char* zdevice_get_temp_buff(zdevice* obj)
 
     /* rewind the file descriptor */
     ZELIA_LOG_MESSAGE("zdevice temp file seek set to position before read");
-    lseek(obj->_fd, _r_sz+1, SEEK_SET);
+    lseek(obj->_fd, _c_offset, SEEK_SET);
 
     return obj->_buff;
 }
