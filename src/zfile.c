@@ -334,6 +334,8 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
 
     /* parse document */
     _p_doc = xmlParseDoc((const xmlChar*) buff);
+    if(_p_doc == NULL)
+	return ZELIA_FILE_COPY_ERROR;
 
     /* check if we find the correct node */
     if(_zfile_find_node_by_name(obj->xml_doc, ZFILE_DEF_NAME, &_m_itr) != ZELIA_OK)
@@ -352,15 +354,17 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
 	}
 
 
-    /* copy definitions object recursively in as child into the main document */
-    _p_def_copy = xmlCopyNode(_p_def_itr, 1);
-    _itr = xmlFirstElementChild(_p_def_copy);
+    /* get first element */
+    _itr = xmlFirstElementChild(_p_def_itr);
     while(_itr) {
 
-	if(xmlAddChild(_m_itr, _itr) == NULL)
+	/* copy node */
+	_p_def_copy = xmlCopyNode(_itr, 1);
+
+	if(xmlAddChild(_m_itr, _p_def_copy) == NULL)
 	    {
 		ZELIA_LOG_MESSAGE("zfile copying of definitions element to the main document failed");
-		xmlFreeDoc(_p_doc);
+		/* xmlFreeDoc(_p_doc); */
 		return ZELIA_FILE_COPY_ERROR;
 	    }
 
@@ -372,7 +376,7 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
     if(_zfile_find_node_by_name(obj->xml_doc, ZFILE_SVG_NAME, &_m_itr) != ZELIA_OK)
 	{
 	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
-	    xmlFreeDoc(_p_doc);
+	    /* xmlFreeDoc(_p_doc); */
 	    return ZELIA_FILE_COPY_ERROR;
 	}
 
@@ -383,13 +387,16 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
 	    return ZELIA_FILE_COPY_ERROR;
 	}
 
-    _p_g_copy = xmlCopyNode(_p_g_itr, 1);
-    _itr = xmlFirstElementChild(_p_g_copy);
+
+    _itr = xmlFirstElementChild(_p_g_itr);
     while(_itr) {
-	if(xmlAddChild(_m_itr, _itr) == NULL)
+	/* copy element */
+	_p_g_copy = xmlCopyNode(_itr, 1);
+
+	if(xmlAddChild(_m_itr, _p_g_copy) == NULL)
 	    {
 		ZELIA_LOG_MESSAGE("zfile copying of drawing elements to the main document failed");
-		xmlFreeDoc(_p_doc);
+		/* xmlFreeDoc(_p_doc); */
 		return ZELIA_FILE_COPY_ERROR;
 	    }
 
@@ -459,7 +466,7 @@ static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr*
 
     /* get root node */
     ZELIA_LOG_MESSAGE_WITH_STR("zfile finding node ", name);
-    
+
     *node = NULL;
     _root = xmlDocGetRootElement(doc);
     while(_root)
