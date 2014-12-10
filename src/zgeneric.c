@@ -38,7 +38,7 @@ void zgeneric_delete(zgeneric* obj)
 
     /* delete the device object if it was internally created */
     zdevice_delete(obj->gdev);
-    
+
     obj->gdev = NULL;
     obj->cols = NULL;
     obj->child = NULL;
@@ -66,7 +66,10 @@ int zgeneric_draw(zgeneric* obj)
     ZCHECK_OBJ_INT(obj);
     ZCHECK_OBJ_INT(obj->vtable.zgeneric_draw);
     ZELIA_LOG_MESSAGE("zgeneric checking for child pointer and calling it");
-    return obj->vtable.zgeneric_draw((void*) obj);
+    if(obj->vtable.zgeneric_draw)
+	return obj->vtable.zgeneric_draw((void*) obj);
+    else
+	return ZELIA_OK;
 }
 
 /* create generic device context */
