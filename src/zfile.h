@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <libxml/parser.h>
 
-
 typedef struct _zfile zfile;
 
 struct zfile_string
@@ -55,14 +54,14 @@ extern "C" {
      * This method parses NULL terminated buffer pointed by buff
      */
     int zfile_parse_and_insert_elements(zfile* obj, const char* buff);
-    
+
     /* property macros */
 #define zfile_toggle_overwrite(obj)			\
     if((obj)->force_flg == ZELIA_FORCE_OVERWRITE)	\
 	(obj)->force_flg = ZELIA_FILE_FORCE_DEFAULT;	\
     else						\
 	(obj)->force_flg = ZELIA_FORCE_OVERWRITE
-    
+
 #define zfile_get_xmldoc_ptr(obj)		\
     (obj)->xml_doc
 
@@ -79,7 +78,7 @@ extern "C" {
 
 	return &obj->_string;
     }
-    
+
 #ifdef __cplusplus
 }
 #endif
