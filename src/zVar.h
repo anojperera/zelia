@@ -110,6 +110,7 @@ typedef enum {
 #define ZELIA_NOTE_ERROR -11
 #define ZELIA_NOTES_ERROR -12
 #define ZELIA_UNAUTHORISE -13
+#define ZELIA_PARSER_ERROR -14
 
 /* line weights */
 #define Z_LINE_WEIGHT1 0.25
