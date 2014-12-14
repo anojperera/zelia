@@ -37,7 +37,7 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
 	    return NULL;
 	}
     zgenerics_set_device(&obj->parent, dev);
-    
+
     /* Set properties */
     obj->_height = 0.0;
     obj->width = width;
@@ -51,14 +51,14 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
 
     obj->child = NULL;
     ZGENERIC_INIT_VTABLE(obj);
-    
+
     /* Set function poiters of parent object */
     zgeneric_set_delete_callback(obj, _znotes_delete);
     zgeneric_set_draw(obj, _znotes_draw);
 
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
-    
+
     obj->parent.usr_data = (void*) obj;
 
     /* return parent object */
@@ -73,11 +73,11 @@ void znotes_delete(znotes* obj)
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
 
-    /* delete device object */
-    zdevice_delete(obj->super_cls->device);
-    
     /* Call delete method of parent object */
     zgenerics_delete(&obj->parent);
+
+    /* delete device object */
+    zdevice_delete(obj->super_cls->device);
 
     ZGENERIC_INIT_VTABLE(obj);
     obj->super_cls = NULL;
@@ -96,7 +96,7 @@ int znotes_add(znotes* obj, const char* note)
 {
     znote* _note;
     zgeneric* _zg;
-    
+
     /* Check object and arguments */
     ZCHECK_OBJ_INT(obj);
     ZCHECK_OBJ_INT(note);
@@ -105,12 +105,12 @@ int znotes_add(znotes* obj, const char* note)
      * not return it */
     if(obj->title[0] == '\0')
 	return ZELIA_NOTES_ERROR;
-    
+
     _zg = znote_new(NULL);
     ZCHECK_OBJ_INT(_zg);
 
     _note = Z_NOTE(_zg);
-    
+
     zgeneric_set_device(_zg, zgenerics_get_device(&obj->parent));
     zgeneric_set_default_dev_context(_zg);
 
@@ -119,9 +119,9 @@ int znotes_add(znotes* obj, const char* note)
 	znote_set_content_with_ref(_note, note, ++obj->counter);
     else
 	znote_set_content(_note, note, ++obj->counter);
-    
+
     obj->_height = (double) (obj->counter + 1) * Z_NOTE_LINE_HEIGHT;
-    
+
     /* Set base coordinates */
     zbase_set_base_coords(Z_BASE(_zg),
 			  obj->x,
@@ -167,12 +167,12 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
 
 	    _head = blist_next(_head);
 	}
-    
+
     if(_head == NULL || (_obj = blist_data(_head)) == NULL)
 	return NULL;
 
     _zg = (zgeneric*) _obj;
-    
+
     return Z_NOTE(_zg);
 }
 
@@ -180,21 +180,21 @@ znote* znotes_get_note(znotes* obj, unsigned int ix)
 /*=================================== Private Methods ===================================*/
 
 /* Virtual draw function */
-static int _znotes_draw(void* obj) 
+static int _znotes_draw(void* obj)
 {
     znotes* _zns;
     znote* _zn;
     znote* _zn_prev;			/* previous note */
-    
+
     /* check for object */
     ZCHECK_OBJ_INT(obj);
     _zn = (znote*) obj;
     _zns = (znotes*) zgeneric_get_collection_pointer(_zn);
-    
+
     /* Reset counter */
     if(_zns->_znotes_counter > _zns->parent.count)
 	_zns->_znotes_counter = 0;
-    
+
     if(_zns->_znotes_counter == 0)
 	_znotes_draw_helper(_zns);
 
@@ -205,7 +205,7 @@ static int _znotes_draw(void* obj)
 	    if((_zns->_note_height +_zn_prev->parent.y - _zn->parent.y) > Z_NOTE_LINE_HEIGHT)
 		_zn->parent.y = _zn_prev->parent.y + _zns->_note_height * 2;
 	}
-    
+
     _zns->_znotes_counter++;
     return znote_draw(_zn);
 }
@@ -218,7 +218,7 @@ static int _znotes_delete(void* obj)
     /* check object */
     ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;
-    
+
     znote_delete(Z_NOTE(_zg));
     return ZELIA_OK;
 }
@@ -232,7 +232,7 @@ static int _znotes_draw_helper(znotes* obj)
     PangoFontDescription* _desc;
     PangoAttrList* _attr_list;
     PangoAttribute* _attr;
-    
+
     ZCHECK_OBJ_INT(obj);
 
     /* check if title was set */
@@ -242,10 +242,10 @@ static int _znotes_draw_helper(znotes* obj)
     /* Get device object */
     _device = zgenerics_get_device(obj->super_cls);
     ZCHECK_OBJ_INT(_device);
-    
+
     _dev_c = zdevice_get_context(_device);
     ZCHECK_OBJ_INT(_dev_c);
-    
+
     /* save cairo context */
     cairo_save(_dev_c);
 
@@ -278,13 +278,13 @@ static int _znotes_draw_helper(znotes* obj)
 	    pango_layout_set_attributes(_layout, _attr_list);
 	}
     pango_cairo_show_layout(_dev_c, _layout);
-    
+
     /* pango_attribute_destroy(_attr); */
     if(obj->uline_flg)
 	pango_attr_list_unref(_attr_list);
 
     g_object_unref(_layout);
-    
+
     /* restore cairo context */
     cairo_restore(_dev_c);
 
@@ -294,7 +294,7 @@ static int _znotes_draw_helper(znotes* obj)
     _desc = NULL;
     _attr_list = NULL;
     _attr = NULL;
-    
+
     return 0;
 }
 
@@ -302,11 +302,11 @@ static int _znotes_draw_helper(znotes* obj)
 static int _znotes_get_note_height(zgeneric* obj, void* usr_data, int height)
 {
     znotes* _notes;
-    
+
     /* Check objects */
     ZCHECK_OBJ_INT(obj);
     ZCHECK_OBJ_INT(usr_data);
-    
+
     _notes = (znotes*) usr_data;
     if(height <= 0)
 	{
@@ -315,5 +315,5 @@ static int _znotes_get_note_height(zgeneric* obj, void* usr_data, int height)
 	}
 
     _notes->_note_height = pango_units_to_double(height);
-    return 0;	
+    return 0;
 }
