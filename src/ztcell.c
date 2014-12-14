@@ -27,10 +27,13 @@ zgeneric* ztcell_new(ztcell* obj)
 	}
 
     /* Set properties */
+    obj->ref_flg = 0;
+
     obj->_row_ix = 0;
     obj->_col_ix = 0;
     obj->child = NULL;
-    obj->content[0] = '\0';
+    obj->content_sz = 0;    
+    obj->content = NULL;
 
     obj->line_flg = 1;
 
@@ -57,6 +60,11 @@ void ztcell_delete(ztcell* obj)
     /* delete parent object */
     zbase_delete(&obj->parent);
 
+    if(obj->content && obj->content_sz > 0)
+	free(obj->content);
+    obj->content = NULL;
+    obj->ref_flg = 0;
+    obj->content_sz = 0;
     obj->child = NULL;
     obj->super_cls = NULL;
 

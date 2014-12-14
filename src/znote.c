@@ -27,11 +27,17 @@ zgeneric* znote_new(znote* obj)
 	}
 
     /* Set properties */
-    obj->ix = 0;			/* index set to nothing */
-    obj->note[0] = '\0';
+    obj->ix = 0;				/* index set to nothing */
+    obj->note = NULL;
     obj->fnote = NULL;
     obj->indent = Z_NOTE_INDENT;		/* default note index */
     obj->note_sz = 0;
+
+    /*
+     * flag to indicate content is referenced,
+     * this prevents the object copying the string to internal memory
+     */
+    obj->ref_flg = 0;
 
 
     obj->height_func = NULL;
@@ -61,6 +67,12 @@ void znote_delete(znote* obj)
     /* Call destructor of parent object */
     zbase_delete(&obj->parent);
 
+    if(obj->note)
+	free(obj->note);
+    if(obj->fnote)
+	free(obj->note);
+    obj->note = NULL;
+    obj->fnote = NULL;
     obj->super_cls = NULL;
     obj->child = NULL;
     obj->cols = NULL;
@@ -175,13 +187,31 @@ int znote_set_content(znote* obj, const char* content, int ix)
 	    free(obj->fnote);
 	    obj->fnote = NULL;
 	}
-    /* if length exceeds buffer size, return fail */
-    if(obj->note_sz < Z_NOTE_BUFF)
-	strcpy(obj->note, content);
-    else
-	return ZELIA_NOTE_ERROR;
     
-    return 0;
+    if(obj->note)
+	free(obj->note);
+
+    if(obj->ref_flg == 0)
+	{
+	    obj->note = (char*) malloc(sizeof(char) * (obj->note_sz + ));
+	    if(!strcpy(obj->note, content);)
+		return ZELIA_NOTE_ERROR;
+	}
+    else
+	obj->note = (char*) content;
+        
+    return ZELIA_OK;
+}
+
+int znote_set_content_with_ref(znote* obj, const char* content, int ix)
+{
+    /* check arguments */
+    ZCHECK_OBJ_INT(obj);
+    ZCHECK_OBJ_INT(content);
+
+    /* set the reference flag */
+    obj->ref_flg = 1;
+    return znote_set_content(obj, content, ix);
 }
 
 
@@ -199,6 +229,7 @@ const char* znote_get_note_with_ix(znote* obj)
     if(obj->fnote)
 	return obj->fnote;
 
+    /* this section should be more optimised */
     _t = sizeof(int) + sizeof(char) * 2 + Z_NOTE_BUFF;
     obj->fnote = (char*) malloc(_t);
     

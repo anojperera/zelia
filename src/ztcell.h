@@ -20,7 +20,9 @@ struct _ztcell
 {
     zbase parent;					/* Inherited parent object */
     unsigned int _init_flg;				/* Internal flag */
-    char content[Z_TCELL_BUFF];				/* Content buffer */
+    size_t content_sz;					/* content size */
+    char* content;					/* Content buffer */
+    unsigned int ref_flg;				/* reference flag */
     unsigned int _row_ix;				/* Internal row index */
     unsigned int _col_ix;				/* Internal column index */
     unsigned int line_flg;				/* Line flag */
@@ -49,10 +51,26 @@ extern "C" {
     {
 	ZCHECK_OBJ_INT(obj);
 	ZCHECK_OBJ_INT(content);
-	memset(obj->content, 0, Z_TCELL_BUFF);
-	strncpy(obj->content, content, Z_TCELL_BUFF-1);
-	obj->content[Z_TCELL_BUFF-1] = '\0';
-	return 0;
+	
+	obj->content_sz = strlen(content);
+	
+	if(obj->content)
+	    free(obj->content);
+
+	/*
+	 * if reference flag is set we just set the
+	 * reference to the content to be deleted in destructor
+	*/
+	if(obj->ref_flg > 0)
+	    obj->content = (char*) content;
+	else
+	    {
+		obj->content = (char*) malloc(sizeof(char) * (obj->content_sz + ));
+		strncpy(obj->content, content, obj->content_sz);
+		obj->content[obj->content_sz] = '\0';
+	    }
+
+	return ZELIA_OK;
     }
     inline __attribute__ ((always_inline)) static const char* ztcell_get_content(ztcell* obj)
     {

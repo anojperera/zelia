@@ -23,8 +23,9 @@ struct _znote
 {
     zbase parent;			/* Inherited parent object */
     unsigned int _init_flg;		/* Internal flag */
+    unsigned int ref_flg;		/* reference flag */
     int ix;				/* Note index */
-    char note[Z_NOTE_BUFF];		/* Note content buffer */
+    char* note;				/* Note content buffer */
     char* fnote;			/* Note and index */
     double indent;			/* Indent */
     size_t note_sz;			/* Note length */
@@ -54,15 +55,13 @@ extern "C" {
 
     /* Set and get note content */
     int znote_set_content(znote* obj, const char* content, int ix);
+    int znote_set_content_with_ref(znote* obj, const char* content, int ix);
     inline __attribute__ ((always_inline)) static const char* znote_get_content(znote* obj)
     {
 	/* check object */
 	ZCHECK_OBJ_PTR(obj);
 
-	if(obj->note[0] != '\0')
-	    return obj->note;
-	else
-	    return NULL;
+	return obj->note;
     }
     inline __attribute__ ((always_inline)) static int znote_get_ix(znote* obj)
     {
@@ -83,6 +82,12 @@ extern "C" {
 	ZCHECK_OBJ_DOUBLE(obj);
 	return obj->indent;
     }
+
+    /* enable and disable flags reference */
+#define znote_enable_ref(obj)			\
+    (obj)->ref_flg = 1
+#define znote_disable_ref(obj)			\
+    (obj)->ref_flg = 0
 
 #ifdef __cplusplus
 }
