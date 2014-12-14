@@ -340,7 +340,6 @@ int _create_attrib_object(xmlNodePtr node, struct _zparser* parser)
 /* create notes object */
 int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 {
-    blist _buffer;
     char* _widths=NULL, _xs=NULL, _ys=NULL;
     double _x=0.0, _y=0.0, _width=0.0;
     char* _t_buff;
