@@ -83,9 +83,11 @@ void ztrows_delete(ztrows* obj)
     /* if the destructor callback was set we call it */
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* call delete method of parent object */
-    zgenerics_delete(obj->super_cls);
+    else
+	{
+	    /* call delete method of parent object */
+	    zgenerics_delete(obj->super_cls);
+	}
 
     obj->child = NULL;
     obj->super_cls = NULL;

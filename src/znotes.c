@@ -72,12 +72,11 @@ void znotes_delete(znotes* obj)
     ZCHECK_OBJ_VOID(obj);
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* Call delete method of parent object */
-    zgenerics_delete(&obj->parent);
-
-    /* delete device object */
-    zdevice_delete(obj->super_cls->device);
+    else
+	{
+	    /* Call delete method of parent object */
+	    zgenerics_delete(&obj->parent);
+	}
 
     ZGENERIC_INIT_VTABLE(obj);
     obj->super_cls = NULL;

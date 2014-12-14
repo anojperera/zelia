@@ -100,9 +100,11 @@ void ztcells_delete(ztcells* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	
-    /* call delete method of parent object */
-    zgenerics_delete(&obj->parent);
+    else
+	{
+	    /* call delete method of parent object */
+	    zgenerics_delete(&obj->parent);
+	}
 
     obj->child = NULL;
     obj->super_cls = NULL;

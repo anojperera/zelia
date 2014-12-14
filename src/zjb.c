@@ -72,9 +72,11 @@ void zjb_delete(zjb* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* Call parent destructor */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* Call parent destructor */
+	    zbase_delete(&obj->parent);
+	}
 
     /* Call destructor of terminal collection
      * if internally set */

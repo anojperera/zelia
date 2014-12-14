@@ -56,9 +56,11 @@ void ztcell_delete(ztcell* obj)
     /* if the destruct pointer was set we call it */
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* delete parent object */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* delete parent object */
+	    zbase_delete(&obj->parent);
+	}
 
     if(obj->content && obj->content_sz > 0)
 	free(obj->content);

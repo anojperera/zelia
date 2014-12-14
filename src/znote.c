@@ -63,9 +63,11 @@ void znote_delete(znote* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    
-    /* Call destructor of parent object */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* Call destructor of parent object */
+	    zbase_delete(&obj->parent);
+	}
 
     if(obj->note)
 	free(obj->note);

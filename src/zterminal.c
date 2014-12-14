@@ -51,9 +51,11 @@ void zterminal_delete(zterminal* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* delete parent object */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* delete parent object */
+	    zbase_delete(&obj->parent);
+	}
 
 
     obj->child = NULL;

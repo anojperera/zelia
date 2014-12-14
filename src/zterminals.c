@@ -125,9 +125,11 @@ void zterminals_delete(zterminals* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete(obj->super_cls);
-
-    /* call delete method of parent object */
-    zgenerics_delete(&obj->parent);
+    else
+	{
+	    /* call delete method of parent object */
+	    zgenerics_delete(&obj->parent);
+	}
 
     free(obj->x_links);
     free(obj->y_links);

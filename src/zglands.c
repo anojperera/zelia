@@ -46,9 +46,11 @@ void zglands_delete(zglands* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* Call delete method of parent object */
-    zgenerics_delete(&obj->parent);
+    else
+	{
+	    /* Call delete method of parent object */
+	    zgenerics_delete(&obj->parent);
+	}
 
     obj->child = NULL;
     obj->super_cls = NULL;

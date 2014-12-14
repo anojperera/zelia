@@ -50,9 +50,11 @@ void ztable_delete(ztable* obj)
 
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* delete parent */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* delete parent */
+	    zbase_delete(&obj->parent);
+	}
 
     /* call to delete row collection */
     if(obj->arr_flg)

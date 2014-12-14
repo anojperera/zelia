@@ -78,9 +78,11 @@ void zgland_delete(zgland* obj)
     /* if child destructor callback method set we call it */
     if(obj->vtable.zgeneric_delete)
 	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-
-    /* Call destructor of parent object */
-    zbase_delete(&obj->parent);
+    else
+	{
+	    /* Call destructor of parent object */
+	    zbase_delete(&obj->parent);
+	}
 
     ZGENERIC_INIT_VTABLE(obj);
     obj->child = NULL;
