@@ -119,15 +119,6 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
     char* _buff;						/* temporary buffer */
     xmlDocPtr _xml;						/* xml document pointer */
     xmlNodePtr _root_node = NULL;
-    xmlNodePtr _node = NULL;
-    xmlNodePtr _t_node = NULL;
-    unsigned long _count = 0;
-    unsigned long _cnt = 0;					/* general purpose counter */
-
-    struct zfile_attrib_field* _field_itr = NULL;		/* field iterator */
-    
-    xmlChar* _prop_val;
-    xmlChar* _value;
     
     /* check for object */
     if(obj == NULL)
@@ -152,15 +143,36 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
     ZELIA_LOG_MESSAGE("zfile_attrib iterating through the document");
     _root_node = xmlDocGetRootElement(_xml);
 
-    /* get a count */
-    _count = xmlChildElementCount(_root_node);
-    obj->field_count = (size_t) _count;
+    zfile_attrib_parse_from_node(obj, _root_node);
+
+    xmlFreeDoc(_xml);
+    xmlCleanupParser();
     
+    ZELIA_LOG_MESSAGE("zelia_attrib complete parsing the file");
+    return ZELIA_OK;
+}
+
+/* set attribute notes from an xml node */
+int zfile_attrib_parse_from_node(zfile_attrib* obj, xmlNodePtr root_node)
+{
+    unsigned long _count = 0;
+    unsigned long _cnt = 0;					/* general purpose counter */
+
+    struct zfile_attrib_field* _field_itr = NULL;		/* field iterator */
+
+    xmlNodePtr _node = NULL;
+    xmlNodePtr _t_node = NULL;
+
+    xmlChar* _prop_val;
+    xmlChar* _value;
+
+    /* get a count */
+    _count = xmlChildElementCount(root_node);
+    obj->field_count = (size_t) _count;
+
     if(_count == 0)
 	{
 	    ZELIA_LOG_MESSAGE("zfile_attrib xml element count is zero, therefore we bailing");
-	    xmlFreeDoc(_xml);
-	    xmlCleanupParser();
 	    return ZELIA_ATTRIB_ERROR;
 	}
 
@@ -172,9 +184,9 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
     /*
      * We set the field array iterator to set the values.
      */
-    _field_itr = obj->field_array;    
-    
-    _node = xmlFirstElementChild(_root_node);
+    _field_itr = obj->field_array;
+
+    _node = xmlFirstElementChild(root_node);
     while(_node)
 	{
 	    _t_node = _node;
@@ -192,15 +204,11 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
 
 	    if(++_cnt >= _count)
 		break;
-	    
+
 	    _field_itr++;
 	    _node = xmlNextElementSibling(_node);
 	}
 
-    xmlFreeDoc(_xml);
-    xmlCleanupParser();
-    
-    ZELIA_LOG_MESSAGE("zelia_attrib complete parsing the file");
     return ZELIA_OK;
 }
 

@@ -59,6 +59,7 @@ extern "C" {
      * of zfile_attrib_set_field_array()
      */
     int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path);
+    int zfile_attrib_parse_from_node(zfile_attrib* obj, xmlNodePtr node);
     
 #define zfile_attrib_set_table_name(obj, value)	\
     (obj)->attrib_tbl_name = (value)
