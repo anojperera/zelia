@@ -80,6 +80,8 @@ void zgenerics_delete(zgenerics* obj)
     /* check for object */
     ZCHECK_OBJ_VOID(obj);
 
+    if(obj->vtable.(obj)->vtable.zgeneric_delete)
+	obj->vtable.(obj)->vtable.zgeneric_delete((void* obj);
 
     _zgenerics_del_helper(obj);
 
