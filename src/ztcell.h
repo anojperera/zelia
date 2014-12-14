@@ -65,7 +65,7 @@ extern "C" {
 	    obj->content = (char*) content;
 	else
 	    {
-		obj->content = (char*) malloc(sizeof(char) * (obj->content_sz + ));
+		obj->content = (char*) malloc(sizeof(char) * (obj->content_sz + 1));
 		strncpy(obj->content, content, obj->content_sz);
 		obj->content[obj->content_sz] = '\0';
 	    }

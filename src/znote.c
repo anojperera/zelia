@@ -195,8 +195,8 @@ int znote_set_content(znote* obj, const char* content, int ix)
 
     if(obj->ref_flg == 0)
 	{
-	    obj->note = (char*) malloc(sizeof(char) * (obj->note_sz + ));
-	    if(!strcpy(obj->note, content);)
+	    obj->note = (char*) malloc(sizeof(char) * (obj->note_sz + 1));
+	    if(!strcpy(obj->note, content))
 		return ZELIA_NOTE_ERROR;
 	}
     else

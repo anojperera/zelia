@@ -6,6 +6,7 @@
 #define _ZNOTES_H_
 
 #include <stdlib.h>
+#include <string.h>
 #include "zdevice.h"
 #include "zgenerics.h"
 #include "znote.h"
@@ -24,7 +25,7 @@ struct _znotes
     double x;					/* x coord */
     double y;					/* y coord */
     double _note_height;			/* Note height */
-    char title[Z_NOTES_TITLE_BUFF];		/* Title buffer */
+    char title;					/* Title buffer */
     unsigned int uline_flg;			/* Underline flag */
     unsigned int _znotes_counter;
     unsigned int counter;			/* Counter */
@@ -65,13 +66,15 @@ extern "C" {
     /* Set and get title text */
     inline __attribute__ ((always_inline)) static int znotes_set_title(znotes* obj, const char* title)
     {
+	size_t _sz = 0;
 	ZCHECK_OBJ_INT(obj);
 
-	/* If the title string length exceeds buffer
-	 * return error */
-	if(strlen(title) >= Z_NOTES_TITLE_BUFF)
-	    return ZELIA_NOTES_ERROR;
-
+	if(obj->title)
+	    free(obj->title);
+	
+	_sz = strlen(title);
+	obj->title = (char*) malloc(sizeof(char) * (_sz + 1));
+	
 	/* copy to internal buffer */
 	strcpy(obj->title, title);
 	return ZELIA_OK;

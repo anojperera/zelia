@@ -85,7 +85,7 @@ int zelia_parse_file(const char* xml_path)
 
     /* initialise object array */
     blist_new(&_parser.object_array, _delete_helper);
-    
+
     if(!zfile_new(&_parser.file))
 	return ZELIA_PARSER_ERROR;
 
@@ -340,7 +340,7 @@ int _create_attrib_object(xmlNodePtr node, struct _zparser* parser)
 /* create notes object */
 int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 {
-    char* _widths=NULL, _xs=NULL, _ys=NULL;
+    char* _widths=NULL, *_xs=NULL, *_ys=NULL;
     double _x=0.0, _y=0.0, _width=0.0;
     char* _t_buff;
     struct _zobject* _obj = NULL;
@@ -360,7 +360,7 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 	    /* when all three parameters are set, we come out of the loop */
 	    if(_xs && _ys && _widths)
 		break;
-	    _child = xmlNextElementSibling(_child);	    
+	    _child = xmlNextElementSibling(_child);
 	}
 
     /* convert the values to doubles */
@@ -371,15 +371,32 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
     /* create notes object collection */
     _obj = (struct _zobject*) malloc(sizeof(struct _zobject));
     _obj->type = zobject_cols;
-    
+
     _obj->data._c = znotes_new(NULL, &parser->device, _x, _y, _width);
 
     /* push to the collection */
     blist_add_from_end(&parser->object_array, (void*) _obj);
 
-    
+    /* set the reference flag */
+    if(!zgenerics_get_ref_flg(_obj->data._c))
+	zgenerics_toggle_ref_flg(_obj->data._c);
 
-    
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    /* iterater through the array again and add notes to the collection */
+	    if(strcmp(_child->name, ZPARSER_TITLE) == 0)
+		{
+
+		}
+	    else if(strcmp(_child->name, ZPARSER_TITLE) == 0)
+		{
+
+		}
+	    _child = xmlNextElementSibling(_child);
+	}
+
+
     if(_xs)
 	free(_xs);
     if(_ys)
@@ -405,7 +422,7 @@ int _finalise_parser(struct _zparser* parser)
 static void _delete_helper(void* data)
 {
     struct _zobject* _obj = NULL;
-    
+
     if(data == NULL)
 	return;
 

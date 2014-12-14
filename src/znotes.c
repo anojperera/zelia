@@ -44,7 +44,7 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
     obj->x = x;
     obj->y = y;
     obj->_note_height = 0.0;
-    obj->title[0] = '\0';
+    obj->title = NULL;
     obj->uline_flg = 1;
     obj->counter = 0;
     obj->_znotes_counter = 0;
@@ -79,6 +79,9 @@ void znotes_delete(znotes* obj)
 	}
 
     ZGENERIC_INIT_VTABLE(obj);
+    if(obj->title)
+	free(obj->title);
+    obj->title = NULL;
     obj->super_cls = NULL;
     obj->child = NULL;
 
