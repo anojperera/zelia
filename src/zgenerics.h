@@ -18,6 +18,7 @@ struct _zgenerics
     unsigned int _init_flg;				/* internal flag */
     unsigned int count;					/* count of objects */
     unsigned int expansion_flg;				/* expansion flag */
+    unsigned int ref_flg;				/* reference flag */
 
 
     blist generics_d;					/* dynamically expandable collection */
@@ -80,7 +81,16 @@ extern "C" {
 #define zgenerics_increment_counter(obj)	\
     (obj)->count++
 #define zgenerics_decrement_counter(obj)	\
-    (obj)->count--    
+    (obj)->count--
+#define zgenerics_toggle_ref_flg(obj)		\
+    if((obj)->ref_flg > 0)			\
+	(obj)->ref_flg = 0;			\
+    else					\
+	(obj)->ref_flg = 1
+
+#define zgenerics_get_ref_flg(obj)		\
+    (obj)->ref_flg
+    
 #ifdef __cplusplus
 }
 #endif

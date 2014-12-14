@@ -62,6 +62,8 @@ zgenerics* zgenerics_new(zgenerics* obj,
 	    obj->count = 0;				/* counter set to zero */
 	}
 
+    obj->ref_flg = 0;
+    
     /* initialise the vtable */
     ZGENERIC_INIT_VTABLE(obj);
     
@@ -89,7 +91,8 @@ void zgenerics_delete(zgenerics* obj)
     obj->child = NULL;
     obj->usr_data = NULL;
     obj->count = 0;
-
+    obj->ref_flg = 0;
+    
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
 
