@@ -202,13 +202,16 @@ static void _zgenerics_callback_delete(void* usr_obj, void* obj)
 /* Draw callback function */
 static int _zgenerics_callback_draw(void* usr_obj, void* obj, unsigned int ix)
 {
-    zgenerics* _zg;
+    zgenerics* _zgs;
     /* indicate failure if objects were NULL */
     if(usr_obj == NULL || obj == NULL)
 	return 1;
 
-    _zg = (zgenerics*) usr_obj;
+    _zgs = (zgenerics*) usr_obj;
 
     /* Call draw function pointer of child pointer */
-    return _zg->vtable.zgeneric_draw(obj);
+    if(_zgs->vtable.zgeneric_draw)
+	return _zgs->vtable.zgeneric_draw(obj);
+    else
+	return ZELIA_OK;
 }
