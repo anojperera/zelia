@@ -115,7 +115,11 @@ int znotes_add(znotes* obj, const char* note)
     zgeneric_set_default_dev_context(_zg);
 
     /* increment counter and set note content */
-    znote_set_content(_note, note, ++obj->counter);
+    if(zgenerics_get_ref_flg(obj->super_cls) > 0)
+	znote_set_content_with_ref(_note, note, ++obj->counter);
+    else
+	znote_set_content(_note, note, ++obj->counter);
+    
     obj->_height = (double) (obj->counter + 1) * Z_NOTE_LINE_HEIGHT;
     
     /* Set base coordinates */
