@@ -104,8 +104,8 @@ zgenerics* zterminals_new(zterminals* obj,
 	}
 
     /* set function pointers of parent object */
-    zgeneric_set_delete_callback(obj, _zterminals_delete);
     zgeneric_set_draw(obj, _zterminals_draw);
+    zgeneric_set_delete_callback(obj, _zterminals_delete);
 
     /* child pointer of base object */
     zgeneric_set_child_pointer(obj);
@@ -124,12 +124,14 @@ void zterminals_delete(zterminals* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete(obj->super_cls);
-    else
 	{
-	    /* call delete method of parent object */
-	    zgenerics_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete(obj->super_cls);
+	    return;
 	}
+
+    /* call delete method of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zgenerics_delete(&obj->parent);
 
     free(obj->x_links);
     free(obj->y_links);
@@ -151,12 +153,12 @@ void zterminals_delete(zterminals* obj)
 /* Virtual delete function */
 static int _zterminals_delete(void* obj)
 {
-    zgeneric* _zg;
+    zgenerics* _zgs;
 
     ZCHECK_OBJ_INT(obj);
-    _zg = (zgeneric*) obj;
+    _zgs = (zgenerics*) obj;
 
-    zterminal_delete(Z_TERMINAL(_zg));
+    zterminals_delete(Z_TERMINALS(_zgs));
 
     return ZELIA_OK;
 }

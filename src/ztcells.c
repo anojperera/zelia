@@ -5,7 +5,7 @@
 #include "zVar.h"
 
 /* Virtual functions */
-static int _ztcell_delete(void* obj);				/* delete function */
+static int _ztcells_delete(void* obj);				/* delete function */
 static int _ztcell_draw(void* obj);				/* draw function */
 
 /* Constructor */
@@ -80,8 +80,8 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
 	}
 
     /* Set parent properties */
-    zgeneric_set_delete_callback(obj, _ztcell_delete);
     zgeneric_set_draw(obj, _ztcell_draw);
+    zgeneric_set_delete_callback(obj, _ztcells_delete);
 
     /* Parent user data set as self */
     obj->parent.usr_data = (void*) obj;
@@ -99,12 +99,15 @@ void ztcells_delete(ztcells* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* call delete method of parent object */
-	    zgenerics_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* call delete method of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zgenerics_delete(&obj->parent);
+
 
     obj->child = NULL;
     obj->super_cls = NULL;
@@ -121,14 +124,14 @@ void ztcells_delete(ztcells* obj)
 /*=================================== Private Methods ===================================*/
 
 /* Virtual delete function */
-static int _ztcell_delete(void* obj)
+static int _ztcells_delete(void* obj)
 {
-    zgeneric* _zg = NULL;
+    zgenerics* _zgs = NULL;
 	
     ZCHECK_OBJ_INT(obj);
 	
-    _zg = (zgeneric*) obj;
-    ztcell_delete(Z_TCELL(_zg));
+    _zgs = (zgenerics*) obj;
+    ztcells_delete(Z_TCELLS(_zgs));
 
     return ZELIA_OK;
 }

@@ -11,6 +11,7 @@
 
 /* Virtual function */
 static int _znote_draw(void* obj);
+static int _znote_delete(void* obj);
 
 /* Constructor */
 zgeneric* znote_new(znote* obj)
@@ -48,6 +49,7 @@ zgeneric* znote_new(znote* obj)
 
     /* Set child and function pointers of parent object */
     zgeneric_set_draw(obj, _znote_draw);
+    zgeneric_set_delete_callback(obj, _znote_delete);
 
     zgeneric_set_child_pointer(obj);
 
@@ -62,12 +64,15 @@ void znote_delete(znote* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* Call destructor of parent object */
-	    zbase_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* Call destructor of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zbase_delete(&obj->parent);
+
 
     if(obj->note)
 	free(obj->note);
@@ -253,4 +258,17 @@ static int _znote_draw(void* obj)
     _zg = (zgeneric*) obj;
     
     return znote_draw(Z_NOTE(_zg));
+}
+
+/* Delete callback from parent */
+static int _znote_delete(void* obj)
+{
+    zgeneric* _zg = NULL;
+    
+    ZCHECK_OBJ_INT(obj);
+    
+    _zg = (zgeneric*) obj;
+        
+    znote_delete(Z_NOTE(_zg));
+    return ZELIA_OK;
 }

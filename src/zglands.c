@@ -29,8 +29,8 @@ zgenerics* zglands_new(zglands* obj)
     ZGENERIC_INIT_VTABLE(obj);
 
     /* set function pointers of parent object */
-    zgeneric_set_delete_callback(obj, _zglands_delete);
     zgeneric_set_draw(obj, _zglands_draw);
+    zgeneric_set_delete_callback(obj, _zglands_delete);
 
     /* set child pointer */
     zgeneric_set_child_pointer(obj);
@@ -45,12 +45,15 @@ void zglands_delete(zglands* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* Call delete method of parent object */
-	    zgenerics_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* Call delete method of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zgenerics_delete(&obj->parent);
+
 
     obj->child = NULL;
     obj->super_cls = NULL;
@@ -100,12 +103,12 @@ int zglands_add(zglands* obj,
 /* Virtual delete function */
 static int _zglands_delete(void* obj)
 {
-    zgeneric* _zg;
+    zgenerics* _zgs;
 
     ZCHECK_OBJ_INT(obj);
-    _zg = (zgeneric*) obj;
+    _zgs = (zgenerics*) obj;
 
-    zgland_delete(Z_GLAND(_zg));
+    zglands_delete(Z_GLANDS(_zgs));
 
     return ZELIA_OK;
 }

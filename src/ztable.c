@@ -6,6 +6,7 @@
 /* Virtual function */
 
 static int _ztable_draw(void* obj);
+static int _ztable_delete(void* obj);
 
 /* Constructor */
 zgeneric* ztable_new(ztable* obj)
@@ -33,6 +34,7 @@ zgeneric* ztable_new(ztable* obj)
 
     /* set drawing pointer */
     zgeneric_set_draw(obj, _ztable_draw);
+    zgeneric_set_delete_callback(obj, _ztable_delete);
 
     /* set child pointer */
     zgeneric_set_child_pointer(obj);
@@ -49,12 +51,15 @@ void ztable_delete(ztable* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* delete parent */
-	    zbase_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* delete parent */
+    zgeneric_block_parent_destructor(obj);
+    zbase_delete(&obj->parent);
+
 
     /* call to delete row collection */
     if(obj->arr_flg)
@@ -270,4 +275,15 @@ static int _ztable_draw(void* obj)
 	return _self->vtable.zgeneric_draw(obj);
 
     return _rt;
+}
+
+static int _ztable_delete(void* obj)
+{
+    zgeneric* _zg = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+    _zg = (zgeneric*) obj;
+
+    ztable_delete(Z_TABLE(_zg));
+    return ZELIA_OK;
 }

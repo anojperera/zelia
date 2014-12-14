@@ -4,6 +4,7 @@
 #include "zbase.h"
 
 /* Virtual function call back */
+static int _zbase_delete_function(void* obj);
 static int _zbase_draw_function(void* obj);
 static int _zbase_default_device_auth(void* obj);
 
@@ -32,6 +33,7 @@ zgeneric* zbase_new(zbase* obj)
     /* set parent objects function pointers */
     zgeneric_set_draw(obj, _zbase_draw_function);
     zgeneric_set_device_auth_default_callback(obj, _zbase_default_device_auth);
+    zgeneric_set_delete_callback(obj, _zbase_delete_function);
     
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
@@ -46,11 +48,16 @@ void zbase_delete(zbase* obj)
     ZCHECK_OBJ_VOID(obj);
     /* if function pointer was set call it */
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	{
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
+	}
+
+    zgeneric_block_parent_destructor(obj);
+    zgeneric_delete(&obj->parent);
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    zgeneric_delete(&obj->parent);
 
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
@@ -93,6 +100,19 @@ static int _zbase_default_device_auth(void* obj)
     _self = Z_BASE(_zg);
     if(_self->vtable.zgeneric_auth_default_device)
 	return _self->vtable.zgeneric_auth_default_device(obj);
+
+    return ZELIA_OK;
+}
+
+/* delete callback method from parent */
+static int _zbase_delete_function(void* obj)
+{
+    zgeneric* _zg = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+
+    _zg = (zgeneric*) obj;
+    zbase_delete(Z_BASE(_zg));
 
     return ZELIA_OK;
 }

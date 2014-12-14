@@ -9,6 +9,7 @@
 
 /* Virtual functions */
 static int _zgland_draw(void* obj);
+static int _zgland_delete(void* obj);
 
 /* Constructor */
 zgeneric* zgland_new(zgland* obj,		/* optional object */
@@ -61,6 +62,7 @@ zgeneric* zgland_new(zgland* obj,		/* optional object */
 
     /* Set function pointers of parent object */
     zgeneric_set_draw(obj, _zgland_draw);
+    zgeneric_set_delete_callback(obj, _zgland_delete);
 
     /* Set child pointer of parent object and return
      * top level object */
@@ -77,12 +79,15 @@ void zgland_delete(zgland* obj)
 
     /* if child destructor callback method set we call it */
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* Call destructor of parent object */
-	    zbase_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* Call destructor of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zbase_delete(&obj->parent);
+
 
     ZGENERIC_INIT_VTABLE(obj);
     obj->child = NULL;
@@ -186,4 +191,16 @@ static int _zgland_draw(void* obj)
 	return _self->vtable.zgeneric_draw(obj);
 
     return _rt;
+}
+
+static int _zgland_delete(void* obj)
+{
+    zgeneric* _zg = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+    _zg = (zgeneric*) obj;
+
+    zgland_delete(Z_GLAND(_zg));
+
+    return ZELIA_OK;
 }

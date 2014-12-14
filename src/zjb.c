@@ -10,7 +10,7 @@
 
 /* Virtual function */
 static int _zjb_draw(void* obj);
-
+static int _zjb_delete(void* obj);
 
 /* Constructor */
 zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
@@ -57,6 +57,7 @@ zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
 
     /* Assign function pointer of parent object */
     zgeneric_set_draw(obj, _zjb_draw);
+    zgeneric_set_delete_callback(obj, _zjb_delete);
 
     /* Set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
@@ -71,12 +72,14 @@ void zjb_delete(zjb* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* Call parent destructor */
-	    zbase_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* Call parent destructor */
+    zgeneric_block_parent_destructor(obj);
+    zbase_delete(&obj->parent);
 
     /* Call destructor of terminal collection
      * if internally set */
@@ -304,4 +307,16 @@ static int _zjb_draw(void* obj)
 	return _zjb->vtable.zgeneric_draw(obj);
 
     return _rt;
+}
+
+static int _zjb_delete(void* obj)
+{
+    zgeneric* _zg = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+
+    _zg = (zgeneric*) obj;
+
+    zjb_delete(Z_JB(_zg));
+    return  ZELIA_OK;
 }

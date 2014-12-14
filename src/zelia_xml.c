@@ -52,7 +52,6 @@ static zelia_object_types _get_type(const char* tag_name);
 int _main_loop(xmlNodePtr node, struct _zparser* parser);
 
 static void _delete_helper(void* data);
-static void _delete_helper_notes(void* data);
 
 int _create_file_object(xmlNodePtr node, struct _zparser* parser);
 int _create_attrib_object(xmlNodePtr node, struct _zparser* parser);
@@ -270,6 +269,7 @@ int _main_loop(xmlNodePtr node, struct _zparser* parser)
 		    _create_attrib_object(_node, parser);
 		    break;
 		case znotes_type:
+		    _create_notes_object(_node, parser);
 		    break;
 		case ztable_type:
 		default:
@@ -350,11 +350,11 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
     _child = xmlFirstElementChild(node);
     while(_child)
 	{
-	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X))
+	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
 		_xs = (char*) xmlNodeGetContent(_child);
-	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y))
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
 		_ys = (char*) xmlNodeGetContent(_child);
-	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB))
+	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
 		_widths = (char*) xmlNodeGetContent(_child);
 
 	    /* when all three parameters are set, we come out of the loop */
@@ -379,24 +379,30 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 
     /* set the reference flag */
     if(!zgenerics_get_ref_flg(_obj->data._c))
-	zgenerics_toggle_ref_flg(_obj->data._c);
+	{
+	    zgenerics_toggle_ref_flg(_obj->data._c);
+	}
 
     _child = xmlFirstElementChild(node);
     while(_child)
 	{
 	    /* iterater through the array again and add notes to the collection */
-	    if(strcmp(_child->name, ZPARSER_TITLE) == 0)
+	    if(strcmp((const char*) _child->name, ZPARSER_TITLE) == 0)
 		{
-
+		    _t_buff = (char*) xmlNodeGetContent(_child);
+		    znotes_set_title(Z_NOTES(_obj->data._c), _t_buff);
 		}
-	    else if(strcmp(_child->name, ZPARSER_TITLE) == 0)
+	    else if(strcmp((const char*) _child->name, ZPARSER_NOTE) == 0)
 		{
-
+		    _t_buff = (char*) xmlNodeGetContent(_child);
+		    znotes_add(Z_NOTES(_obj->data._c), _t_buff);
 		}
 	    _child = xmlNextElementSibling(_child);
 	}
 
-
+    /* call draw method */
+    zgenerics_draw(_obj->data._c);
+    
     if(_xs)
 	free(_xs);
     if(_ys)
@@ -410,7 +416,16 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 /* delete objects by calling their destructor */
 int _finalise_parser(struct _zparser* parser)
 {
+    const char* _buff = NULL;
+
+    /* get buffer */
+    _buff = zdevice_get_temp_buff(&parser->device);
+
+    /* add to the file object */
+    zfile_parse_and_insert_elements(&parser->file, _buff);
+
     /* clean up */
+    blist_delete(&parser->object_array);
     zdevice_delete(&parser->device);
 
     zfile_attrib_delete(&parser->attrib);
@@ -419,6 +434,7 @@ int _finalise_parser(struct _zparser* parser)
     return ZELIA_OK;
 }
 
+/* delete helper for clearing the object array */
 static void _delete_helper(void* data)
 {
     struct _zobject* _obj = NULL;
@@ -428,5 +444,17 @@ static void _delete_helper(void* data)
 
     _obj = (struct _zobject*) data;
 
+    if(_obj->type == zobject_item)
+	{
+	    zgeneric_delete(_obj->data._i);
+	    _obj->data._i = NULL;
+	}
+    else if(_obj->type == zobject_cols)
+	{
+	    zgenerics_delete(_obj->data._c);
+	    _obj->data._c = NULL;
+	}
+
+    free(data);
     return;
 }

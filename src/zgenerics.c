@@ -81,7 +81,10 @@ void zgenerics_delete(zgenerics* obj)
     ZCHECK_OBJ_VOID(obj);
 
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj);
+	{
+	    obj->vtable.zgeneric_delete((void*) obj);
+	    return;
+	}
 
     _zgenerics_del_helper(obj);
 
@@ -89,7 +92,7 @@ void zgenerics_delete(zgenerics* obj)
 	free(obj->generics_s);
 
     zdevice_delete(obj->device);
-
+    
     obj->generics_s = NULL;
     obj->device = NULL;
     obj->child = NULL;
@@ -182,13 +185,13 @@ static inline int _zgenerics_del_helper(zgenerics* obj)
 /* Delete callback function */
 static void _zgenerics_callback_delete(void* usr_obj, void* obj)
 {
-    zgenerics* _zg;
+    zgeneric* _zg;
     /* indicate failure if objects were NULL */
-    if(obj == NULL || usr_obj == NULL)
+    if(obj == NULL)
 	return;
 
-    _zg = (zgenerics*) usr_obj;
-
+    _zg = (zgeneric*) obj;
+    
     /* Call delete function pointer of child pointer */
     if(_zg->vtable.zgeneric_delete)
 	_zg->vtable.zgeneric_delete(obj);

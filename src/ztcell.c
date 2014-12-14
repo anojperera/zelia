@@ -11,6 +11,7 @@
 
 /* Virtual functions */
 static int _ztcell_draw(void* obj);
+static int _ztcell_delete(void* obj);
 
 /* Constructor */
 zgeneric* ztcell_new(ztcell* obj)
@@ -42,7 +43,7 @@ zgeneric* ztcell_new(ztcell* obj)
 
     /* set parent objects function pointers */
     zgeneric_set_draw(obj, _ztcell_draw);
-
+    zgeneric_set_delete_callback(obj, _ztcell_delete);
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
     return obj->super_cls;
@@ -55,12 +56,15 @@ void ztcell_delete(ztcell* obj)
 
     /* if the destruct pointer was set we call it */
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* delete parent object */
-	    zbase_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* delete parent object */
+    zgeneric_block_parent_destructor(obj);
+    zbase_delete(&obj->parent);
+
 
     if(obj->content && obj->content_sz > 0)
 	free(obj->content);
@@ -125,7 +129,7 @@ int ztcell_draw(ztcell* obj)
 	    cairo_restore(_dev_c);
 	}
 
-    if(obj->content[0] != '\0')
+    if(obj->content != NULL)
     	{
     	    /* Translate to coordinates */
     	    _x = _base->x + ZTCELL_TEXT_LEFT;
@@ -180,4 +184,16 @@ static int _ztcell_draw(void* obj)
 	return _self->vtable.zgeneric_draw(obj);
 
     return _rt;
+}
+
+static int _ztcell_delete(void* obj)
+{
+    zgeneric* _zg = NULL;
+
+    ZCHECK_OBJ_INT(obj);
+
+    _zg = (zgeneric*) obj;
+
+    ztcell_delete(Z_TCELL(_zg));
+    return ZELIA_OK;
 }

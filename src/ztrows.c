@@ -64,8 +64,8 @@ zgenerics* ztrows_new(ztrows* obj,			/* optional argument */
     ZGENERIC_INIT_VTABLE(obj);
 
     /* Set function pointers of parent object */
-    zgeneric_set_delete_callback(obj, _ztrows_delete);
     zgeneric_set_draw(obj, _ztrows_draw);
+    zgeneric_set_delete_callback(obj, _ztrows_delete);
 
     /* Set child pointer and user data of parent */
     zgeneric_set_child_pointer(obj);
@@ -82,12 +82,14 @@ void ztrows_delete(ztrows* obj)
 
     /* if the destructor callback was set we call it */
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* call delete method of parent object */
-	    zgenerics_delete(obj->super_cls);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* call delete method of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zgenerics_delete(obj->super_cls);
 
     obj->child = NULL;
     obj->super_cls = NULL;
@@ -106,12 +108,12 @@ void ztrows_delete(ztrows* obj)
 /* Virtual delete method */
 static int _ztrows_delete(void* obj)
 {
-    zgeneric* _zg;
+    zgenerics* _zgs;
 
     ZCHECK_OBJ_INT(obj);
-    _zg = (zgeneric*) obj;
+    _zgs = (zgenerics*) obj;
 
-    ztrow_delete(Z_TROW(_zg));
+    ztrows_delete(Z_TROWS(_zgs));
 
     return ZELIA_OK;
 }

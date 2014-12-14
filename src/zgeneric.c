@@ -34,7 +34,10 @@ void zgeneric_delete(zgeneric* obj)
      * If delete pointer was set call it first
      */
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj);
+	{
+	    obj->vtable.zgeneric_delete((void*) obj);
+	    return;
+	}
 
     /* delete the device object if it was internally created */
     zdevice_delete(obj->gdev);

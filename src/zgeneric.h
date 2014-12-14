@@ -169,6 +169,12 @@ extern "C" {
     (obj)->cols = (collection)
 #define zgeneric_get_collection_pointer(obj)	\
     ((obj)? (obj)->super_cls->cols : NULL)
+
+    /* helper macro to indicate parent called the destructor */
+#define zgeneric_called_by_parent(obj)					\
+    ((obj)->parent.vtable.zgeneric_delete? ZELIA_OK : ZELIA_NULL)
+#define zgeneric_block_parent_destructor(obj)	\
+    (obj)->parent.vtable.zgeneric_delete = NULL
 #ifdef __cplusplus
 }
 #endif

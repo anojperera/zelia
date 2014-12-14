@@ -53,8 +53,8 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
     ZGENERIC_INIT_VTABLE(obj);
 
     /* Set function poiters of parent object */
-    zgeneric_set_delete_callback(obj, _znotes_delete);
     zgeneric_set_draw(obj, _znotes_draw);
+    zgeneric_set_delete_callback(obj, _znotes_delete);
 
     /* set child pointer of parent object */
     zgeneric_set_child_pointer(obj);
@@ -71,12 +71,14 @@ void znotes_delete(znotes* obj)
     /* Check object */
     ZCHECK_OBJ_VOID(obj);
     if(obj->vtable.zgeneric_delete)
-	obj->vtable.zgeneric_delete((void*) obj->super_cls);
-    else
 	{
-	    /* Call delete method of parent object */
-	    zgenerics_delete(&obj->parent);
+	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
+	    return;
 	}
+
+    /* Call delete method of parent object */
+    zgeneric_block_parent_destructor(obj);
+    zgenerics_delete(&obj->parent);
 
     ZGENERIC_INIT_VTABLE(obj);
     if(obj->title)
@@ -215,13 +217,13 @@ static int _znotes_draw(void* obj)
 /* Virtual delete function */
 static int _znotes_delete(void* obj)
 {
-    zgeneric* _zg = NULL;
+    zgenerics* _zgs = NULL;
 
     /* check object */
     ZCHECK_OBJ_INT(obj);
-    _zg = (zgeneric*) obj;
+    _zgs = (zgenerics*) obj;
 
-    znote_delete(Z_NOTE(_zg));
+    znotes_delete(Z_NOTES(_zgs));
     return ZELIA_OK;
 }
 

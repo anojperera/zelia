@@ -25,7 +25,7 @@ struct _znotes
     double x;					/* x coord */
     double y;					/* y coord */
     double _note_height;			/* Note height */
-    char title;					/* Title buffer */
+    char* title;					/* Title buffer */
     unsigned int uline_flg;			/* Underline flag */
     unsigned int _znotes_counter;
     unsigned int counter;			/* Counter */
@@ -73,10 +73,15 @@ extern "C" {
 	    free(obj->title);
 	
 	_sz = strlen(title);
-	obj->title = (char*) malloc(sizeof(char) * (_sz + 1));
+	if(zgenerics_get_ref_flg(obj->super_cls))
+	    obj->title = (char*) title;
+	else
+	    {
+		obj->title = (char*) malloc(sizeof(char) * (_sz + 1));
 	
-	/* copy to internal buffer */
-	strcpy(obj->title, title);
+		/* copy to internal buffer */
+		strcpy(obj->title, title);
+	    }
 	return ZELIA_OK;
     }
     inline __attribute__ ((always_inline)) static const char* znotes_get_title(znotes* obj)
