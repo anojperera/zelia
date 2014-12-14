@@ -26,6 +26,30 @@
 
 #define Z_TEMP_FILE_DIR "/tmp/"
 
+typedef enum {
+    /* item classes */
+    zunknown_type,
+    zgeneric_type,
+    zfile_type,
+    zfile_attrib_type,
+    zbase_type,
+    zgland_type,
+    zjb_type,
+    zterminal_type,
+    znote_type,
+    ztcell_type,
+    ztrow_type,
+    ztable_type,
+
+    /* collection classes */
+    zgenerics_type,
+    zglands_type,
+    znotes_type,
+    zterminals_type,
+    ztrows_type,
+    ztcells_type
+} zelia_object_types;
+
 /* file types handled by the system */
 typedef enum {
     zFile_Type_SVG,
@@ -146,7 +170,6 @@ typedef enum {
 #define Z_M16_GLAND 16.0
 #define Z_M20_GLAND 20.0
 #define Z_M25_GLAND 25.0
-
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
