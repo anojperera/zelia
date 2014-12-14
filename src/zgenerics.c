@@ -80,23 +80,23 @@ void zgenerics_delete(zgenerics* obj)
     /* check for object */
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.(obj)->vtable.zgeneric_delete)
-	obj->vtable.(obj)->vtable.zgeneric_delete(void* obj);
+    if(obj->vtable.zgeneric_delete)
+	obj->vtable.zgeneric_delete((void*) obj);
 
     _zgenerics_del_helper(obj);
 
     if(obj->generics_s)
 	free(obj->generics_s);
-    
+
     zdevice_delete(obj->device);
-    
+
     obj->generics_s = NULL;
     obj->device = NULL;
     obj->child = NULL;
     obj->usr_data = NULL;
     obj->count = 0;
     obj->ref_flg = 0;
-    
+
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
 
