@@ -374,9 +374,6 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 
     _obj->data._c = znotes_new(NULL, &parser->device, _x, _y, _width);
 
-    /* push to the collection */
-    blist_add_from_end(&parser->object_array, (void*) _obj);
-
     /* set the reference flag */
     if(!zgenerics_get_ref_flg(_obj->data._c))
 	{
@@ -402,6 +399,10 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 
     /* call draw method */
     zgenerics_draw(_obj->data._c);
+
+
+    /* push to the collection */
+    blist_add_from_end(&parser->object_array, (void*) _obj);    
     
     if(_xs)
 	free(_xs);
@@ -417,13 +418,13 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 int _finalise_parser(struct _zparser* parser)
 {
     const char* _buff = NULL;
-
+    
     /* get buffer */
     _buff = zdevice_get_temp_buff(&parser->device);
 
     /* add to the file object */
     zfile_parse_and_insert_elements(&parser->file, _buff);
-
+    
     /* clean up */
     blist_delete(&parser->object_array);
     zdevice_delete(&parser->device);
