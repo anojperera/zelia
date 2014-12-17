@@ -9,6 +9,7 @@
 #include <fcntl.h>
 
 #include "zVar.h"
+#include "zelia_parser.h"
 #include "zfile_attrib.h"
 
 #define ZFILE_ATTRIB_PROP_1 "id"
@@ -118,7 +119,7 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
     size_t _buff_sz = 0;
     char* _buff;						/* temporary buffer */
     xmlDocPtr _xml;						/* xml document pointer */
-    xmlNodePtr _root_node = NULL;
+    xmlNodePtr _root_node = NULL, _child = NULL;
     
     /* check for object */
     if(obj == NULL)
@@ -142,8 +143,18 @@ int zfile_attrib_parse_attrib_xml(zfile_attrib* obj, const char* file_path)
 
     ZELIA_LOG_MESSAGE("zfile_attrib iterating through the document");
     _root_node = xmlDocGetRootElement(_xml);
+    
+    _child = xmlFirstElementChild(_root_node);
+    /* iterate until attrib node is found */
+    while(_child)
+	{
+	    if(strcmp((const char*) _child->name, ZPARSER_SHEET_ATTRIB) == 0)
+		break;
+	    _child = xmlNextElementSibling(_child);
+	}
+    
 
-    zfile_attrib_parse_from_node(obj, _root_node);
+    zfile_attrib_parse_from_node(obj, _child);
 
     xmlFreeDoc(_xml);
     xmlCleanupParser();
