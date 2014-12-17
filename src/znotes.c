@@ -107,7 +107,7 @@ int znotes_add(znotes* obj, const char* note)
 
     /* Check if title of the notes were set if
      * not return it */
-    if(obj->title[0] == '\0')
+    if(obj->title == NULL)
 	return ZELIA_NOTES_ERROR;
 
     _zg = znote_new(NULL);
@@ -240,7 +240,7 @@ static int _znotes_draw_helper(znotes* obj)
     ZCHECK_OBJ_INT(obj);
 
     /* check if title was set */
-    if(obj->title[0] == '\0')
+    if(obj->title == NULL)
 	return ZELIA_NOTES_ERROR;
 
     /* Get device object */

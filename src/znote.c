@@ -112,7 +112,7 @@ int znote_draw(znote* obj)
     ZCHECK_OBJ_INT(_dev_c);
 
     /* check if content was assigned */
-    if(obj->note[0] == '\0' || obj->ix <= 0)
+    if(obj->note == NULL || obj->ix <= 0)
 	return ZELIA_NOTE_ERROR;
 
     /* get index into a buffer */
@@ -228,7 +228,7 @@ const char* znote_get_note_with_ix(znote* obj)
     size_t _t;
     
     ZCHECK_OBJ_PTR(obj);
-    if(obj->note[0] == '\0' || obj->ix <= 0)
+    if(obj->note == NULL || obj->ix <= 0)
 	return NULL;
 
     /* If the fnote was created in a previous call
