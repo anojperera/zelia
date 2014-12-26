@@ -172,8 +172,8 @@ static inline int _zgenerics_del_helper(zgenerics* obj)
 	    /* iterate through static collection and destructors */
 	    for(_i=0; _i<obj->count; _i++)
 		{
-		    if(obj->vtable.zgeneric_delete && obj->generics_s[_i])
-			obj->vtable.zgeneric_delete((void*) obj->generics_s[_i]);
+		    if(obj->generics_s[_i])
+			zgeneric_delete(obj->generics_s[_i]);
 		    obj->generics_s[_i] = NULL;
 		}
 	}
