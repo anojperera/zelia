@@ -56,7 +56,11 @@ static void _delete_helper(void* data);
 int _create_file_object(xmlNodePtr node, struct _zparser* parser);
 int _create_attrib_object(xmlNodePtr node, struct _zparser* parser);
 int _create_notes_object(xmlNodePtr node, struct _zparser* parser);
+int _create_table_object(xmlNodePtr node, struct _zparser* parser);
 
+inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNodePtr node, zgeneric* object);
+inline __attribute__ ((always_inline)) static int _create_table_object_content(xmlNodePtr node, const xmlChar* content, zgeneric* object);
+    
 int _finalise_parser(struct _zparser* parser);
 
 int zelia_parse_file(const char* xml_path);
@@ -272,6 +276,8 @@ int _main_loop(xmlNodePtr node, struct _zparser* parser)
 		    _create_notes_object(_node, parser);
 		    break;
 		case ztable_type:
+		    _create_table_object(_node, parser);
+		    break;
 		default:
 		    break;
 		};
@@ -406,8 +412,8 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
 
 
     /* push to the collection */
-    blist_add_from_end(&parser->object_array, (void*) _obj);    
-    
+    blist_add_from_end(&parser->object_array, (void*) _obj);
+
     if(_xs)
 	free(_xs);
     if(_ys)
@@ -417,18 +423,106 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser)
     return ZELIA_OK;
 }
 
+/* create table object */
+int _create_table_object(xmlNodePtr node, struct _zparser* parser)
+{
+    xmlChar* _content = NULL, *_rows = NULL, *_cols = NULL;
+    double _dim_dbl = 0.0;
+    int _num_cols = 0, _num_rows = 0;
+    struct _zobject* _obj = NULL;
+
+    xmlNodePtr _child = NULL;
+
+
+    /* create notes object collection */
+    _obj = (struct _zobject*) malloc(sizeof(struct _zobject));
+    _obj->type = zobject_item;
+
+    /* create the table object */
+    _obj->data._i = ztable_new(NULL);
+
+    if(_obj->data._i == NULL)
+	{
+	    free(_obj);
+	    return ZELIA_NULL;
+	}
+    zgeneric_set_device(_obj->data._i, &parser->device);
+    zgeneric_set_default_dev_context(_obj->data._i);
+
+    /* set the reference flag this is so that retrieved values of xml to be freed */
+    if(!zgenerics_get_ref_flg(_obj->data._c))
+	{
+	    zgenerics_toggle_ref_flg(_obj->data._c);
+	}
+
+
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    _content = xmlNodeGetContent(_child);
+	    if(_content != NULL)
+		_dim_dbl = atof((char*) _content);
+
+	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
+		    zbase_set_base_coords_x(Z_BASE(_obj->data._i), _dim_dbl);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
+		    zbase_set_base_coords_y(Z_BASE(_obj->data._i), _dim_dbl);
+	    else if(strcmp((const char*) _child->name, ZPARSER_ROW_HEIGHT_ATTRIB) == 0)
+		    zbase_set_height(Z_BASE(_obj->data._i), _dim_dbl);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
+		    zbase_set_width(Z_BASE(_obj->data._i), _dim_dbl);
+	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_ROWS) == 0 && _rows == NULL)
+		    _rows = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_COLUMNS) == 0 && _cols == NULL)
+		    _cols = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_COLUMN) == 0)
+		_create_table_object_dim(_child, _obj->data._i);
+	    else if(strcmp((const char*) _child->name, ZPARSER_CONTENT) == 0)
+		_create_table_object_content(_child, _content, _obj->data._i);
+
+	    /* set numbeer of rows and columns */
+	    if(_cols && _rows)
+		{
+		    _num_rows = atoi((char*) _rows);
+		    _num_cols = atoi((char*) _cols);
+
+		    ztable_set_rows_and_cols(Z_TABLE(_obj->data._i), _num_rows, _num_cols);
+
+		    xmlFree(_rows);
+		    xmlFree(_cols);
+		    
+		    _cols = NULL;
+		    _rows = NULL;		    
+		}
+
+	    /* free copy */
+	    if(_content)
+		xmlFree(_content);
+
+	    _content = NULL;
+	    _child = xmlNextElementSibling(_child);
+	}
+
+    /* call draw method */
+    zgeneric_draw(_obj->data._i);
+
+    /* push to the collection */
+    blist_add_from_end(&parser->object_array, (void*) _obj);
+
+    return ZELIA_OK;
+}
 
 /* delete objects by calling their destructor */
 int _finalise_parser(struct _zparser* parser)
 {
     const char* _buff = NULL;
-    
+
     /* get buffer */
     _buff = zdevice_get_temp_buff(&parser->device);
 
     /* add to the file object */
     zfile_parse_and_insert_elements(&parser->file, _buff);
-    
+
     /* clean up */
     blist_delete(&parser->object_array);
     zdevice_delete(&parser->device);
@@ -462,4 +556,55 @@ static void _delete_helper(void* data)
 
     free(data);
     return;
+}
+
+/* helper method for setting the width of columns */
+inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNodePtr node, zgeneric* object)
+{
+    int _ix = 0;
+    double _w = 0.0;
+    xmlChar* _val = NULL;
+    xmlChar* _attrib_val = NULL;
+
+    /* check if width property was set, if found set the value */
+    _attrib_val = xmlGetProp(node, (xmlChar*) ZPARSER_COLUMN_WIDTH_ATTRIB);
+    _val = xmlNodeGetContent(node);
+    if(_attrib_val != NULL)
+	_w = atof((char*) _attrib_val);
+
+    if(_val != NULL)
+	_ix = atoi((char*) _val);
+
+    ztable_set_column_width(Z_TABLE(object), _ix, _w);    
+
+    xmlFree(_attrib_val);
+    xmlFree(_val);
+
+    return ZELIA_OK;
+}
+
+/* set table content */
+inline __attribute__ ((always_inline)) static int _create_table_object_content(xmlNodePtr node, const xmlChar* content, zgeneric* object)
+{
+    int _col_ix = 0, _row_ix = 0;
+    xmlChar* _col_ch = NULL, *_row_ch = NULL;
+
+    _col_ch = xmlGetProp(node, (xmlChar*) ZPARSER_COL_IX_ATTRIB);
+    _row_ch = xmlGetProp(node, (xmlChar*) ZPARSER_ROW_IX_ATTRIB);
+
+    if(_col_ch)
+	{
+	    _col_ix = atoi((char*) _col_ch);
+	    xmlFree(_col_ch);
+	}
+
+    if(_row_ch)
+	{
+	    _row_ix = atoi((char*) _row_ch);
+	    xmlFree(_row_ch);
+	}
+
+    /* if content pointer is not null we set the content */
+    ztable_set_content(Z_TABLE(object), _row_ix, _col_ix, (const char*) content);
+    return ZELIA_OK;
 }
