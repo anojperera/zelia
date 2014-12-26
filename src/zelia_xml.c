@@ -312,8 +312,12 @@ int _create_file_object(xmlNodePtr node, struct _zparser* parser)
 
     if(strcmp(_sheet_size, ZPARSER_SHEET_A4_PORT) == 0)
 	_sheet_type = zSheetA4_Portrait;
+    else if(strcmp(_sheet_size, ZPARSER_SHEET_A4_LAND) == 0)
+	_sheet_type = zSheetA4_Landscape;
+    else if(strcmp(_sheet_size, ZPARSER_SHEET_A3_PORT) == 0)
+       _sheet_type = zSheetA3_Portrait;
     else
-	_sheet_type = zSheetA4_Portrait;
+       _sheet_type = zSheetA3_Landscape;
 
     zdevice_new2(_sheet_type, 0, &parser->device);
 
