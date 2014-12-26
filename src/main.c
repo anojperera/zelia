@@ -86,7 +86,7 @@ int create_drawing(zfile* obj)
 {
     zdevice dev;		/* device object */
 
-    /* zgeneric* table;		/\* table *\/ */
+    zgeneric* table;		/* table */
     zgenerics* notes;		/* note */
 
     const char* _buff = NULL;
@@ -96,16 +96,16 @@ int create_drawing(zfile* obj)
 		 &dev);
 
 
-    /* table = ztable_new(NULL); */
-    /* zgeneric_set_device(table, &dev); */
-    /* zgeneric_set_default_dev_context(table); */
+    table = ztable_new(NULL);
+    zgeneric_set_device(table, &dev);
+    zgeneric_set_default_dev_context(table);
 
-    /* zbase_set_base_coords(Z_BASE(table), 40.0, 120.0); */
-    /* zbase_set_width_and_height(Z_BASE(table), 160.0, 30.0); */
-    /* ztable_set_rows_and_cols(Z_TABLE(table), 3, 4); */
-    /* ztable_set_column_width(Z_TABLE(table), 0, 60.0); */
-    /* ztable_set_column_width(Z_TABLE(table), 2, 60.0); */
-    /* ztable_set_content(Z_TABLE(table), 0, 1, "DAMPERS"); */
+    zbase_set_base_coords(Z_BASE(table), 40.0, 120.0);
+    zbase_set_width_and_height(Z_BASE(table), 160.0, 30.0);
+    ztable_set_rows_and_cols(Z_TABLE(table), 3, 4);
+    ztable_set_column_width(Z_TABLE(table), 0, 60.0);
+    ztable_set_column_width(Z_TABLE(table), 2, 60.0);
+    ztable_set_content(Z_TABLE(table), 0, 1, "DAMPERS");
 
     notes = znotes_new(NULL, &dev, 260.0, 130.0, 150.0);
     znotes_set_title(Z_NOTES(notes), "DAMPER OPERATION");
@@ -115,7 +115,7 @@ int create_drawing(zfile* obj)
 
 
     zgenerics_draw(notes);
-    /* zgeneric_draw(table); */
+    zgeneric_draw(table);
 
     /* get buffer */
     _buff = zdevice_get_temp_buff(&dev);
@@ -124,7 +124,7 @@ int create_drawing(zfile* obj)
     zfile_parse_and_insert_elements(obj, _buff);
 
     /* delete objects */
-    /* ztable_delete(Z_TABLE(table)); */
+    ztable_delete(Z_TABLE(table));
     znotes_delete(Z_NOTES(notes));
 
 
