@@ -16,6 +16,7 @@
 #define ZPARSER_TABLE_ROWS "rows"
 #define ZPARSER_TABLE_ROW "row"
 #define ZPARSER_TABLE_COLUMNS "columns"
+#define ZPARSER_TABLE_COLUMN "column"
 #define ZPARSER_COLUMN_WIDTH_ATTRIB "width"
 #define ZPARSER_ROW_HEIGHT_ATTRIB "height"
 #define ZPARSER_ROW_IX_ATTRIB "row_ix"
