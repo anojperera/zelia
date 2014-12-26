@@ -51,6 +51,22 @@ extern "C" {
 	return ZELIA_OK;
     }
 
+    inline __attribute__ ((always_inline)) static int zbase_set_base_coords_x(zbase* obj, double x)
+    {
+	/* check for object pointers */
+	ZCHECK_OBJ_INT(obj);
+	obj->x = x;
+	return ZELIA_OK;
+    }
+
+    inline __attribute__ ((always_inline)) static int zbase_set_base_coords_y(zbase* obj, double y)
+    {
+	/* check for object pointers */
+	ZCHECK_OBJ_INT(obj);
+	obj->y = y;
+	return ZELIA_OK;
+    }
+
     /* Set orientation angle */
     inline __attribute__ ((always_inline)) static int zbase_set_orientation(zbase* obj, double ang)
     {
