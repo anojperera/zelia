@@ -14,8 +14,8 @@
    height="1052.3622"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
-   sodipodi:docname="Wozair Border (A3).svg">
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="wozair_border_a3.svg">
   <defs
      id="defs4">
     <marker
@@ -999,17 +999,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.79142005"
+     inkscape:zoom="0.52566645"
      inkscape:cx="745.55598"
      inkscape:cy="527.29588"
      inkscape:document-units="px"
      inkscape:current-layer="layer9"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1014"
-     inkscape:window-x="-4"
-     inkscape:window-y="-4"
-     inkscape:window-maximized="1"
+     inkscape:window-width="1362"
+     inkscape:window-height="725"
+     inkscape:window-x="0"
+     inkscape:window-y="41"
+     inkscape:window-maximized="0"
      showguides="true"
      inkscape:guide-bbox="true" />
   <metadata
@@ -1527,7 +1527,7 @@
        id="text3143"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145"
+         id="drawing_no"
          x="1345.7007"
          y="1026.8973">C _ _ _ _ _ _</tspan></text>
     <text
@@ -1538,7 +1538,7 @@
        id="text3143-1"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145-7"
+         id="sheet_no"
          x="1431.1011"
          y="1026.7407">_</tspan></text>
     <text
@@ -1549,7 +1549,7 @@
        id="text3143-0"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145-9"
+         id="revision_no"
          x="1458.8691"
          y="1026.9735">_</tspan></text>
     <text
@@ -1560,7 +1560,7 @@
        id="text3143-4"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145-8"
+         id="drawing_no_top"
          x="46.877857"
          y="35.081768">CXXXXXX</tspan></text>
     <text
@@ -1571,7 +1571,7 @@
        id="text3143-1-8"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145-7-2"
+         id="sheet_no_top"
          x="144.18907"
          y="33.193096">_</tspan></text>
     <text
@@ -1582,7 +1582,7 @@
        id="text3143-0-4"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3145-9-5"
+         id="revision_no_top"
          x="182.04625"
          y="33.15794">_</tspan></text>
     <text
@@ -1593,7 +1593,7 @@
        id="text3220"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222"
+         id="client"
          x="1129.3577"
          y="913.87024">- - -</tspan></text>
     <text
@@ -1604,7 +1604,7 @@
        id="text3220-5"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-1"
+         id="site"
          x="1129.4873"
          y="927.75848">- - -</tspan></text>
     <text
@@ -1615,7 +1615,7 @@
        id="text3220-1"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-15"
+         id="job_no"
          x="1129.361"
          y="941.64813">W _ _ _ _</tspan></text>
     <text
@@ -1626,7 +1626,7 @@
        id="text3220-7"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-6"
+         id="order_no"
          x="1245.781"
          y="941.64813">_ _ _ _ _ _ _ _ _</tspan></text>
     <text
@@ -1637,7 +1637,7 @@
        id="text3220-4"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-2"
+         id="drawn_by"
          x="1377.0212"
          y="928.12573">_ _</tspan></text>
     <text
@@ -1648,7 +1648,7 @@
        id="text3220-2"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-21"
+         id="drawn_date"
          x="1376.6489"
          y="941.94458">_ _ / _ _ / _ _ _ _</tspan></text>
     <text
@@ -1659,7 +1659,7 @@
        id="text3220-4-6"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-2-8"
+         id="checked_by"
          x="1376.3611"
          y="956.24939">_ _</tspan></text>
     <text
@@ -1670,7 +1670,7 @@
        id="text3220-2-5"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-21-7"
+         id="checked_date"
          x="1375.9888"
          y="970.06824">_ _ / _ _ / _ _ _ _</tspan></text>
     <text
@@ -1681,7 +1681,7 @@
        id="text3220-4-1"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-2-89"
+         id="approved_by"
          x="1376.0039"
          y="983.74939">_ _</tspan></text>
     <text
@@ -1692,7 +1692,7 @@
        id="text3220-2-2"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-21-79"
+         id="approved_date"
          x="1376.0105"
          y="997.8208">_ _ / _ _ / _ _ _ _</tspan></text>
     <text
@@ -1703,7 +1703,7 @@
        id="text3220-54"
        sodipodi:linespacing="100%"><tspan
          sodipodi:role="line"
-         id="tspan3222-3"
+         id="title"
          x="1129.1084"
          y="897.5802"
          style="font-size:14px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;font-family:Calibri;-inkscape-font-specification:Calibri">- - -</tspan></text>
