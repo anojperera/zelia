@@ -68,6 +68,8 @@ zgenerics* znotes_new(znotes* obj,		/* optional argument */
 /* Destructor */
 void znotes_delete(znotes* obj)
 {
+    zdevice* _device = NULL;
+
     /* Check object */
     ZCHECK_OBJ_VOID(obj);
     if(obj->vtable.zgeneric_delete)
@@ -75,6 +77,9 @@ void znotes_delete(znotes* obj)
 	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
 	    return;
 	}
+
+    _device = zgenerics_get_device(obj->super_cls);
+    zdevice_delete(_device);
 
     /* Call delete method of parent object */
     zgeneric_block_parent_destructor(obj);
@@ -298,6 +303,9 @@ static int _znotes_draw_helper(znotes* obj)
     _desc = NULL;
     _attr_list = NULL;
     _attr = NULL;
+
+    /* delete device as we have incremented its ref count */
+    zdevice_delete(_device);
 
     return 0;
 }

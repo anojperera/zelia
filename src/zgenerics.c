@@ -91,8 +91,6 @@ void zgenerics_delete(zgenerics* obj)
     if(obj->generics_s)
 	free(obj->generics_s);
 
-    zdevice_delete(obj->device);
-    
     obj->generics_s = NULL;
     obj->device = NULL;
     obj->child = NULL;
