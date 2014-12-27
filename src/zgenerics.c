@@ -193,9 +193,7 @@ static void _zgenerics_callback_delete(void* usr_obj, void* obj)
     _zg = (zgeneric*) obj;
     
     /* Call delete function pointer of child pointer */
-    if(_zg->vtable.zgeneric_delete)
-	_zg->vtable.zgeneric_delete(obj);
-
+    zgeneric_delete(_zg);
     return;
 }
 
