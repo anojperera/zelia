@@ -1,5 +1,5 @@
 #!/bin/bash
-gcc -g -Wall -O0 -pedantic -o zelia main.c zelia_xml.c zfile.c zfile_attrib.c \
+gcc -g -Wall -pg -O0 -pedantic -o zelia main.c zelia_xml.c zfile.c zfile_attrib.c \
     zbase.c zdevice.c zgeneric.c zgenerics.c zgland.c zglands.c \
     zjb.c znote.c znotes.c ztable.c ztcell.c ztcells.c zterminal.c \
     zterminals.c ztrow.c ztrows.c -D_GNU_SOURCE \
