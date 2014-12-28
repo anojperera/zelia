@@ -24,6 +24,8 @@
 #include "znote.h"
 #include "znotes.h"
 
+#define ZELIA_XML_TSTRUCT_ALIGN 8
+
 struct _zobject
 {
     enum _zobject_primary_type
@@ -57,10 +59,15 @@ int _create_file_object(xmlNodePtr node, struct _zparser* parser);
 int _create_attrib_object(xmlNodePtr node, struct _zparser* parser);
 int _create_notes_object(xmlNodePtr node, struct _zparser* parser);
 int _create_table_object(xmlNodePtr node, struct _zparser* parser);
+int _create_jb_object(xmlNodePtr node, struct _zparser* parser);
 
 inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNodePtr node, zgeneric* object);
 inline __attribute__ ((always_inline)) static int _create_table_object_content(xmlNodePtr node, const xmlChar* content, zgeneric* object);
-    
+inline __attribute__ ((always_inline)) static int _create_jb_object_helper(xmlNodePtr node, void* object);
+inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_helper(xmlNodePtr node, zgeneric* object);
+inline __attribute__ ((always_inline)) static int _create_jb_object_gland_helper(xmlNodePtr node, zgeneric* object);
+
+
 int _finalise_parser(struct _zparser* parser);
 
 int zelia_parse_file(const char* xml_path);
@@ -278,6 +285,9 @@ int _main_loop(xmlNodePtr node, struct _zparser* parser)
 		case ztable_type:
 		    _create_table_object(_node, parser);
 		    break;
+		case zjb_type:
+		    _create_jb_object(_node, parser);
+		    break;
 		default:
 		    break;
 		};
@@ -321,9 +331,9 @@ int _create_file_object(xmlNodePtr node, struct _zparser* parser)
     else if(strcmp(_sheet_size, ZPARSER_SHEET_A4_LAND) == 0)
 	_sheet_type = zSheetA4_Landscape;
     else if(strcmp(_sheet_size, ZPARSER_SHEET_A3_PORT) == 0)
-       _sheet_type = zSheetA3_Portrait;
+	_sheet_type = zSheetA3_Portrait;
     else
-       _sheet_type = zSheetA3_Landscape;
+	_sheet_type = zSheetA3_Landscape;
 
     zdevice_new2(_sheet_type, 0, &parser->device);
 
@@ -464,17 +474,17 @@ int _create_table_object(xmlNodePtr node, struct _zparser* parser)
 		_dim_dbl = atof((char*) _content);
 
 	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
-		    zbase_set_base_coords_x(Z_BASE(_obj->data._i), _dim_dbl);
+		zbase_set_base_coords_x(Z_BASE(_obj->data._i), _dim_dbl);
 	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
-		    zbase_set_base_coords_y(Z_BASE(_obj->data._i), _dim_dbl);
+		zbase_set_base_coords_y(Z_BASE(_obj->data._i), _dim_dbl);
 	    else if(strcmp((const char*) _child->name, ZPARSER_ROW_HEIGHT_ATTRIB) == 0)
-		    zbase_set_height(Z_BASE(_obj->data._i), _dim_dbl);
+		zbase_set_height(Z_BASE(_obj->data._i), _dim_dbl);
 	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
-		    zbase_set_width(Z_BASE(_obj->data._i), _dim_dbl);
+		zbase_set_width(Z_BASE(_obj->data._i), _dim_dbl);
 	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_ROWS) == 0 && _rows == NULL)
-		    _rows = xmlNodeGetContent(_child);
+		_rows = xmlNodeGetContent(_child);
 	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_COLUMNS) == 0 && _cols == NULL)
-		    _cols = xmlNodeGetContent(_child);
+		_cols = xmlNodeGetContent(_child);
 	    else if(strcmp((const char*) _child->name, ZPARSER_TABLE_COLUMN) == 0)
 		_create_table_object_dim(_child, _obj->data._i);
 	    else if(strcmp((const char*) _child->name, ZPARSER_CONTENT) == 0)
@@ -490,9 +500,9 @@ int _create_table_object(xmlNodePtr node, struct _zparser* parser)
 
 		    xmlFree(_rows);
 		    xmlFree(_cols);
-		    
+
 		    _cols = NULL;
-		    _rows = NULL;		    
+		    _rows = NULL;
 		}
 
 	    /* free copy */
@@ -500,6 +510,62 @@ int _create_table_object(xmlNodePtr node, struct _zparser* parser)
 		xmlFree(_content);
 
 	    _content = NULL;
+	    _child = xmlNextElementSibling(_child);
+	}
+
+    /* call draw method */
+    zgeneric_draw(_obj->data._i);
+
+    /* push to the collection */
+    blist_add_from_end(&parser->object_array, (void*) _obj);
+
+    return ZELIA_OK;
+}
+
+/* create junction boxes */
+int _create_jb_object(xmlNodePtr node, struct _zparser* parser)
+{
+    xmlNodePtr _child = NULL;
+    struct _zobject* _obj = NULL;
+    struct _jb_dims
+    {
+	double x __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double y __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double width __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double height __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double depth __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double radius __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+	double angle __attribute__ ((aligned (ZELIA_XML_TSTRUCT_ALIGN)));
+    } _jb_dim;
+
+    /* create notes object collection */
+    memset(&_jb_dim, 0, sizeof(struct _jb_dims));
+
+    _obj = (struct _zobject*) malloc(sizeof(struct _zobject));
+    _obj->type = zobject_item;
+
+    _child = xmlFirstElementChild(node);
+    _create_jb_object_helper(_child, (void*) &_jb_dim);
+
+    /* create junction box object */
+    _obj->data._i = zjb_new(NULL,
+			    &parser->device,
+			    _jb_dim.x,
+			    _jb_dim.y,
+			    _jb_dim.width,
+			    _jb_dim.height,
+			    _jb_dim.depth,
+			    _jb_dim.angle);
+
+    zjb_set_fillet_radius(Z_JB(_obj->data._i), _jb_dim.radius);
+
+    while(_child)
+	{
+	    if(strcmp((const char*) _child->name, ZPARSER_TERMINALS) == 0)
+		_create_jb_object_terminals_helper(_child, _obj->data._i);
+	    else if(strcmp((const char*) _child->name, ZPARSER_GLAND) == 0)
+		_create_jb_object_gland_helper(_child, _obj->data._i);
+
 	    _child = xmlNextElementSibling(_child);
 	}
 
@@ -575,7 +641,7 @@ inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNo
     if(_val != NULL)
 	_ix = atoi((char*) _val);
 
-    ztable_set_column_width(Z_TABLE(object), _ix, _w);    
+    ztable_set_column_width(Z_TABLE(object), _ix, _w);
 
     xmlFree(_attrib_val);
     xmlFree(_val);
@@ -606,5 +672,248 @@ inline __attribute__ ((always_inline)) static int _create_table_object_content(x
 
     /* if content pointer is not null we set the content */
     ztable_set_content(Z_TABLE(object), _row_ix, _col_ix, (const char*) content);
+    return ZELIA_OK;
+}
+
+
+inline __attribute__ ((always_inline)) static int _create_jb_object_helper(xmlNodePtr node, void* object)
+{
+    xmlChar *_xs = NULL;
+    xmlChar *_ys = NULL;
+    xmlChar *_widths = NULL;
+    xmlChar *_heights = NULL;
+    xmlChar *_depths = NULL;
+    xmlChar *_angles = NULL;
+    xmlChar *_radiuss = NULL;
+    double _x = 0.0, _y = 0.0, _width = 0.0, _height = 0.0, _depth = 0.0, _angle = 0.0, _radius = 0.0;
+    double* _ptr = (double*) object;
+
+    xmlNodePtr _child = NULL;
+
+    _child = node;
+    while(_child)
+	{
+
+	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
+		_xs = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
+		_ys = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
+		_widths = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_ROW_HEIGHT_ATTRIB) == 0)
+		_heights = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_DEPTH) == 0)
+		_depths = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_RADIUS) == 0)
+		_radiuss = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_ANGLE) == 0)
+		_angles = xmlNodeGetContent(_child);
+
+	    /* if all variables are set we exit loop here, otherwise continue looking */
+	    if(_xs && _ys && _widths && _heights && _depths && _radiuss && _angles)
+		break;
+
+    	    _child = xmlNextElementSibling(_child);
+	}
+
+
+    /* convert the variables and free the buffers */
+    if(_xs)
+	{
+	    _x = atof((const char*) _xs);
+	    xmlFree(_xs);
+	}
+    if(_ys)
+	{
+	    _y = atof((const char*) _ys);
+	    xmlFree(_ys);
+	}
+
+    if(_widths)
+	{
+	    _width = atof((const char*) _widths);
+	    xmlFree(_widths);
+	}
+
+    if(_heights)
+	{
+	    _height = atof((const char*) _heights);
+	    xmlFree(_heights);
+	}
+
+    if(_depths)
+	{
+	    _depth = atof((const char*) _depths);
+	    xmlFree(_depths);
+	}
+
+    if(_radiuss)
+	{
+	    _radius = atof((const char*) _radiuss);
+	    xmlFree(_radiuss);
+	}
+
+    if(_angles)
+	{
+	    _angle = atof((const char*) _angles);
+	    xmlFree(_angles);
+	}
+
+    *_ptr = _x;
+    _ptr++;
+
+    *_ptr = _y;
+    _ptr++;
+
+    *_ptr = _width;
+    _ptr++;
+
+    *_ptr = _height;
+    _ptr++;
+
+    *_ptr = _depth;
+    _ptr++;
+
+    *_ptr = _radius;
+    _ptr++;
+
+    *_ptr = _angle;
+
+    return ZELIA_OK;
+}
+
+inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_helper(xmlNodePtr node, zgeneric* object)
+{
+    xmlChar* _nums = NULL, *_widths = NULL, *_heights = NULL, *_links = NULL;
+    int _num = 0;
+    double _width = 0.0, _height = 0.0;
+
+    xmlNodePtr _child = NULL;
+
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    if(strcmp((const char*) _child->name, ZPARSER_TERMINALS_NUM) == 0)
+		_nums = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
+		_widths = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_ROW_HEIGHT_ATTRIB) == 0)
+		_heights = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_TERMINALS_LINKS) == 0)
+		_links = xmlNodeGetContent(_child);
+
+	    /* break from loop if we have obtained every thing */
+	    if(_nums && _widths && _heights && _links)
+		break;
+    	    _child = xmlNextElementSibling(_child);
+	}
+
+
+    if(_nums)
+	{
+	    _num = atoi((const char*) _nums);
+	    xmlFree(_nums);
+	}
+
+    if(_widths)
+	{
+	    _width = atof((const char*) _widths);
+	    xmlFree(_widths);
+	}
+
+    if(_heights)
+	{
+	    _height = atof((const char*) _heights);
+	    xmlFree(_heights);
+	}
+
+    /* check links pointer and add terminals */
+    if(_links)
+	{
+	    zjb_add_terminals(Z_JB(object),
+			      _num,
+			      _width,
+			      _height,
+			      (const char*) _links);
+	    xmlFree(_links);
+	}
+    else
+	{
+	    zjb_add_terminals(Z_JB(object),
+			      _num,
+			      _width,
+			      _height,
+			      NULL);
+	}
+
+    return ZELIA_OK;
+}
+
+
+inline __attribute__ ((always_inline)) static int _create_jb_object_gland_helper(xmlNodePtr node, zgeneric* object)
+{
+    xmlChar *_xs = NULL;
+    xmlChar *_ys = NULL;
+    xmlChar *_szs = NULL;
+    xmlChar *_hexs = NULL;
+
+    double _x = 0.0, _y = 0.0;
+    zGlandSize _sz = zM16;
+    int _hex = 0;
+    xmlNodePtr _child = NULL;
+
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
+		_xs = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
+		_ys = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_SIZE) == 0)
+		_szs = xmlNodeGetContent(_child);
+	    else if(strcmp((const char*) _child->name, ZPARSER_HEX_FLG) == 0)
+		_hexs = xmlNodeGetContent(_child);
+
+	    /* break if all interested variables are set */
+	    if(_xs && _ys && _szs && _hexs)
+		break;
+
+    	    _child = xmlNextElementSibling(_child);
+	}
+
+
+    if(_xs)
+	{
+	    _x = atof((const char*) _xs);
+	    xmlFree(_xs);
+	}
+
+    if(_ys)
+	{
+	    _y = atof((const char*) _ys);
+	    xmlFree(_ys);
+	}
+
+    if(_szs)
+	{
+	    if(strcmp((const char*) _szs, ZPARSER_GLAND_SZ_M16) == 0)
+		_sz = zM16;
+	    else if(strcmp((const char*) _szs, ZPARSER_GLAND_SZ_M20) == 0)
+		_sz = zM20;
+	    else
+		_sz = zM25;
+
+	    xmlFree(_szs);
+	}
+
+    if(_hexs)
+	{
+	    _hex = atoi((const char*) _hexs);
+	    xmlFree(_hexs);
+	}
+
+    /* add glands */
+    zjb_add_glands(Z_JB(object), _x, _y, _sz, _hex);
+
     return ZELIA_OK;
 }
