@@ -36,6 +36,7 @@ int create_drawing(zfile* obj);
 int create_gland(int argc, char** argv);
 int create_glands(int argc, char** argv);
 int create_note(int argc, char** argv);
+int create_jb(zfile* obj);
 
 extern int zelia_parse_file(const char* xml_path);
 
@@ -72,8 +73,9 @@ int test(int argc, char** argv)
 
     /* create_gland(argc, argv); */
     /* create_glands(argc, argv); */
-    create_drawing(&_file);
+    /* create_drawing(&_file); */
     /* create_note(argc, argv);     */
+    create_jb(&_file);
 
     /* clean up */
     zfile_attrib_delete(&_attrib);
@@ -226,6 +228,33 @@ int create_note(int argc, char** argv)
     znote_draw(Z_NOTE(note));
 
     zgeneric_delete(note);
+    zdevice_delete(&dev);
+
+    return 0;
+}
+
+int create_jb(zfile* obj)
+{
+    zdevice dev;
+    zgeneric* _jb = NULL;
+    const char* _buff = NULL;
+    
+    zdevice_new2(zSheetA3_Landscape,
+		 0,
+		 &dev);
+
+    _jb = zjb_new(NULL, &dev, 100.0, 150.0, 80.0, 80.0, 20.0, 0.0);
+    zjb_set_fillet_radius(Z_JB(_jb), 5.0);
+    
+    zjb_draw(Z_JB(_jb));
+
+    /* get buffer */
+    _buff = zdevice_get_temp_buff(&dev);
+
+    /* add to the file object */
+    zfile_parse_and_insert_elements(obj, _buff);    
+
+    zjb_delete(Z_JB(_jb));
     zdevice_delete(&dev);
 
     return 0;
