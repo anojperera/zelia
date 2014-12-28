@@ -261,7 +261,7 @@ int zjb_add_glands(zjb* obj,
 		   double x,					/* relative coordinate */
 		   double y,					/* relative coordinate */
 		   zGlandSize sz,				/* gland size */
-		   unsigned int hex_flg)				/* hex flag */
+		   unsigned int hex_flg)			/* hex flag */
 {
     zdevice* _dev;
     zbase* _base;

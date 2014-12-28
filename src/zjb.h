@@ -94,9 +94,9 @@ extern "C" {
     /* Add terminal collection */
     int zjb_add_terminals(zjb* obj,
 			  unsigned int num_term,			/* number of terminals */
-			  double width,				/* terminal width */
+			  double width,					/* terminal width */
 			  double height,				/* terminal height */
-			  const char* links);			/* terminal links */
+			  const char* links);				/* terminal links */
     
     /* Set and get gland collection */
     inline __attribute__ ((always_inline)) static int zjb_set_glands(zjb* obj, zgenerics* glands)
