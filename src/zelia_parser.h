@@ -19,6 +19,9 @@
 #define ZPARSER_TABLE_COLUMN "column"
 #define ZPARSER_COLUMN_WIDTH_ATTRIB "width"
 #define ZPARSER_ROW_HEIGHT_ATTRIB "height"
+#define ZPARSER_DEPTH "depth"
+#define ZPARSER_RADIUS "radius"
+#define ZPARSER_ANGLE "angle"
 #define ZPARSER_ROW_IX_ATTRIB "row_ix"
 #define ZPARSER_COL_IX_ATTRIB "col_ix"
 #define ZPARSER_CONTENT "content"
@@ -31,14 +34,22 @@
 #define ZPARSER_GLANDS "glands"
 #define ZPARSER_TERMINAL "terminal"
 #define ZPARSER_TERMINALS "terminals"
+#define ZPARSER_TERMINALS_NUM "num_terminals"
+#define ZPARSER_TERMINALS_LINKS "links"
 #define ZPARSER_TABLE_TCELL "cell"
 #define ZPARSER_TABLE_CELLS "cells"
 #define ZPARSER_GENERIC "generic"
 #define ZPARSER_GENERICS "generics"
+#define ZPARSER_SIZE "size"
+#define ZPARSER_HEX_FLG "hex"
 
 #define ZPARSER_SHEET_A4_PORT "A4_P"
 #define ZPARSER_SHEET_A4_LAND "A4_L"
 #define ZPARSER_SHEET_A3_PORT "A3_P"
 #define ZPARSER_SHEET_A3_LAND "A3_L"
+
+#define ZPARSER_GLAND_SZ_M16 "M16"
+#define ZPARSER_GLAND_SZ_M20 "M20"
+#define ZPARSER_GLAND_SZ_M25 "M25"
 
 #endif /* _ZELIA_PARSER_H_ */
