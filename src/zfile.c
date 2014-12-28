@@ -347,11 +347,7 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
 
 
     if(_zfile_find_node_by_name(_p_doc, ZFILE_DEF_NAME, &_p_def_itr) != ZELIA_OK)
-	{
-	    ZELIA_LOG_MESSAGE("zfile failed to find node while in parsed document");
-	    xmlFreeDoc(_p_doc);
-	    return ZELIA_FILE_COPY_ERROR;
-	}
+	ZELIA_LOG_MESSAGE("zfile failed to find node while in parsed document");
 
 
     /* get first element */
