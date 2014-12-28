@@ -36,7 +36,7 @@ zgenerics* zterminals_new(zterminals* obj,
 
     /* create parent object */
     if(!(obj->super_cls = zgenerics_new(&obj->parent,
-				       0,
+					0,
 					num_term)))
 	{
 	    /* If the object was created internally, delete it */
@@ -102,7 +102,7 @@ zgenerics* zterminals_new(zterminals* obj,
 	    obj->y_links[_i] = ang==90.0? y + (double) _i * width + width / 2 : y + 3 * height / 4;
 
 	}
-
+    
     /* set function pointers of parent object */
     zgeneric_set_draw(obj, _zterminals_draw);
     zgeneric_set_delete_callback(obj, _zterminals_delete);
@@ -178,7 +178,7 @@ static int _zterminals_draw(void* obj)
     zterminal_draw(Z_TERMINAL(_zg));
 
     /* if counter is reached max, draw links if required */
-    if(_zts->_d_counter == _zts->parent.count)
+    if(++_zts->_d_counter == _zts->parent.count)
 	{
 	    _zterminals_parser(_zts);
 	    _zts->_d_counter = 0;
@@ -196,6 +196,7 @@ static int _zterminals_parser(zterminals* obj)
     int _tnum[2];		/* Terminal number */
     int _st, _ed;		/* Start and end indexes */
     zdevice* _dev;		/* Device */
+    cairo_t* _dev_c;		/* cairo context */
     char* _tok2;		/* second token */
 
     /* Check link string */
@@ -204,7 +205,8 @@ static int _zterminals_parser(zterminals* obj)
 
     /* Get device */
     _dev = zgenerics_get_device(&obj->parent);
-
+    _dev_c = zdevice_get_context(_dev);
+    
     /* split the string into tokens */
     _b = 0;
     for(_j=0; _j < strlen(obj->term_links); _j++)
@@ -256,28 +258,28 @@ static int _zterminals_parser(zterminals* obj)
 		continue;
 
 	    /* Draw link line */
-	    cairo_move_to(zdevice_get_context(_dev),
+	    cairo_move_to(_dev_c,
 	    		  ZCONV_TO_POINTS(obj->x_links[_st]),
 	    		  ZCONV_TO_POINTS(obj->y_links[_st]));
-	    cairo_line_to(zdevice_get_context(_dev),
+	    cairo_line_to(_dev_c,
 	    		  ZCONV_TO_POINTS(obj->x_links[_ed]),
 	    		  ZCONV_TO_POINTS(obj->y_links[_ed]));
 
-	    cairo_stroke(zdevice_get_context(_dev));
+	    cairo_stroke(_dev_c);
 
 	    /* link connections */
 	    for(_a=_st; _a<_ed+1; _a++)
 	    	{
-	    	    cairo_move_to(zdevice_get_context(_dev),
+	    	    cairo_move_to(_dev_c,
 	    			  ZCONV_TO_POINTS(obj->x_links[_a]),
 	    			  ZCONV_TO_POINTS(obj->y_links[_a]));
-	    	    cairo_arc(zdevice_get_context(_dev),
+	    	    cairo_arc(_dev_c,
 	    		      ZCONV_TO_POINTS(obj->x_links[_a]),
 	    		      ZCONV_TO_POINTS(obj->y_links[_a]),
 	    		      ZCONV_TO_POINTS(2),
 	    		      0.0,
 	    		      2 * M_PI);
-	    	    cairo_fill(zdevice_get_context(_dev));
+	    	    cairo_fill(_dev_c);
 	    	}
 	}
 
@@ -291,5 +293,8 @@ static int _zterminals_parser(zterminals* obj)
     if(_tok)
 	free(_tok);
     _tok = NULL;
+
+    /* delete device as we have incremented its ref count */
+    zdevice_delete(_dev);
     return ZELIA_OK;
 }
