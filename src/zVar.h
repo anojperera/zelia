@@ -114,6 +114,13 @@ typedef enum {
     zM25
 } zGlandSize;
 
+/* Arrow head types */
+typedef enum {
+    zArrow1,
+    zArrow2,
+    zArrow3
+} zArrowTypes;
+
 /* error codes */
 #define ZELIA_CONSTRUCTED 1
 #define ZELIA_INITIALISED 2
@@ -170,6 +177,14 @@ typedef enum {
 #define Z_M16_GLAND 16.0
 #define Z_M20_GLAND 20.0
 #define Z_M25_GLAND 25.0
+
+/* Arrow angles */
+#define Z_ARROW_ANG1 45.0
+#define Z_ARROW_ANG2 30.0
+
+#define Z_ARROW_HEIGHT1 3.0
+#define Z_ARROW_HEIGHT2 5.0
+#define Z_ARROW_HEIGHT3 8.0
 
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
