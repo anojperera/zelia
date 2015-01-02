@@ -232,4 +232,5 @@ typedef enum {
 #define Z_JB(obj) ((zjb*) Z_BASE(obj)->child)
 #define Z_NOTE(obj) ((znote*) Z_BASE(obj)->child)
 #define Z_NOTES(obj) ((znotes*) (obj)->child)
+#define Z_ARROW(obj) ((zarrow*) (obj)->child)
 #endif /* __ZVAR__ */
