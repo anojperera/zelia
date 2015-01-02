@@ -90,6 +90,8 @@ int zarrow_draw(zarrow* obj)
     ZCHECK_OBJ_INT(_base);
     ZCHECK_OBJ_INT(_dev_c);
 
+    ZELIA_LOG_MESSAGE("zarrow start drawing");
+
     /* Check if the angle is greater than zero.
      * If the angle is greater than zero, save cairo context
      * and translate and rotate the coordinate system */
@@ -159,6 +161,7 @@ int zarrow_draw(zarrow* obj)
 
     cairo_restore(_dev_c);
 
+    ZELIA_LOG_MESSAGE("zarrow compelete drawing");    
     return ZELIA_OK;
 }
 

@@ -24,13 +24,13 @@ zgeneric* zleader_new(zleader* obj,				/* leader object optional */
 {
 
     /* check for object */
-    ZCONSTRUCTOR(obj, zarrow);
+    ZCONSTRUCTOR(obj, zleader);
 
     /* create parent object */
     if(!(obj->super_cls = zarrow_new(&obj->parent)))
 	{
-	    if(obj->int_flg)
-		free(obj);
+	    if(ZDESTRUCTOR_CHECK)
+		free(obj);	    
 	    return NULL;
 	}
 
@@ -80,8 +80,8 @@ void zleader_delete(zleader* obj)
     /* call destructor of base object */
     zgeneric_block_parent_destructor(obj);
     zarrow_delete(&obj->parent);
-
-    obj->z_child = NULL;
+    
+    obj->child = NULL;
     return;
 }
 
@@ -105,6 +105,8 @@ int zleader_draw(zleader* obj)
     /* Check all objects */
     ZCHECK_OBJ_INT(_dev_c);
 
+    ZELIA_LOG_MESSAGE("zleader start drawing");
+    
     /* Check if the angle is greater than zero.
      * If the angle is greater than zero, save cairo context
      * and translate and rotate the coordinate system */
@@ -154,9 +156,9 @@ int zleader_draw(zleader* obj)
 
 	    /* create pango layout */
 	    _layout = pango_cairo_create_layout(_dev_c);
-	    _desc = pango_font_description_from_string(GRD_FONT_STYLE);
+	    _desc = pango_font_description_from_string(Z_GRD_FONT_STYLE);
 	    pango_font_description_set_style(_desc, PANGO_STYLE_NORMAL);
-	    pango_font_description_set_size(_desc, PANGO_SCALE*GRD_FONT_SZ);
+	    pango_font_description_set_size(_desc, PANGO_SCALE * Z_GRD_FONT_SZ);
 	    pango_font_description_set_weight(_desc, PANGO_WEIGHT_LIGHT);
 
 	    pango_layout_set_font_description(_layout, _desc);
@@ -165,7 +167,7 @@ int zleader_draw(zleader* obj)
 
 	    cairo_translate(_dev_c,
 	    		    ZCONV_TO_POINTS(x[1]),
-	    		    ZCONV_TO_POINTS(y[1]) - 2.5 * GRD_FONT_SZ);
+	    		    ZCONV_TO_POINTS(y[1]) - 1.8 * Z_GRD_FONT_SZ);
 
 	    cairo_rotate(_dev_c, -1 * ZCONV_TO_RADIANS(_base->ang));
 
@@ -183,7 +185,9 @@ int zleader_draw(zleader* obj)
 	}
 
     cairo_restore(_dev_c);
-    return 0;
+
+    ZELIA_LOG_MESSAGE("zleader compelete drawing");
+    return ZELIA_OK;
 
 }
 
