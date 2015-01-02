@@ -16,7 +16,7 @@ typedef struct _zarrow zarrow;
 struct _zarrow
 {
     zbase parent;				/* inherited parent object */
-    unsigned int _int_flg;			/* internal flag */
+    unsigned int _init_flg;			/* internal flag */
     zArrowTypes arrow_type;			/* arrow head type */
     unsigned int fill_flg;			/* flag to indicate fill arrow */
 
@@ -50,14 +50,14 @@ extern "C" {
     inline __attribute__ ((always_inline)) static unsigned int zarrow_get_fill_flag(zarrow* obj)
     {
 	ZCHECK_OBJ_INT(obj);
-	return obj->z_fill_flg;
+	return obj->fill_flg;
     }
 
     /* Set and get arrow head type */
     inline __attribute__ ((always_inline)) static int zarrow_set_arrow_type(zarrow* obj, zArrowTypes type)
     {
 	ZCHECK_OBJ_INT(obj);
-	obj->z_arrow_type = type;
+	obj->arrow_type = type;
 	return ZELIA_OK;
     }
     
@@ -66,7 +66,7 @@ extern "C" {
 	if(obj == NULL)
 	    return zArrow1;
 	else
-	    return obj->z_arrow_type;
+	    return obj->arrow_type;
     }
 
 #ifdef __cplusplus

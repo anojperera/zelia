@@ -1,8 +1,8 @@
 /* Implementation of Arrow head */
 /* Mon Feb  6 22:16:39 GMT 2012 */
 
-#include "zArrow.h"
 #include <math.h>
+#include "zarrow.h"
 
 #define ZARROW_ARR 6
 
