@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zelia>
+  <file>
+    <template_path>/home/pyrus/Prog/C++/zelia/resources/wozair_border_a3.svg</template_path>
+    <sheet_size>A3_L</sheet_size>
+    <save_path>/home/pyrus/temp.svg</save_path>
+  </file>
+  <attrib>
+    <attrib_element id="drawing_no">C123456</attrib_element>
+    <attrib_element id="drawing_no_top">C123456</attrib_element>
+    <attrib_element id="sheet_no">1</attrib_element>
+    <attrib_element id="sheet_no_top">1</attrib_element>
+    <attrib_element id="revision_no">A</attrib_element>
+    <attrib_element id="revision_no_top">A</attrib_element>
+    <attrib_element id="client">ABCD</attrib_element>
+    <attrib_element id="site">SITE</attrib_element>
+    <attrib_element id="job_no">W1234</attrib_element>
+    <attrib_element id="order_no">TEST</attrib_element>
+    <attrib_element id="title">THIS IS TEST DRAWING</attrib_element>
+    <attrib_element id="drawn_by">AP</attrib_element>
+    <attrib_element id="drawn_date">10/11/14</attrib_element>
+    <attrib_element id="checked_by">NC</attrib_element>
+    <attrib_element id="checked_date">10/11/14</attrib_element>
+    <attrib_element id="approved_by">TT</attrib_element>
+    <attrib_element id="approved_date">10/11/14</attrib_element>
+  </attrib>
+  <table>
+    <x>40.0</x>
+    <y>90.0</y>
+    <height>30.0</height>
+    <width>160.0</width>
+    <rows>3</rows>
+    <columns>2</columns>
+    <column width="60.0">0</column>
+    <column width="100.0">1</column>
+    <content row_ix="0" col_ix="0">Frame</content>
+    <content row_ix="0" col_ix="1">Stainless Steel</content>
+    <content row_ix="1" col_ix="0">Blades</content>
+    <content row_ix="1" col_ix="1">Stainless Steel</content>
+    <content row_ix="2" col_ix="0">Actuator</content>
+    <content row_ix="2" col_ix="1">Anodised Aluminium</content>
+  </table>
+  <table>
+    <x>180.0</x>
+    <y>10.0</y>
+    <height>30.0</height>
+    <width>160.0</width>
+    <rows>3</rows>
+    <columns>4</columns>
+    <column width="60.0">0</column>
+    <column width="60.0">2</column>
+    <content row_ix="0" col_ix="0">Dampers</content>
+  </table>
+  <notes>
+    <x>260.0</x>
+    <y>130.0</y>
+    <width>150.0</width>
+    <title>DAMPER OPERATION</title>
+    <note>FRAMES ARE CONTINUOUSLY WELDED CONSTRUCTION.</note>
+    <note>DAMPER BLADES TO BE HOT DIP GALVANISED.</note>
+    <note>BLADES ARE WELDED TO SHAFTS.</note>
+  </notes>
+  <jb>
+    <x>100.0</x>
+    <y>230.0</y>
+    <width>80.0</width>
+    <height>80.0</height>
+    <depth>20.0</depth>
+    <angle>0.0</angle>
+    <radius>5.0</radius>
+    <terminals>
+      <num_terminals>5</num_terminals>
+      <width>10.0</width>
+      <height>20.0</height>
+      <links>1-2</links>
+    </terminals>
+    <gland>
+      <x>20.0</x>      
+      <y>65.0</y>
+      <size>M20</size>
+      <hex>0</hex>
+    </gland>
+    <gland>
+      <x>60.0</x>      
+      <y>65.0</y>
+      <size>M20</size>
+      <hex>0</hex>
+    </gland>    
+  </jb>
+  <jb>
+    <x>100.0</x>
+    <y>180.0</y>
+    <width>80.0</width>
+    <height>30.0</height>
+    <depth>20.0</depth>
+    <angle>0.0</angle>
+    <radius>5.0</radius>
+    <gland>
+      <x>20.0</x>      
+      <y>15.0</y>
+      <size>M20</size>
+      <hex>1</hex>
+    </gland>
+    <gland>
+      <x>60.0</x>      
+      <y>15.0</y>
+      <size>M20</size>
+      <hex>1</hex>
+    </gland>    
+  </jb>
+  <leader>
+    <x>85.0</x>
+    <y>100.0</y>
+    <seg1>30.0</seg1>
+    <seg2>50.0</seg2>
+    <angle>30.0</angle>
+    <desc>TEST NOTE</desc>
+  </leader>
+</zelia>
