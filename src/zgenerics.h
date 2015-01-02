@@ -82,14 +82,10 @@ extern "C" {
     (obj)->count++
 #define zgenerics_decrement_counter(obj)	\
     (obj)->count--
-#define zgenerics_toggle_ref_flg(obj)		\
-    if((obj)->ref_flg > 0)			\
-	(obj)->ref_flg = 0;			\
-    else					\
-	(obj)->ref_flg = 1
+    
+#define zgenerics_toggle_ref_flg zgeneric_toggle_ref_flg
+#define zgenerics_get_ref_flg zgeneric_get_ref_flg
 
-#define zgenerics_get_ref_flg(obj)		\
-    (obj)->ref_flg
     
 #ifdef __cplusplus
 }

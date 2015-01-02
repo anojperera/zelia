@@ -16,7 +16,8 @@ zgeneric* zgeneric_new(zgeneric* obj)
     obj->gcairo_dev = NULL;
 
     obj->def_dev_ctxt_flg = 0;
-
+    obj->ref_flg = 0;
+    
     /* initialise the vtable */
     ZGENERIC_INIT_VTABLE(obj);
     ZELIA_LOG_MESSAGE("zgeneric object created");
@@ -47,7 +48,8 @@ void zgeneric_delete(zgeneric* obj)
     obj->child = NULL;
     obj->super_cls = NULL;
     obj->gcairo_dev = NULL;
-
+    obj->ref_flg = 0;
+    
     /* remove vtables */
     ZGENERIC_INIT_VTABLE(obj);
 

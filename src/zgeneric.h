@@ -39,6 +39,7 @@ struct _zgeneric
 {
     unsigned int _init_flg;			/* internal flag */
     unsigned int def_dev_ctxt_flg;		/* defulat device context set */
+    unsigned int ref_flg;			/* reference flag */
     zdevice* gdev;				/* primary device */
     
     zgeneric* super_cls;			/* pointer to itself */
@@ -175,6 +176,16 @@ extern "C" {
     ((obj)->parent.vtable.zgeneric_delete? ZELIA_OK : ZELIA_NULL)
 #define zgeneric_block_parent_destructor(obj)	\
     (obj)->parent.vtable.zgeneric_delete = NULL
+
+#define zgeneric_toggle_ref_flg(obj)		\
+    if((obj)->ref_flg > 0)			\
+	(obj)->ref_flg = 0;			\
+    else					\
+	(obj)->ref_flg = 1
+
+#define zgeneric_get_ref_flg(obj)		\
+    (obj)->ref_flg
+    
 #ifdef __cplusplus
 }
 #endif
