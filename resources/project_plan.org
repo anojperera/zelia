@@ -1,0 +1,35 @@
+* DONE XML Based Drawing Attributes
+  This allows darwings attributes to be read from an exml file
+* TODO Bill of Materials and Other tables
+  CLOCK: [2014-11-23 Sun 17:48]--[2014-11-23 Sun 20:04] =>  2:16
+  CLOCK: [2014-11-17 Mon 23:04]--[2014-11-17 Mon 23:19] =>  0:15
+  :PROPERTIES:
+  :Effort:   24:00
+  :ORDERED:  t
+  :END:
+  - [ ] Read from xml / json
+  - [ ] Draw
+* TODO Main Drawing View
+  :PROPERTIES:
+  :Effort:   48:00
+  :END:
+  - This is the main part of the program.
+  - We will enabling the main views to parameterise based xml or database criteria
+** TODO Junction box development (Woziar Specific)
+   - Wozair specific feature to develop drawing based on selection.
+* TODO Database and File System
+  :PROPERTIES:
+  :Effort:   16:00
+  :END:
+* TODO Web Application
+  :PROPERTIES:
+  :Effort:   48:00
+  :END:
+* TODO Infrastructure
+  :PROPERTIES:
+  :Effort:   8:00
+  :END:
+* TODO Sales
+  :PROPERTIES:
+  :Effort:   36:00
+  :END:

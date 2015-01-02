@@ -1,0 +1,15 @@
+<attrib>
+  <attrib_element id="drawing_no">C123456</attrib_element>
+  <attrib_element id="sheet_no">1</attrib_element>
+  <attrib_element id="revision_no">1</attrib_element>
+  <attrib_element id="client">ABCD</attrib_element>
+  <attrib_element id="site">SITE</attrib_element>
+  <attrib_element id="job_no">W1234</attrib_element>
+  <attrib_element id="title">THIS IS TEST DRAWING</attrib_element>
+  <attrib_element id="drawn_by">AP</attrib_element>
+  <attrib_element id="drawn_date">10/11/14</attrib_element>
+  <attrib_element id="checked_by">NC</attrib_element>
+  <attrib_element id="checked_date">10/11/14</attrib_element>
+  <attrib_element id="approved_by">TT</attrib_element>
+  <attrib_element id="approved_date">10/11/14</attrib_element>
+</attrib>
