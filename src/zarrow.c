@@ -7,8 +7,8 @@
 #define ZARROW_ARR 6
 
 /* Virtual draw function */
-static int _zarrow_draw(zgeneric* obj);
-static int _zarrow_delete(zgeneric* obj);
+static int _zarrow_draw(void* obj);
+static int _zarrow_delete(void* obj);
 
 /* Constructor */
 zgeneric* zarrow_new(zarrow* obj)
@@ -185,7 +185,7 @@ static int _zarrow_draw(void* obj)
 	return rt_val;
 }
 
-static int _zarrow_delete(zgeneric* obj)
+static int _zarrow_delete(void* obj)
 {
     zgeneric* _zg = NULL;
 

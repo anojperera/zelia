@@ -60,8 +60,8 @@ extern "C" {
 	obj->arrow_type = type;
 	return ZELIA_OK;
     }
-    
-    inline __attribute__ ((always_inline)) static zArrowTypes zarrow_get_arrow_type(zArrow* obj)
+
+    inline __attribute__ ((always_inline)) static zArrowTypes zarrow_get_arrow_type(zarrow* obj)
     {
 	if(obj == NULL)
 	    return zArrow1;
@@ -71,6 +71,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif    
-    
+#endif
+
 #endif /* _ZARROW_H_ */
