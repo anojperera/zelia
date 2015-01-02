@@ -19,7 +19,7 @@ typedef struct _zleader zleader;
 struct _zleader
 {
     zarrow parent;						/* inherited parent object */
-    unsigned int _int_flg;					/* internal flag */
+    unsigned int _init_flg;					/* internal flag */
     double length_1;						/* first segment length */
     double length_2;						/* second segment length */
 
