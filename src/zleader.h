@@ -11,7 +11,7 @@
 #include "zgeneric.h"
 #include "zdevice.h"
 
-#define Z_LEADER_DESC_BUFF 256
+#define ZLEADER_DESC_BUFF 256
 
 /* Forward declaration of struct */
 typedef struct _zleader zleader;
@@ -23,7 +23,7 @@ struct _zleader
     double length_1;						/* first segment length */
     double length_2;						/* second segment length */
 
-    char content[LEADER_DESC_BUFF];				/* leader description / content */
+    char content[ZLEADER_DESC_BUFF];				/* leader description / content */
 
     struct _zgeneric_vtable vtable;				/* vtable */
     void* child;						/* child pointer */
@@ -86,7 +86,7 @@ extern "C" {
     inline __attribute__ ((always_inline)) static const char* zleader_get_description(zleader* obj)
     {
 	ZCHECK_OBJ_PTR(obj);
-	return obj->z_content;	
+	return obj->content;	
     }
 #ifdef __cplusplus
 }
