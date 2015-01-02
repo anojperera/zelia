@@ -42,6 +42,11 @@
 #define ZPARSER_GENERICS "generics"
 #define ZPARSER_SIZE "size"
 #define ZPARSER_HEX_FLG "hex"
+#define ZPARSER_LEADER "leader"
+#define ZPARSER_ARROW "arrow"
+#define ZPARSER_SEGMENT_1 "seg1"
+#define ZPARSER_SEGMENT_2 "seg2"
+#define ZPARSER_DESCRIPTION "desc"
 
 #define ZPARSER_SHEET_A4_PORT "A4_P"
 #define ZPARSER_SHEET_A4_LAND "A4_L"
