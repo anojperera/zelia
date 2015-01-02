@@ -23,6 +23,7 @@
 #include "ztable.h"
 #include "znote.h"
 #include "znotes.h"
+#include "zleader.h"
 
 #define ZELIA_XML_TSTRUCT_ALIGN 8
 
@@ -60,6 +61,7 @@ int _create_attrib_object(xmlNodePtr node, struct _zparser* parser);
 int _create_notes_object(xmlNodePtr node, struct _zparser* parser);
 int _create_table_object(xmlNodePtr node, struct _zparser* parser);
 int _create_jb_object(xmlNodePtr node, struct _zparser* parser);
+int _create_leader_object(xmlNodePtr node, struct _zparser* parser);
 
 inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNodePtr node, zgeneric* object);
 inline __attribute__ ((always_inline)) static int _create_table_object_content(xmlNodePtr node, const xmlChar* content, zgeneric* object);
@@ -236,6 +238,10 @@ static zelia_object_types _get_type(const char* tag_name)
 	return ztrows_type;
     else if(strcmp(tag_name, ZPARSER_TABLE_CELLS) == 0)
 	return ztcells_type;
+    else if(strcmp(tag_name, ZPARSER_ARROW) == 0)
+	return zarrow_type;
+    else if(strcmp(tag_name, ZPARSER_LEADER) == 0)
+	return zleader_type;
 
     return zunknown_type;
 }
@@ -287,6 +293,9 @@ int _main_loop(xmlNodePtr node, struct _zparser* parser)
 		    break;
 		case zjb_type:
 		    _create_jb_object(_node, parser);
+		    break;
+		case zleader_type:
+		    _create_leader_object(_node, parser);
 		    break;
 		default:
 		    break;
@@ -575,6 +584,70 @@ int _create_jb_object(xmlNodePtr node, struct _zparser* parser)
     /* push to the collection */
     blist_add_from_end(&parser->object_array, (void*) _obj);
 
+    return ZELIA_OK;
+}
+
+/* create leader object */
+int _create_leader_object(xmlNodePtr node, struct _zparser* parser)
+{
+    xmlChar* _content = NULL;
+    xmlNodePtr _child = NULL;
+    double _dim_dbl = 0.0, _x = 0.0, _y = 0.0, _ang = 0.0, _seg1 = 0.0, _seg2 = 0.0;
+    struct _zobject* _obj = NULL;
+    unsigned int _del_flg = 1;
+
+    _obj = (struct _zobject*) malloc(sizeof(struct _zobject));
+    _obj->type = zobject_item;
+
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    _content = xmlNodeGetContent(_child);
+	    if(_content != NULL)
+		_dim_dbl = atof((char*) _content);
+	    
+	    _del_flg = 1;
+	    
+	    if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
+		_x = _dim_dbl;
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
+		_y = _dim_dbl;
+	    else if(strcmp((const char*) _child->name, ZPARSER_ANGLE) == 0)
+		_ang = _dim_dbl;
+	    else if(strcmp((const char*) _child->name, ZPARSER_SEGMENT_1) == 0)
+		_seg1 = _dim_dbl;
+	    else if(strcmp((const char*) _child->name, ZPARSER_SEGMENT_2) == 0)
+		_seg2 = _dim_dbl;
+	    else if(strcmp((const char*) _child->name, ZPARSER_DESCRIPTION) == 0)
+		_del_flg = 0;
+	    
+	    if(_del_flg)
+		{
+		    xmlFree(_content);
+		    _content = NULL;
+		}
+
+	    _child = xmlNextElementSibling(_child);	    
+	}
+
+    /* create a new leader object */
+    _obj->data._i = zleader_new(NULL,
+				&parser->device,
+				_x,
+				_y,
+				_seg1,
+				_seg2,
+				_ang,
+				(char*) _content);
+    /* call draw method */
+    zgeneric_draw(_obj->data._i);
+
+    /* push to the collection */
+    blist_add_from_end(&parser->object_array, (void*) _obj);
+
+    if(_content)
+	xmlFree(_content);
+    
     return ZELIA_OK;
 }
 
