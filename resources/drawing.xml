@@ -75,17 +75,17 @@
       <links>1-2</links>
     </terminals>
     <gland>
-      <x>20.0</x>      
+      <x>20.0</x>
       <y>65.0</y>
       <size>M20</size>
       <hex>0</hex>
     </gland>
     <gland>
-      <x>60.0</x>      
+      <x>60.0</x>
       <y>65.0</y>
       <size>M20</size>
       <hex>0</hex>
-    </gland>    
+    </gland>
   </jb>
   <jb>
     <x>100.0</x>
@@ -96,17 +96,17 @@
     <angle>0.0</angle>
     <radius>5.0</radius>
     <gland>
-      <x>20.0</x>      
+      <x>20.0</x>
       <y>15.0</y>
       <size>M20</size>
       <hex>1</hex>
     </gland>
     <gland>
-      <x>60.0</x>      
+      <x>60.0</x>
       <y>15.0</y>
       <size>M20</size>
       <hex>1</hex>
-    </gland>    
+    </gland>
   </jb>
   <leader>
     <x>85.0</x>
@@ -118,5 +118,17 @@
   </leader>
   <label>
     <template_path>/home/pyrus/Prog/C++/zelia/resources/images/close_label.svg</template_path>
+    <x>190.0</x>
+    <y>200.0</y>
   </label>
+  <label>
+    <template_path>/home/pyrus/Prog/C++/zelia/resources/images/open_label.svg</template_path>
+    <x>240.0</x>
+    <y>200.0</y>
+  </label>
+  <!-- <label> -->
+  <!--   <template_path>/home/pyrus/Prog/C++/zelia/resources/images/tag_plate_eng.svg</template_path> -->
+  <!--   <x>340.0</x> -->
+  <!--   <y>200.0</y> -->
+  <!-- </label> -->
 </zelia>
