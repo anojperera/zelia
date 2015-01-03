@@ -660,7 +660,7 @@ int _finalise_parser(struct _zparser* parser)
     _buff = zdevice_get_temp_buff(&parser->device);
 
     /* add to the file object */
-    zfile_parse_and_insert_elements(&parser->file, _buff);
+    zfile_parse_and_insert_elements_as_new(&parser->file, _buff);
 
     /* clean up */
     blist_delete(&parser->object_array);
