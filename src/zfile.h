@@ -51,9 +51,14 @@ extern "C" {
 
     /*
      * Parse elements and add to the file.
-     * This method parses NULL terminated buffer pointed by buff
+     * This method parses NULL terminated buffer pointed by buff.
+     *
+     * The second method inserts elements as separate items. The defs and
+     * g elements are wrapped in to a g element and inserted in to the main
+     * file.
      */
     int zfile_parse_and_insert_elements(zfile* obj, const char* buff);
+    int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff);
 
     /* property macros */
 #define zfile_toggle_overwrite(obj)			\

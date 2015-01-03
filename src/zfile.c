@@ -19,6 +19,8 @@ static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr*
 #define ZFILE_G_NAME "g"
 #define ZFILE_SVG_NAME "svg"
 
+#define ZFILE_PARSED_SVG_SECTIONS 2
+
 /* constructor */
 zfile* zfile_new(zfile* obj)
 {
@@ -408,6 +410,76 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
     return ZELIA_OK;
 }
 
+
+int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff)
+{
+    int i = 0;
+    xmlDocPtr _p_doc = NULL;							/* document pointer of parsed buffer */
+    xmlNodePtr _m_itr = NULL;							/* main xml iterator of document */
+
+    /*
+     * Array of xml nodes for finding the definitions and elements section
+     * of the parsed xml document.
+     */
+    xmlNodePtr _p_itr[ZFILE_PARSED_SVG_SECTIONS] = {NULL, NULL};
+    xmlNodePtr _n_ptr = NULL;							/* new xml node */
+    xmlNodePtr _p_itr_copy = NULL;
+    
+    /* check arguments */
+    ZCHECK_OBJ_INT(obj);
+    ZCHECK_OBJ_INT(buff);
+    
+    /* parse buffer */
+    ZELIA_LOG_MESSAGE("zfile begin parsing buffer");
+
+    /* parse document */
+    _p_doc = xmlParseDoc((const xmlChar*) buff);
+    if(_p_doc == NULL)
+	return ZELIA_FILE_COPY_ERROR;
+
+    /* find definitions section */
+    if(_zfile_find_node_by_name(_p_doc, ZFILE_DEF_NAME, &_p_itr[0]) != ZELIA_OK)
+	ZELIA_LOG_MESSAGE("zfile failed to find node while in parsed document");
+
+    /* find elements section */
+    if(_zfile_find_node_by_name(_p_doc, ZFILE_G_NAME, &_p_itr[1]) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+    /* find the main svg item in document */
+    if(_zfile_find_node_by_name(obj->xml_doc, ZFILE_SVG_NAME, &_m_itr) != ZELIA_OK)
+	{
+	    ZELIA_LOG_MESSAGE("zfile failed to find node while in main document");
+	    xmlFreeDoc(_p_doc);
+	    return ZELIA_FILE_COPY_ERROR;
+	}
+
+    /* create new element under ZFILE_SVG_NAME */
+    _n_ptr = xmlNewChild(_m_itr, NULL, (const xmlChar*) ZFILE_G_NAME, NULL);
+    
+    for(i = 0; i < ZFILE_PARSED_SVG_SECTIONS; i++)
+	{
+	    if(_p_itr[i] == NULL)
+		continue;
+
+	    /* copy and add to the element */
+	    _p_itr_copy = xmlCopyNode(_p_itr[i], 1);
+	    
+	    if(xmlAddChild(_n_ptr, _p_itr_copy) == NULL)
+		ZELIA_LOG_MESSAGE("errors occured during adding new element to the xmldoc");
+	}
+    
+    /* call to update the buffer */
+    zfile_update_file(obj);
+    zfile_update_cache(obj);
+
+    /* free document */
+    xmlFreeDoc(_p_doc);
+    return ZELIA_OK;    
+}
 /*=================================== Private Methods ===================================*/
 
 /* parse the xml document */
