@@ -11,6 +11,8 @@
 #include "zVar.h"
 #include "zfile.h"
 
+char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz);
+
 static int _zfile_parse_xml(zfile* obj);
 static int _zfile_callback_hook(void* obj);
 static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr* node);
@@ -573,4 +575,53 @@ static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr*
 	return ZELIA_NULL;
     else
 	return ZELIA_OK;
+}
+
+char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz)
+{
+    int r_fd = 0;
+    struct stat tmp_stat;								/* struct for holding the template file stat */    
+    
+    ZELIA_LOG_MESSAGE_WITH_STR("zfile check file exist ", file_path);
+    if(access(file_path, F_OK))
+	{
+	    ZELIA_LOG_MESSAGE("zfile file does not exist");
+	    return NULL;
+	}
+
+    /* open file */
+    r_fd = open(file_path, O_RDONLY);
+    if(r_fd == -1)
+	{
+   	    ZELIA_LOG_MESSAGE("zfile errors occured while reading the template");
+	    return NULL;
+	}
+
+    /* check stats for the file to obtain the size */
+    ZELIA_LOG_MESSAGE("checking file stats");
+    if(fstat(r_fd, &tmp_stat))
+	{
+	    ZELIA_LOG_MESSAGE("zfile unable to get tempalate file size");
+	    ZELIA_LOG_MESSAGE("zfile unable closing template file and write file");
+	    close(r_fd);
+	    return NULL;
+	}
+
+    *sz = tmp_stat.st_size+1;
+    *buff = (char*) malloc(tmp_stat.st_size+1);
+
+    if(!read(r_fd, (void*) *buff, tmp_stat.st_size))
+	{
+	    ZELIA_LOG_MESSAGE("zfile unable to read the file");
+	    free(*buff);
+	    close(r_fd);
+
+	    return NULL;
+	}
+
+    /* close the file descriptor */
+    close(r_fd);
+    ZELIA_LOG_MESSAGE("zfile file read and loaded in to temporary buffer");
+    
+    return *buff;
 }

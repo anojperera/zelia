@@ -14,10 +14,13 @@
 
 #define ZFILE_ATTRIB_PROP_1 "id"
 
+extern char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz);
+
 static int _zfile_attrib_count_field_array(zfile_attrib* obj, struct zfile_attrib_field* array);
 static int _zfile_attrib_itr_node(zfile_attrib* obj, xmlNode* root);
-static char* _zfile_attrib_read_contents(const char* file_path, char** buff, size_t* sz);
 static int _zfile_attrib_delete_field_array(zfile_attrib* obj);
+
+#define _zfile_attrib_read_contents _zfile_read_contents
 
 /* constructor */
 zfile_attrib* zfile_attrib_new(zfile_attrib* obj, xmlDocPtr doc)
@@ -302,56 +305,6 @@ static int _zfile_attrib_itr_node(zfile_attrib* obj, xmlNodePtr root)
 	}
 
     return ZELIA_OK;
-}
-
-
-static char* _zfile_attrib_read_contents(const char* file_path, char** buff, size_t* sz)
-{
-    int r_fd = 0;
-    struct stat tmp_stat;								/* struct for holding the template file stat */    
-    
-    ZELIA_LOG_MESSAGE_WITH_STR("zfile_attrib check file exist ", file_path);
-    if(access(file_path, F_OK))
-	{
-	    ZELIA_LOG_MESSAGE("zfile_attrib file does not exist");
-	    return NULL;
-	}
-
-    /* open file */
-    r_fd = open(file_path, O_RDONLY);
-    if(r_fd == -1)
-	{
-   	    ZELIA_LOG_MESSAGE("zfile_attrib errors occured while reading the template");
-	    return NULL;
-	}
-
-    /* check stats for the file to obtain the size */
-    ZELIA_LOG_MESSAGE("checking file stats");
-    if(fstat(r_fd, &tmp_stat))
-	{
-	    ZELIA_LOG_MESSAGE("zfile_attrib unable to get tempalate file size");
-	    ZELIA_LOG_MESSAGE("zfile_attrib unable closing template file and write file");
-	    close(r_fd);
-	    return NULL;
-	}
-
-    *sz = tmp_stat.st_size+1;
-    *buff = (char*) malloc(tmp_stat.st_size+1);
-
-    if(!read(r_fd, (void*) *buff, tmp_stat.st_size))
-	{
-	    ZELIA_LOG_MESSAGE("zfile_attrib unable to read the file");
-	    free(*buff);
-	    close(r_fd);
-
-	    return NULL;
-	}
-
-    /* close the file descriptor */
-    close(r_fd);
-    ZELIA_LOG_MESSAGE("zfile_attrib file read and loaded in to temporary buffer");
-    
-    return *buff;
 }
 
 /* helper method for deleting the field array */
