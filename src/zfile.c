@@ -420,7 +420,6 @@ int zfile_parse_and_insert_elements_as_new_with_coords(zfile* obj,
 						       const double* x,
 						       const double* y)
 {
-    const double* _x_ptr = NULL, *_y_ptr = NULL;
     double _x = 0.0, _y = 0.0;
     int i = 0;
     xmlDocPtr _p_doc = NULL;							/* document pointer of parsed buffer */
@@ -484,10 +483,10 @@ int zfile_parse_and_insert_elements_as_new_with_coords(zfile* obj,
 	}
 
     /* add attribute */
-    if(_n_ptr != NULL && _x_ptr && _y_ptr)
+    if(_n_ptr && x && y)
 	{
-	    _x = ZCONV_TO_POINTS(*_x_ptr);
-	    _y = ZCONV_TO_POINTS(*_y_ptr);
+	    _x = ZCONV_TO_POINTS(*x);
+	    _y = ZCONV_TO_POINTS(*y);
 	    sprintf(_buff, ZFILE_TRANSLATE_ATTRIB, (float) _x, (float) _y);
 
 	    xmlSetProp(_n_ptr, (const xmlChar*) ZFILE_TRANSFORM_ATTRIB, (const xmlChar*) _buff);
