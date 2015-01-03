@@ -42,6 +42,7 @@ typedef enum {
     ztable_type,
     zarrow_type,
     zleader_type,
+    zlabel_type,
 
     /* collection classes */
     zgenerics_type,
@@ -251,5 +252,6 @@ typedef enum {
 #define Z_NOTES(obj) ((znotes*) (obj)->child)
 #define Z_ARROW(obj) ((zarrow*) Z_BASE(obj)->child)
 #define Z_LEADER(obj) ((zleader*) Z_ARROW(obj)->child)
+#define Z_LABEL(obj) ((zlabel*) Z_BASE(obj)->child)
 
 #endif /* __ZVAR__ */
