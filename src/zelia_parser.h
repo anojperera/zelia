@@ -47,6 +47,7 @@
 #define ZPARSER_SEGMENT_1 "seg1"
 #define ZPARSER_SEGMENT_2 "seg2"
 #define ZPARSER_DESCRIPTION "desc"
+#define ZPARSER_LABEL "label"
 
 #define ZPARSER_SHEET_A4_PORT "A4_P"
 #define ZPARSER_SHEET_A4_LAND "A4_L"
