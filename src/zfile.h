@@ -58,7 +58,12 @@ extern "C" {
      * file.
      */
     int zfile_parse_and_insert_elements(zfile* obj, const char* buff);
-    int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff);
+    int zfile_parse_and_insert_elements_as_new_with_coords(zfile* obj,
+							   const char* buff,
+							   const double* x,
+							   const double* y);
+#define zfile_parse_and_insert_elements_as_new(obj, buff)		\
+    zfile_parse_and_insert_elements_as_new_with_coords((obj), (buff), NULL, NULL)
 
     /* property macros */
 #define zfile_toggle_overwrite(obj)			\

@@ -22,6 +22,9 @@ static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr*
 #define ZFILE_SVG_NAME "svg"
 
 #define ZFILE_PARSED_SVG_SECTIONS 2
+#define ZFILE_TRANSFORM_BUFF 512
+#define ZFILE_TRANSFORM_ATTRIB "transform"
+#define ZFILE_TRANSLATE_ATTRIB "translate (%f, %f)"
 
 /* constructor */
 zfile* zfile_new(zfile* obj)
@@ -412,12 +415,17 @@ int zfile_parse_and_insert_elements(zfile* obj, const char* buff)
     return ZELIA_OK;
 }
 
-
-int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff)
+int zfile_parse_and_insert_elements_as_new_with_coords(zfile* obj,
+						       const char* buff,
+						       const double* x,
+						       const double* y)
 {
+    const double* _x_ptr = NULL, *_y_ptr = NULL;
+    double _x = 0.0, _y = 0.0;
     int i = 0;
     xmlDocPtr _p_doc = NULL;							/* document pointer of parsed buffer */
     xmlNodePtr _m_itr = NULL;							/* main xml iterator of document */
+    char _buff[ZFILE_TRANSFORM_BUFF];
 
     /*
      * Array of xml nodes for finding the definitions and elements section
@@ -426,10 +434,12 @@ int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff)
     xmlNodePtr _p_itr[ZFILE_PARSED_SVG_SECTIONS] = {NULL, NULL};
     xmlNodePtr _n_ptr = NULL;							/* new xml node */
     xmlNodePtr _p_itr_copy = NULL;
-    
+        
     /* check arguments */
     ZCHECK_OBJ_INT(obj);
     ZCHECK_OBJ_INT(buff);
+
+    memset(_buff, 0, ZFILE_TRANSFORM_BUFF);
     
     /* parse buffer */
     ZELIA_LOG_MESSAGE("zfile begin parsing buffer");
@@ -461,7 +471,6 @@ int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff)
 
     /* create new element under ZFILE_SVG_NAME */
     _n_ptr = xmlNewChild(_m_itr, NULL, (const xmlChar*) ZFILE_G_NAME, NULL);
-    
     for(i = 0; i < ZFILE_PARSED_SVG_SECTIONS; i++)
 	{
 	    if(_p_itr[i] == NULL)
@@ -472,6 +481,16 @@ int zfile_parse_and_insert_elements_as_new(zfile* obj, const char* buff)
 	    
 	    if(xmlAddChild(_n_ptr, _p_itr_copy) == NULL)
 		ZELIA_LOG_MESSAGE("errors occured during adding new element to the xmldoc");
+	}
+
+    /* add attribute */
+    if(_n_ptr != NULL && _x_ptr && _y_ptr)
+	{
+	    _x = ZCONV_TO_POINTS(*_x_ptr);
+	    _y = ZCONV_TO_POINTS(*_y_ptr);
+	    sprintf(_buff, ZFILE_TRANSLATE_ATTRIB, (float) _x, (float) _y);
+
+	    xmlSetProp(_n_ptr, (const xmlChar*) ZFILE_TRANSFORM_ATTRIB, (const xmlChar*) _buff);
 	}
     
     /* call to update the buffer */
