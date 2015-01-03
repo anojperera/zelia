@@ -116,4 +116,7 @@
     <angle>30.0</angle>
     <desc>TEST NOTE</desc>
   </leader>
+  <label>
+    <template_path>/home/pyrus/Prog/C++/zelia/resources/images/close_label.svg</template_path>
+  </label>
 </zelia>
