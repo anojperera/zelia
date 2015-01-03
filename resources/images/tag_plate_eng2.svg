@@ -14,7 +14,7 @@
    height="283.46457"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.47 r22583"
+   inkscape:version="0.48.3.1 r9886"
    version="1.0"
    sodipodi:docname="tag_plate_eng2.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
@@ -171,14 +171,14 @@
      inkscape:pageshadow="2"
      inkscape:zoom="2.448316"
      inkscape:cx="88.582676"
-     inkscape:cy="141.73229"
+     inkscape:cy="207.08333"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="954"
-     inkscape:window-x="-4"
-     inkscape:window-y="-4"
+     inkscape:window-width="1362"
+     inkscape:window-height="729"
+     inkscape:window-x="0"
+     inkscape:window-y="37"
      inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
@@ -188,7 +188,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -282,13 +282,13 @@
        id="path3279" />
     <text
        xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
-       x="263.28156"
+       style="font-size:10px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="257.26202"
        y="555.52716"
        id="text3281"><tspan
          sodipodi:role="line"
          id="tspan3283"
-         x="263.28156"
+         x="257.26202"
          y="555.52716"
          style="font-size:6px">GILLINGHAM, KENT, ME8 0QN, UK +44 1634 263366</tspan></text>
     <text
