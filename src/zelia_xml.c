@@ -24,6 +24,7 @@
 #include "znote.h"
 #include "znotes.h"
 #include "zleader.h"
+#include "zlabel.h"
 
 #define ZELIA_XML_TSTRUCT_ALIGN 8
 
@@ -62,6 +63,7 @@ int _create_notes_object(xmlNodePtr node, struct _zparser* parser);
 int _create_table_object(xmlNodePtr node, struct _zparser* parser);
 int _create_jb_object(xmlNodePtr node, struct _zparser* parser);
 int _create_leader_object(xmlNodePtr node, struct _zparser* parser);
+int _create_label_object(xmlNodePtr node, struct _zparser* parser);
 
 inline __attribute__ ((always_inline)) static int _create_table_object_dim(xmlNodePtr node, zgeneric* object);
 inline __attribute__ ((always_inline)) static int _create_table_object_content(xmlNodePtr node, const xmlChar* content, zgeneric* object);
@@ -242,7 +244,8 @@ static zelia_object_types _get_type(const char* tag_name)
 	return zarrow_type;
     else if(strcmp(tag_name, ZPARSER_LEADER) == 0)
 	return zleader_type;
-
+    else if(strcmp(tag_name, ZPARSER_LABEL) == 0)
+	return zlabel_type;
     return zunknown_type;
 }
 
@@ -296,6 +299,9 @@ int _main_loop(xmlNodePtr node, struct _zparser* parser)
 		    break;
 		case zleader_type:
 		    _create_leader_object(_node, parser);
+		    break;
+		case zlabel_type:
+		    _create_label_object(_node, parser);
 		    break;
 		default:
 		    break;
@@ -647,6 +653,59 @@ int _create_leader_object(xmlNodePtr node, struct _zparser* parser)
 
     if(_content)
 	xmlFree(_content);
+    
+    return ZELIA_OK;
+}
+
+int _create_label_object(xmlNodePtr node, struct _zparser* parser)
+{
+    struct _zobject* _obj = NULL;
+
+    xmlNodePtr _child = NULL;
+    xmlChar* _content = NULL;
+    xmlChar* _path = NULL;
+    unsigned int _del_flg = 1;
+    double _x = 0.0, _y = 0.0;
+    
+    _child = xmlFirstElementChild(node);
+    while(_child)
+	{
+	    _del_flg = 1;
+	    _content = xmlNodeGetContent(_child);
+	    if(strcmp((const char*) _child->name, ZPARSER_TEMPLATE_PATH) == 0)
+		{
+		    _del_flg = 0;
+		    _path = _content;
+		}
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_X) == 0)
+		_x = atof((const char*) _content);
+	    else if(strcmp((const char*) _child->name, ZPARSER_COORD_Y) == 0)
+		_y = atof((const char*) _content);
+	    
+	    /* if delete flag is true delete and set the pointer to NULL */
+	    if(_del_flg)
+		{
+		    xmlFree(_content);
+		    _content = NULL;
+		}
+	    
+	    _child = xmlNextElementSibling(_child);
+	}
+
+    if(_path == NULL)
+	return ZELIA_NULL;
+
+    /* create object */
+    _obj = (struct _zobject*) malloc(sizeof(struct _zobject));
+    _obj->type = zobject_item;
+
+    _obj->data._i = zlabel_new(NULL, &parser->file, (const char*) _path, _x, _y);
+    
+    /* call draw method */
+    zgeneric_draw(_obj->data._i);
+
+    /* push to the collection */
+    blist_add_from_end(&parser->object_array, (void*) _obj);
     
     return ZELIA_OK;
 }
