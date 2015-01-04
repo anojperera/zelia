@@ -12,6 +12,7 @@
 #define _ZTERMINALS_H_
 
 #include <stdlib.h>
+#include "zterminal.h"
 #include "zgenerics.h"
 
 #define ZTERMINALS_LK_SZ 32
@@ -26,6 +27,8 @@ struct _zterminals
     unsigned int links_flg;				/* links flag */
 
     int _d_counter;					/* terminal counter */
+
+    char term_annot[ZTERMINAL_NUM_SZ];			/* terminal annotate buffer */
     
     /* Link string to be specified in the following format;
      * 1-2, 4-8 etc. */
@@ -48,15 +51,19 @@ extern "C" {
 #endif
 
     /* Constructor and destructor */
-    zgenerics* zterminals_new(zterminals* obj,
-			      zdevice* dev,		/* device object */
-			      unsigned int num_term,	/* number of terminals */
-			      double x,			/* base coordinate */
-			      double y,			/* base coordinate */
-			      double width,		/* width */
-			      double height,		/* height */
-			      double ang,		/* orientation angle */
-			      const char* links);	/* links */
+#define zterminals_new(obj, dev, num_term, x, y, width, height, ang, links) \
+    zterminals_new_with_annot((obj), (dev), num_term, x, y, width, height, ang, NULL, links)
+    
+    zgenerics* zterminals_new_with_annot(zterminals* obj,
+					 zdevice* dev,			/* device object */
+					 unsigned int num_term,		/* number of terminals */
+					 double x,			/* base coordinate */
+					 double y,			/* base coordinate */
+					 double width,			/* width */
+					 double height,			/* height */
+					 double ang,			/* orientation angle */
+					 const char* annot,		/* annotation prefix */
+					 const char* links);		/* links */
 
     /* Destruct is a virtual interface */
     void zterminals_delete(zterminals* obj);

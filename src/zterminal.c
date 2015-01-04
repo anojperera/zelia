@@ -78,7 +78,7 @@ int zterminal_draw(zterminal* obj)
     cairo_t* _dev_c;
     double x, y;
     cairo_text_extents_t _te;
-
+    
     /* Check for object */
     ZCHECK_OBJ_INT(obj);
 
@@ -114,7 +114,7 @@ int zterminal_draw(zterminal* obj)
     cairo_text_extents(_dev_c,
 		       obj->term_num,
 		       &_te);
-    x = _base->x + (_base->width - _te.width) / 2 + _te.x_bearing;
+    x = _base->x + (_base->width - ZCONV_TO_MM(_te.width)) / 2 - ZCONV_TO_MM(_te.x_bearing);
     y = _base->y + _base->height / 2;
     cairo_move_to(_dev_c,
 		  ZCONV_TO_POINTS(x),

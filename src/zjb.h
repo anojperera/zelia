@@ -22,11 +22,14 @@ struct _zjb
     unsigned int _init_flg;			/* Internal flag */
     unsigned int terms_ext;			/* Flag to indicate terminal collection
 						 * externally set */
+    unsigned int eterms_ext;			/* Flag to indicate earth terminal is set external */
+    
     unsigned int glands_ext;			/* Flag to indicate glads collection external */
     double depth;				/* Depth of junction box */
     double ang;					/* Orientation angle */
     double rad;					/* radius */
     zgenerics* terms;				/* Terminals collection */
+    zgenerics* eterms;				/* Earth Terminals */
     zgenerics* glands;				/* cable gland collection */
 
     struct _zgeneric_vtable vtable;		/* vtable */
@@ -77,27 +80,54 @@ extern "C" {
 
 	if(obj->terms_ext == 0)
 	    return ZELIA_JB_ERROR;
-    
+
 	obj->terms = terms;
 
 	/* indicate external flag was set */
 	obj->terms_ext = 1;
 	return ZELIA_OK;
     }
-    
+
+    inline __attribute__ ((always_inline)) static int zjb_set_earth_terminals(zjb* obj, zgenerics* terms)
+    {
+	/* check for objects */
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(terms);
+
+	if(obj->eterms_ext == 0)
+	    return ZELIA_JB_ERROR;
+
+	obj->eterms = terms;
+
+	/* indicate external flag was set */
+	obj->eterms_ext = 1;
+	return ZELIA_OK;
+    }    
+
     inline __attribute__ ((always_inline)) static zgenerics* zjb_get_terminals(zjb* obj)
     {
 	ZCHECK_OBJ_PTR(obj);
 	return obj->terms;
     }
 
+    inline __attribute__ ((always_inline)) static zgenerics* zjb_get_eterminals(zjb* obj)
+    {
+	ZCHECK_OBJ_PTR(obj);
+	return obj->eterms;
+    }    
+
     /* Add terminal collection */
-    int zjb_add_terminals(zjb* obj,
+    #define zjb_add_terminals(obj, num_term, width, height, links) \
+	zjb_add_with_earth_terminals((obj), num_term, 0, width, height, NULL, (links))
+
+    int zjb_add_with_earth_terminals(zjb* obj,
 			  unsigned int num_term,			/* number of terminals */
+			  unsigned int num_eterm,			/* number of earth terminals */
 			  double width,					/* terminal width */
 			  double height,				/* terminal height */
+			  const char* e_annot,				/* earth terminal annotation */
 			  const char* links);				/* terminal links */
-    
+
     /* Set and get gland collection */
     inline __attribute__ ((always_inline)) static int zjb_set_glands(zjb* obj, zgenerics* glands)
     {
@@ -106,13 +136,13 @@ extern "C" {
 
 	if(obj->glands == 0)
 	    return ZELIA_JB_ERROR;
-    
+
 	obj->glands = glands;
 	obj->glands_ext = 1;
 
 	return ZELIA_OK;
     }
-    
+
     inline __attribute__ ((always_inline)) static zgenerics* zjb_get_glands(zjb* obj)
     {
 	/* Check for object */

@@ -8,6 +8,7 @@
 #include "zgeneric.h"
 #include "zbase.h"
 
+#define ZTERMINAL_NUM_SZ 8
 
 /* Forward declaration of struct */
 typedef struct _zterminal zterminal;
@@ -21,7 +22,7 @@ struct _zterminal
 
     double term_height;			/* terminal height - projected */
 
-    char term_num[5];			/* terminal number */
+    char term_num[ZTERMINAL_NUM_SZ];	/* terminal number */
     int term_cnt;			/* terminal counter */
 
     struct _zgeneric_vtable vtable;	/* vtable */
@@ -50,6 +51,15 @@ extern "C" {
 	sprintf(obj->term_num, "%i", num);
 	return ZELIA_OK;
     }
+
+    inline __attribute__ ((always_inline)) static int zterminal_set_terminal_number_with_annot(zterminal* obj, int num, const char* annot)
+    {
+	ZCHECK_OBJ_INT(obj);
+	ZCHECK_OBJ_INT(annot);
+	sprintf(obj->term_num, "%s%i", annot, num);
+	return ZELIA_OK;
+    }    
+    
     inline __attribute__ ((always_inline)) static int zterminal_get_terminal_number(zterminal* obj)
     {
 	if(obj == NULL)

@@ -49,6 +49,8 @@ zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
 	    zgeneric_set_device(obj->super_cls, dev);
 	    zgeneric_set_default_dev_context(obj->super_cls);
 	}
+
+    obj->eterms = NULL;
     obj->terms = NULL;
     obj->glands = NULL;
 
@@ -86,12 +88,18 @@ void zjb_delete(zjb* obj)
     if(obj->terms_ext == 0)
 	zterminals_delete(Z_TERMINALS(obj->terms));
 
+    /* Call destructor of earh terminal collection
+     * if internally set */
+    if(obj->eterms_ext == 0)
+	zterminals_delete(Z_TERMINALS(obj->eterms));
+
     /* Call destructor of glands collection
      * if internally set */
     if(obj->glands_ext == 0)
 	zglands_delete(Z_GLANDS(obj->glands));
 
     obj->terms = NULL;
+    obj->eterms = NULL;
     obj->glands = NULL;
     obj->child = NULL;
     obj->super_cls = NULL;
@@ -202,19 +210,19 @@ int zjb_draw(zjb* obj)
 
     /* call draw functions of glands and terminals */
     zgenerics_draw(obj->terms);
+    zgenerics_draw(obj->eterms);
     zgenerics_draw(obj->glands);
 
     return ZELIA_OK;
 }
 
-
-
-/* Add terminal collection*/
-int zjb_add_terminals(zjb* obj,
+int zjb_add_with_earth_terminals(zjb* obj,
 		      unsigned int num_term,			/* number of terminals */
+		      unsigned int num_eterm,			/* number of earth terminals */
 		      double width,				/* terminal width */
 		      double height,				/* terminal height */
-		      const char* links)
+		      const char* e_annot,			/* earth terminal annotation */
+		      const char* links)			/* terminal links */
 {
     double _w, _h, _bw, _bh;
     zbase* _base;
@@ -227,8 +235,8 @@ int zjb_add_terminals(zjb* obj,
 
     ZCHECK_OBJ_INT(_base);
 
-    _w = (obj->ang == 0.0? width * (double) num_term : height);
-    _h = (obj->ang == 0.0? height : width * (double) num_term);
+    _w = (obj->ang == 0.0? width * (double) (num_term + num_eterm) : height);
+    _h = (obj->ang == 0.0? height : width * (double) (num_term + num_eterm));
 
     _bw = (obj->ang == 0.0? _base->width : _base->height);
     _bh = (obj->ang == 0.0? _base->height : _base->width);
@@ -237,12 +245,26 @@ int zjb_add_terminals(zjb* obj,
     obj->terms = zterminals_new(NULL,				/* object pointer */
 				zgeneric_get_device(obj->super_cls),
 				num_term,
-				_base->x + (_bw - _w) / 2,
+				_base->x + (_bw - _w) / 2 + width * num_eterm,
 				_base->y + (_bh - _h) / 2,
 				width,
 				height,
 				obj->ang,
 				links);
+
+    if(num_eterm > 0)
+	{
+	    obj->eterms = zterminals_new_with_annot(NULL,				/* object pointer */
+						    zgeneric_get_device(obj->super_cls),
+						    num_eterm,
+						    _base->x + (_bw - _w) / 2,
+						    _base->y + (_bh - _h) / 2,
+						    width,
+						    height,
+						    obj->ang,
+						    e_annot,
+						    links);
+	}
 
     /* Check for object */
     ZCHECK_OBJ_INT(obj->terms);
@@ -251,6 +273,7 @@ int zjb_add_terminals(zjb* obj,
      * so that class destructor will call terminal collections
      * destructor method */
     obj->terms_ext = 0;
+    obj->eterms_ext = 0;
 
     return ZELIA_OK;
 }

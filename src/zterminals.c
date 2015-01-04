@@ -20,15 +20,16 @@ static inline int _zterminals_parser(zterminals* obj);		/* terminals parser */
 
 
 /* Constructor */
-zgenerics* zterminals_new(zterminals* obj,
-			  zdevice* dev,			/* device object */
-			  unsigned int num_term,	/* number of terminals */
-			  double x,			/* base coordinate */
-			  double y,			/* base coordinate */
-			  double width,			/* width */
-			  double height,		/* height */
-			  double ang,			/* orientation angle */
-			  const char* links)		/* links */
+zgenerics* zterminals_new_with_annot(zterminals* obj,
+				     zdevice* dev,			/* device object */
+				     unsigned int num_term,		/* number of terminals */
+				     double x,				/* base coordinate */
+				     double y,				/* base coordinate */
+				     double width,			/* width */
+				     double height,			/* height */
+				     double ang,			/* orientation angle */
+				     const char* annot,			/* annotation prefix */
+				     const char* links)			/* links */
 {
     int _i;
 
@@ -69,6 +70,15 @@ zgenerics* zterminals_new(zterminals* obj,
     else
 	obj->term_links[0] = '\0';
 
+    if(annot)
+	{
+	    memset(obj->term_annot, 0, ZTERMINAL_NUM_SZ);
+	    strncpy(obj->term_annot, annot, ZTERMINAL_NUM_SZ-1);
+	    obj->term_annot[ZTERMINAL_NUM_SZ-1] = '\0';
+	}
+    else
+	obj->term_annot[0] = '\0';
+
     /* create coordinate array */
     obj->x_links = (double*) calloc(num_term, sizeof(double));
     obj->y_links = (double*) calloc(num_term, sizeof(double));
@@ -82,7 +92,10 @@ zgenerics* zterminals_new(zterminals* obj,
 	    zgeneric_set_collection_pointer(obj->parent.generics_s[_i], (void*) obj);
 
 	    /* Set terminal number */
-	    zterminal_set_terminal_number(Z_TERMINAL(obj->parent.generics_s[_i]), _i+1);
+	    if(obj->term_annot[0] != '\0')
+		zterminal_set_terminal_number_with_annot(Z_TERMINAL(obj->parent.generics_s[_i]), _i+1, obj->term_annot);
+	    else
+		zterminal_set_terminal_number(Z_TERMINAL(obj->parent.generics_s[_i]), _i+1);
 
 	    zbase_set_base_coords(Z_BASE(obj->parent.generics_s[_i]),
 				  ang==90.0? x : x + (double) _i * width,
@@ -102,7 +115,7 @@ zgenerics* zterminals_new(zterminals* obj,
 	    obj->y_links[_i] = ang==90.0? y + (double) _i * width + width / 2 : y + 3 * height / 4;
 
 	}
-    
+
     /* set function pointers of parent object */
     zgeneric_set_draw(obj, _zterminals_draw);
     zgeneric_set_delete_callback(obj, _zterminals_delete);
@@ -138,6 +151,8 @@ void zterminals_delete(zterminals* obj)
 
     ZGENERIC_INIT_VTABLE(obj);
 
+    memset(obj->term_annot, 0, ZTERMINAL_NUM_SZ);
+    memset(obj->term_links, 0, ZTERMINALS_LK_SZ);
     obj->child = NULL;
     obj->x_links = NULL;
     obj->y_links = NULL;
@@ -281,7 +296,10 @@ static int _zterminals_parser(zterminals* obj)
 	    		      2 * M_PI);
 	    	    cairo_fill(_dev_c);
 	    	}
+
 	}
+    
+    cairo_stroke(_dev_c);
 
     for(_j=0; _j<_b; _j++)
 	{
