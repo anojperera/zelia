@@ -41,6 +41,8 @@
 #define ZPARSER_TERMINAL "terminal"
 #define ZPARSER_TERMINALS "terminals"
 #define ZPARSER_TERMINALS_NUM "num_terminals"
+#define ZPARSER_ETERMINALS_NUM "num_eterminals"
+#define ZPARSER_TERMINAL_ANNOT "terminal_annotation"
 #define ZPARSER_TERMINALS_LINKS "links"
 #define ZPARSER_TABLE_TCELL "cell"
 #define ZPARSER_TABLE_CELLS "cells"
