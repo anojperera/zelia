@@ -906,8 +906,9 @@ inline __attribute__ ((always_inline)) static int _create_jb_object_helper(xmlNo
 
 inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_helper(xmlNodePtr node, zgeneric* object)
 {
-    xmlChar* _nums = NULL, *_widths = NULL, *_heights = NULL, *_links = NULL;
-    int _num = 0;
+    xmlChar* _nums = NULL, *_widths = NULL, *_heights = NULL, *_links = NULL, *_enums = NULL;
+    xmlChar* _annot = NULL;
+    int _num = 0, _enum = 0;
     double _width = 0.0, _height = 0.0;
 
     xmlNodePtr _child = NULL;
@@ -917,24 +918,33 @@ inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_he
 	{
 	    if(strcmp((const char*) _child->name, ZPARSER_TERMINALS_NUM) == 0)
 		_nums = xmlNodeGetContent(_child);
+	    if(strcmp((const char*) _child->name, ZPARSER_ETERMINALS_NUM) == 0)
+		_enums = xmlNodeGetContent(_child);
 	    else if(strcmp((const char*) _child->name, ZPARSER_COLUMN_WIDTH_ATTRIB) == 0)
 		_widths = xmlNodeGetContent(_child);
 	    else if(strcmp((const char*) _child->name, ZPARSER_ROW_HEIGHT_ATTRIB) == 0)
 		_heights = xmlNodeGetContent(_child);
 	    else if(strcmp((const char*) _child->name, ZPARSER_TERMINALS_LINKS) == 0)
 		_links = xmlNodeGetContent(_child);
-
+	    else if(strcmp((const char*) _child->name, ZPARSER_TERMINAL_ANNOT) == 0)
+		_annot = xmlNodeGetContent(_child);
+	    
 	    /* break from loop if we have obtained every thing */
 	    if(_nums && _widths && _heights && _links)
 		break;
     	    _child = xmlNextElementSibling(_child);
 	}
 
-
     if(_nums)
 	{
 	    _num = atoi((const char*) _nums);
 	    xmlFree(_nums);
+	}
+
+    if(_enums)
+	{
+	    _enum = atoi((const char*) _enums);
+	    xmlFree(_enums);
 	}
 
     if(_widths)
@@ -950,23 +960,18 @@ inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_he
 	}
 
     /* check links pointer and add terminals */
+    zjb_add_with_earth_terminals(Z_JB(object),
+				 _num,
+				 _enum,
+				 _width,
+				 _height,
+				 _annot? (const char*) _annot : NULL,
+				 _links? (const char*) _links : NULL);
     if(_links)
-	{
-	    zjb_add_terminals(Z_JB(object),
-			      _num,
-			      _width,
-			      _height,
-			      (const char*) _links);
-	    xmlFree(_links);
-	}
-    else
-	{
-	    zjb_add_terminals(Z_JB(object),
-			      _num,
-			      _width,
-			      _height,
-			      NULL);
-	}
+	xmlFree(_links);
+
+    if(_annot)
+	xmlFree(_annot);
 
     return ZELIA_OK;
 }
