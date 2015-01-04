@@ -28,29 +28,6 @@
 
 #define ZELIA_XML_TSTRUCT_ALIGN 8
 
-struct _zobject
-{
-    enum _zobject_primary_type
-	{
-	    zobject_item,
-	    zobject_cols
-	} type;
-
-    union _zobject_data
-    {
-	zgeneric* _i;
-	zgenerics* _c;
-    } data;
-};
-
-struct _zparser
-{
-    unsigned int _init_flg;
-    zfile file;
-    zfile_attrib attrib;
-    zdevice device;
-    blist object_array;
-};
 
 static int _read_file(const char* temp_path, char** buff, size_t* size);
 static zelia_object_types _get_type(const char* tag_name);

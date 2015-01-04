@@ -5,6 +5,12 @@
 #ifndef _ZELIA_PARSER_H_
 #define _ZELIA_PARSER_H_
 
+#include <blist.h>
+#include "zfile.h"
+#include "zfile_attrib.h"
+#include "zgeneric.h"
+#include "zgenerics.h"
+
 #define ZPARSER_FILE "file"
 #define ZPARSER_TEMPLATE_PATH "template_path"
 #define ZPARSER_SAVE_PATH "save_path"
@@ -57,5 +63,29 @@
 #define ZPARSER_GLAND_SZ_M16 "M16"
 #define ZPARSER_GLAND_SZ_M20 "M20"
 #define ZPARSER_GLAND_SZ_M25 "M25"
+
+struct _zobject
+{
+    enum _zobject_primary_type
+	{
+	    zobject_item,
+	    zobject_cols
+	} type;
+
+    union _zobject_data
+    {
+	zgeneric* _i;
+	zgenerics* _c;
+    } data;
+};
+
+struct _zparser
+{
+    unsigned int _init_flg;
+    zfile file;
+    zfile_attrib attrib;
+    zdevice device;
+    blist object_array;
+};
 
 #endif /* _ZELIA_PARSER_H_ */
