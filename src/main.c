@@ -18,7 +18,7 @@
 #include "ztable.h"
 #include "znote.h"
 #include "znotes.h"
-
+#include "zelia_parser.h"
 
 #define Z_FILE_PATH "/home/pyrus/Prog/C++/zelia/resources/wozair_border_a4.svg"
 #define Z_FILE_SAVE_PATH "/home/pyrus/temp.svg"
@@ -38,11 +38,11 @@ int create_glands(int argc, char** argv);
 int create_note(int argc, char** argv);
 int create_jb(zfile* obj);
 
-extern int zelia_parse_file(const char* xml_path);
+extern void* zelia_xml_parse_file(const char* xml_path, void* parser);
 
 int main(int argc, char** argv)
 {
-    zelia_parse_file(Z_FILE_XML_ATTRIB_PATH);
+    zelia_xml_parse_file(Z_FILE_XML_ATTRIB_PATH, NULL);
     /* test(argc, argv); */
     return 0;
 }
