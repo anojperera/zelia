@@ -45,6 +45,7 @@ struct _zobject
 
 struct _zparser
 {
+    unsigned int _init_flg;
     zfile file;
     zfile_attrib attrib;
     zdevice device;
@@ -72,40 +73,47 @@ inline __attribute__ ((always_inline)) static int _create_jb_object_terminals_he
 inline __attribute__ ((always_inline)) static int _create_jb_object_gland_helper(xmlNodePtr node, zgeneric* object);
 
 
-int _finalise_parser(struct _zparser* parser);
 
-int zelia_parse_file(const char* xml_path);
+#define _finalise_parser zelia_xml_finalise
+
+void* zelia_xml_parse_file(const char* xml_path, void* parser);
+int zelia_xml_finalise(struct _zparser* parser);
+
 /* int zelia_parse_buffer(const char* buff, const size_t sz); */
 
 /* parse xml file and create objects */
-int zelia_parse_file(const char* xml_path)
+void* zelia_xml_parse_file(const char* xml_path, void* parser)
 {
     char* _buff = NULL;					/* buffer to hold the file contents */
     size_t _sz = 0;					/* buffer file size */
 
     xmlDocPtr _xml_doc = NULL;				/* xml document pointer */
     xmlNodePtr _root = NULL;
-
-    struct _zparser _parser;
-
+    struct _zparser* obj = NULL;
+    
     /* check arguments */
     ZCHECK_OBJ_INT(xml_path);
+    
+    if(parser == NULL)
+	{
+	    ZCONSTRUCTOR(obj, struct _zparser);
+	}
+    else
+	obj = (struct _zparser*) parser;
 
     /* read the file */
     if(_read_file(xml_path, &_buff, &_sz) != ZELIA_OK)
-	return ZELIA_PARSER_ERROR;
+	return NULL;
 
-    memset((void*) &_parser, 0, sizeof(struct _zparser));
 
     /* initialise object array */
-    blist_new(&_parser.object_array, _delete_helper);
+    blist_new(&obj->object_array, _delete_helper);
 
-    if(!zfile_new(&_parser.file))
-	return ZELIA_PARSER_ERROR;
+    if(!zfile_new(&obj->file))
+	return NULL;
 
     /* toggle the force overwrite mode */
-    zfile_toggle_overwrite(&_parser.file);
-
+    zfile_toggle_overwrite(&obj->file);
 
     /* parse the document */
     xmlInitParser();
@@ -115,27 +123,32 @@ int zelia_parse_file(const char* xml_path)
     if(_xml_doc == NULL)
 	{
 	    ZELIA_LOG_MESSAGE("zelia_xml unable to parse the document");
-	    if(_buff != NULL && _sz > 0)
-		free(_buff);
-	    _buff = NULL;
-	    _sz = 0;
-	    return ZELIA_PARSER_ERROR;
+	    goto clean_up;
 	}
 
     _root = xmlDocGetRootElement(_xml_doc);
 
-    _main_loop(xmlFirstElementChild(_root), &_parser);
-
-    _finalise_parser(&_parser);
+    _main_loop(xmlFirstElementChild(_root), obj);
+    
     xmlFreeDoc(_xml_doc);
     xmlCleanupParser();
+
+ clean_up:
 
     if(_buff != NULL && _sz > 0)
 	free(_buff);
     _buff = NULL;
     _sz = 0;
-
-    return ZELIA_OK;
+    
+    if(ZDESTRUCTOR_CHECK)
+	{
+	    _finalise_parser(obj);
+	    free(obj);
+	}
+    else
+	return obj;
+    
+    return NULL;
 }
 
 
