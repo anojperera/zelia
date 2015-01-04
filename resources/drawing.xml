@@ -70,6 +70,8 @@
     <radius>5.0</radius>
     <terminals>
       <num_terminals>5</num_terminals>
+      <num_eterminals>1</num_eterminals>
+      <terminal_annotation>EK</terminal_annotation>
       <width>10.0</width>
       <height>20.0</height>
       <links>1-2</links>
