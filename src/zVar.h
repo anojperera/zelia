@@ -189,6 +189,10 @@ typedef enum {
 #define Z_ARROW_HEIGHT2 5.0
 #define Z_ARROW_HEIGHT3 8.0
 
+#define Z_EARTH_TERMINALS_ANNOT_DEFAULT "EK"
+#define Z_EARTH_TERMINALS_EXTRA_WDITH 2.0
+#define Z_EARTH_TERMINALS_EXTRA_HEIGHT 3.0
+
 /* constructor helper */
 #define ZCONSTRUCTOR(obj, type)				\
     if((obj) == NULL)					\
@@ -205,6 +209,8 @@ typedef enum {
     ((obj->_init_flg == ZELIA_CONSTRUCTED)? 1 : 0)
 #define ZCONV_TO_POINTS(val)			\
     (Z_POINT_TO_INCHES / Z_MM_TO_INCHES) * val
+#define ZCONV_TO_MM(val)			\
+    (Z_MM_TO_INCHES / Z_POINT_TO_INCHES) * val
 
 #define ZCONV_TO_RADIANS(val)			\
     (M_PI * val / 180.0)
@@ -235,23 +241,23 @@ typedef enum {
     fprintf(stdout, "%s%s - %s line %i\n", (msg), (val), __FILE__, __LINE__)
 
 /* object conversion macros */
-#define Z_GENERIC(obj) ((obj)->super_cls)
-#define Z_GENERICS(obj) ((obj)->super_cls)
-#define Z_BASE(obj) ((zbase*) (obj)->child)
-#define Z_TCELL(obj) ((ztcell*) Z_BASE(obj)->child)
-#define Z_TCELLS(obj) ((ztcells*) (obj)->child)
-#define Z_TROW(obj) ((ztrow*) Z_BASE(obj)->child)
-#define Z_TROWS(obj) ((ztrows*) (obj)->child)
-#define Z_TABLE(obj) ((ztable*) Z_BASE(obj)->child)
-#define Z_TERMINAL(obj) ((zterminal*) Z_BASE(obj)->child)
-#define Z_TERMINALS(obj) ((zterminals*) (obj)->child)
-#define Z_GLAND(obj) ((zgland*) Z_BASE(obj)->child)
-#define Z_GLANDS(obj) ((zglands*) (obj)->child)
-#define Z_JB(obj) ((zjb*) Z_BASE(obj)->child)
-#define Z_NOTE(obj) ((znote*) Z_BASE(obj)->child)
-#define Z_NOTES(obj) ((znotes*) (obj)->child)
-#define Z_ARROW(obj) ((zarrow*) Z_BASE(obj)->child)
-#define Z_LEADER(obj) ((zleader*) Z_ARROW(obj)->child)
-#define Z_LABEL(obj) ((zlabel*) Z_BASE(obj)->child)
+#define Z_GENERIC(obj) ((obj)? (obj)->super_cls : NULL)
+#define Z_GENERICS(obj) ((obj)? (obj)->super_cls : NULL)
+#define Z_BASE(obj) ((obj)? (zbase*) (obj)->child : NULL)
+#define Z_TCELL(obj) ((obj)? (ztcell*) Z_BASE(obj)->child : NULL)
+#define Z_TCELLS(obj) ((obj)? (ztcells*) (obj)->child : NULL)
+#define Z_TROW(obj) ((obj)? (ztrow*) Z_BASE(obj)->child: NULL)
+#define Z_TROWS(obj) ((obj)? (ztrows*) (obj)->child : NULL)
+#define Z_TABLE(obj) ((obj)? (ztable*) Z_BASE(obj)->child : NULL)
+#define Z_TERMINAL(obj) ((obj)? (zterminal*) Z_BASE(obj)->child : NULL)
+#define Z_TERMINALS(obj) ((obj)? (zterminals*) (obj)->child : NULL)
+#define Z_GLAND(obj) ((obj)? (zgland*) Z_BASE(obj)->child : NULL)
+#define Z_GLANDS(obj) ((obj)? (zglands*) (obj)->child : NULL)
+#define Z_JB(obj) ((obj)? (zjb*) Z_BASE(obj)->child : NULL)
+#define Z_NOTE(obj) ((obj)? (znote*) Z_BASE(obj)->child : NULL)
+#define Z_NOTES(obj) ((obj)? (znotes*) (obj)->child : NULL)
+#define Z_ARROW(obj) ((obj)? (zarrow*) Z_BASE(obj)->child : NULL)
+#define Z_LEADER(obj) ((obj)? (zleader*) Z_ARROW(obj)->child : NULL)
+#define Z_LABEL(obj) ((obj)? (zlabel*) Z_BASE(obj)->child : NULL)
 
 #endif /* __ZVAR__ */
