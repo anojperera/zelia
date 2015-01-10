@@ -31,9 +31,6 @@ zgeneric* zterminal_new(zterminal* obj)
     obj->term_num[0] = '1';				/* set terminal number to 1 */
     obj->term_num[1] = '\0';
 
-    /* initialise the vtable */
-    ZGENERIC_INIT_VTABLE(obj);
-
     /* set drawing pointer */
     zgeneric_set_draw(obj, _zterminal_draw_function);
     zgeneric_set_delete_callback(obj, _zterminal_delete);
@@ -50,12 +47,6 @@ void zterminal_delete(zterminal* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* delete parent object */
     zgeneric_block_parent_destructor(obj);
     zbase_delete(&obj->parent);
@@ -63,7 +54,6 @@ void zterminal_delete(zterminal* obj)
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
@@ -132,8 +122,6 @@ static int _zterminal_draw_function(void* obj)
     zgeneric* _zg;
     zterminal* _self;
 
-    int _rt = ZELIA_OK;
-
     ZCHECK_OBJ_INT(obj);
 
     _zg = (zgeneric*) obj;
@@ -141,13 +129,8 @@ static int _zterminal_draw_function(void* obj)
     _self = Z_TERMINAL(_zg);
 
     /* call draw function */
-    _rt = zterminal_draw(_self);
+    return zterminal_draw(_self);
 
-    /* Check for child function pointer and call */
-    if(_self->vtable.zgeneric_draw)
-	return _self->vtable.zgeneric_draw(obj);
-    else
-	return _rt;
 }
 
 static int _zterminal_delete(void* obj)

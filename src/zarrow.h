@@ -20,7 +20,6 @@ struct _zarrow
     zArrowTypes arrow_type;			/* arrow head type */
     unsigned int fill_flg;			/* flag to indicate fill arrow */
 
-    struct _zgeneric_vtable vtable;		/* vtable */
     zgeneric* super_cls;			/* super class pointer */
     void* child;				/* child pointer */
 };

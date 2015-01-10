@@ -42,7 +42,6 @@ zgenerics* ztcells_new(ztcells* obj,				/* Optional argument */
     obj->height = row_height;
 	
     obj->child = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
     
     /* Create object array */
     for(_i=0; _i<num_col; _i++)
@@ -98,20 +97,12 @@ void ztcells_delete(ztcells* obj)
     /* check object */
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* call delete method of parent object */
     zgeneric_block_parent_destructor(obj);
     zgenerics_delete(&obj->parent);
 
-
     obj->child = NULL;
     obj->super_cls = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* if the object was created we free it */
     if(ZDESTRUCTOR_CHECK)

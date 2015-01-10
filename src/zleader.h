@@ -25,7 +25,6 @@ struct _zleader
 
     char content[ZLEADER_DESC_BUFF];				/* leader description / content */
 
-    struct _zgeneric_vtable vtable;				/* vtable */
     void* child;						/* child pointer */
     zgeneric* super_cls;					/* super class pointer */
 };

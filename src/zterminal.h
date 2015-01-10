@@ -25,7 +25,6 @@ struct _zterminal
     char term_num[ZTERMINAL_NUM_SZ];	/* terminal number */
     int term_cnt;			/* terminal counter */
 
-    struct _zgeneric_vtable vtable;	/* vtable */
     zgeneric* super_cls;		/* super class pointer */
     void* child;			/* child pointer */
 };

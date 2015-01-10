@@ -29,9 +29,6 @@ zgeneric* ztable_new(ztable* obj)
     obj->col_widths = NULL;
     obj->child = NULL;
 
-    /* initialise vtable */
-    ZGENERIC_INIT_VTABLE(obj);
-
     /* set drawing pointer */
     zgeneric_set_draw(obj, _ztable_draw);
     zgeneric_set_delete_callback(obj, _ztable_delete);
@@ -50,16 +47,9 @@ void ztable_delete(ztable* obj)
     /* Check object */
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* delete parent */
     zgeneric_block_parent_destructor(obj);
     zbase_delete(&obj->parent);
-
 
     /* call to delete row collection */
     if(obj->arr_flg)
@@ -70,7 +60,6 @@ void ztable_delete(ztable* obj)
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* if object was internally created
      * delete it */
@@ -259,22 +248,13 @@ int ztable_set_column_width(ztable* obj,
 /* Virtual draw method */
 static int _ztable_draw(void* obj)
 {
-    int _rt = ZELIA_OK;
     zgeneric* _zg;
-    ztable* _self;
     
     ZCHECK_OBJ_INT(obj);
 
     _zg = (zgeneric*) obj;
-    _self = Z_TABLE(_zg);
     
-    _rt = ztable_draw(_self);
-
-    /* if the callback pointer of child class set, call it */
-    if(_self->vtable.zgeneric_draw)
-	return _self->vtable.zgeneric_draw(obj);
-
-    return _rt;
+    return ztable_draw(Z_TABLE(_zg));
 }
 
 static int _ztable_delete(void* obj)

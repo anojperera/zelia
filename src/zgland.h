@@ -21,8 +21,6 @@ struct _zgland
     double dia;					/* diameter */
     zGlandSize gland_size;			/* gland size */
 
-
-    struct _zgeneric_vtable vtable;
     void* child;				/* child object */
     zgeneric* super_cls;			/* super class pointer */
 };

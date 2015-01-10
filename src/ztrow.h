@@ -25,7 +25,6 @@ struct _ztrow
     unsigned int arr_flg;				/* Array created flag */
     unsigned int ix;					/* Row index */
 
-    struct _zgeneric_vtable vtable;			/* vtable */
     zgeneric* super_cls;				/* super class  pointer */
     void* child;					/* Child pointer */
 };

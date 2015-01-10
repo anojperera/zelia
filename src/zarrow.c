@@ -29,7 +29,6 @@ zgeneric* zarrow_new(zarrow* obj)
     obj->fill_flg = 1;				/* fill arrow head */
     obj->child = NULL;
 
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* Assign function pointer of parent object */
     zgeneric_set_draw(obj, _zarrow_draw);
@@ -48,19 +47,12 @@ void zarrow_delete(zarrow* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* call destructor of base object */
     zgeneric_block_parent_destructor(obj);
     zbase_delete(&obj->parent);
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
@@ -172,20 +164,13 @@ int zarrow_draw(zarrow* obj)
 /* Draw method */
 static int _zarrow_draw(void* obj)
 {
-    int rt_val;
     zgeneric* _zg = NULL;
-    zarrow* _za = NULL;
 
     ZCHECK_OBJ_INT(obj);
 
     _zg = (zgeneric*) obj;
-    _za = Z_ARROW(_zg);
 
-    rt_val = zarrow_draw(Z_ARROW(_zg));
-    if(_za->vtable.zgeneric_draw)
-	return _za->vtable.zgeneric_draw(obj);
-    else
-	return rt_val;
+    return zarrow_draw(Z_ARROW(_zg));
 }
 
 static int _zarrow_delete(void* obj)

@@ -59,8 +59,6 @@ zgenerics* zterminals_new_with_annot(zterminals* obj,
     obj->links_flg = 0;
     obj->child = NULL;
 
-    ZGENERIC_INIT_VTABLE(obj);
-
     if(links)
 	{
 	    strcpy(obj->term_links, links);
@@ -136,20 +134,12 @@ void zterminals_delete(zterminals* obj)
     /* check object */
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete(obj->super_cls);
-	    return;
-	}
-
     /* call delete method of parent object */
     zgeneric_block_parent_destructor(obj);
     zgenerics_delete(&obj->parent);
 
     free(obj->x_links);
     free(obj->y_links);
-
-    ZGENERIC_INIT_VTABLE(obj);
 
     memset(obj->term_annot, 0, ZTERMINAL_NUM_SZ);
     memset(obj->term_links, 0, ZTERMINALS_LK_SZ);

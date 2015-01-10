@@ -26,7 +26,6 @@ zgenerics* zglands_new(zglands* obj)
 
     /* set properties */
     obj->child = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* set function pointers of parent object */
     zgeneric_set_draw(obj, _zglands_draw);
@@ -44,12 +43,6 @@ void zglands_delete(zglands* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* Call delete method of parent object */
     zgeneric_block_parent_destructor(obj);
     zgenerics_delete(&obj->parent);
@@ -57,7 +50,6 @@ void zglands_delete(zglands* obj)
 
     obj->child = NULL;
     obj->super_cls = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     if(ZDESTRUCTOR_CHECK)
 	free(obj);

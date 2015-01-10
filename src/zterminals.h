@@ -41,7 +41,6 @@ struct _zterminals
     double* x_links;					/* link coordinates array */
     double* y_links;					/* link coordinates array */
 
-    struct _zgeneric_vtable vtable;			/* vtable */
     zgenerics* super_cls;				/* super class pointer */
     void* child;					/* child class pointer */
 };

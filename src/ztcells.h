@@ -25,7 +25,6 @@ struct _ztcells
     double width;					/* Column width */
     double height;					/* Row height */
 
-    struct _zgeneric_vtable vtable;			/* vtable for delete, draw and new function pointers */
 
     zgenerics* super_cls;				/* super class pointer */
     void* child;					/* Child pointer */

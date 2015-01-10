@@ -29,8 +29,6 @@ zgeneric* ztrow_new(ztrow* obj, unsigned int ix)
     obj->ix = ix;
 
     /* Set function and child pointer of parent object */
-    /* initialise vtable */
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* set parent objects function pointers */
     zgeneric_set_draw(obj, _ztrow_draw);
@@ -48,21 +46,12 @@ void ztrow_delete(ztrow* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    /* if the destructor callback was set call it */
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* delete parent object */
     zgeneric_block_parent_destructor(obj);
     zbase_delete(&obj->parent);
 
     obj->super_cls = NULL;
     obj->child = NULL;
-
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* if tcells was created destroy */
     if(obj->arr_flg)
@@ -182,7 +171,6 @@ ztcell* ztrow_get_cell(ztrow* obj, unsigned int ix)
 /* Virtual draw method */
 static int _ztrow_draw(void* obj)
 {
-    int _rt = ZELIA_OK;
     zgeneric* _zg = NULL;
     ztrow* _self = NULL;
 
@@ -190,13 +178,8 @@ static int _ztrow_draw(void* obj)
 
     _zg = (zgeneric*) obj;
     _self = Z_TROW(_zg);
-    _rt =  ztrow_draw(_self);
-
-    /* if child pointer draw callback was set we call it */
-    if(_self->vtable.zgeneric_draw)
-	return _self->vtable.zgeneric_draw(obj);
-
-    return _rt;
+    
+    return ztrow_draw(_self);
 }
 
 static int _ztrow_delete(void* obj)

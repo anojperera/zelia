@@ -27,7 +27,6 @@ struct _ztable
     unsigned int num_cols;				/* Number of colums */
     double* col_widths;					/* Column width array */
 
-    struct _zgeneric_vtable vtable;
     zgeneric* super_cls;
     void* child;					/* Child pointer */
 };

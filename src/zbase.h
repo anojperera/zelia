@@ -25,7 +25,6 @@ struct _zbase
     double thk;					/* thickness of material */
     unsigned int prj_flg;			/* projected flag */
 
-    struct _zgeneric_vtable vtable;		/* vtable for update draw, delete and new */
     zgeneric* super_cls;			/* super class (in this case it will be the parent */
     void* child;				/* child pointer */
 };

@@ -55,7 +55,6 @@ zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
     obj->glands = NULL;
 
     obj->child = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* Assign function pointer of parent object */
     zgeneric_set_draw(obj, _zjb_draw);
@@ -72,12 +71,6 @@ zgeneric* zjb_new(zjb* obj,				/* optional NULL pointer */
 void zjb_delete(zjb* obj)
 {
     ZCHECK_OBJ_VOID(obj);
-
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
 
     /* Call parent destructor */
     zgeneric_block_parent_destructor(obj);
@@ -103,8 +96,6 @@ void zjb_delete(zjb* obj)
     obj->glands = NULL;
     obj->child = NULL;
     obj->super_cls = NULL;
-
-    ZGENERIC_INIT_VTABLE(obj);
 
     if(ZDESTRUCTOR_CHECK)
 	free(obj);
@@ -314,7 +305,6 @@ int zjb_add_glands(zjb* obj,
 
 static int _zjb_draw(void* obj)
 {
-    int _rt;
     zgeneric* _zg = NULL;
     zjb* _zjb = NULL;
 
@@ -324,12 +314,8 @@ static int _zjb_draw(void* obj)
 
     _zjb = Z_JB(_zg);
 
-    _rt = zjb_draw(_zjb);
+    return zjb_draw(_zjb);
 
-    if(_zjb->vtable.zgeneric_draw)
-	return _zjb->vtable.zgeneric_draw(obj);
-
-    return _rt;
 }
 
 static int _zjb_delete(void* obj)

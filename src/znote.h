@@ -31,7 +31,6 @@ struct _znote
     size_t note_sz;			/* Note length */
     size_t obj_sz;			/* Object size */
 
-    struct _zgeneric_vtable vtable;	/* vtable */
     znote_fptr height_func;		/* Inform function pointer */
     void* usr_data;			/* User data */
     void* cols;				/* collection object pointer */

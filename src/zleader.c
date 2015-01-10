@@ -69,19 +69,16 @@ void zleader_delete(zleader* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    ZGENERIC_INIT_VTABLE(obj);
-
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* call destructor of base object */
     zgeneric_block_parent_destructor(obj);
     zarrow_delete(&obj->parent);
     
     obj->child = NULL;
+    obj->super_cls = NULL;
+
+    if(ZDESTRUCTOR_CHECK)
+	free(obj);
+    
     return;
 }
 
@@ -106,6 +103,8 @@ int zleader_draw(zleader* obj)
     ZCHECK_OBJ_INT(_dev_c);
 
     ZELIA_LOG_MESSAGE("zleader start drawing");
+
+    zarrow_draw(Z_ARROW(obj->super_cls));
     
     /* Check if the angle is greater than zero.
      * If the angle is greater than zero, save cairo context
@@ -198,19 +197,11 @@ int zleader_draw(zleader* obj)
 static int _zleader_draw(void* obj)
 {
     zgeneric* _zg = NULL;
-    zleader* _zl = NULL;
-    int rt_val;
 
     ZCHECK_OBJ_INT(obj);
     _zg = (zgeneric*) obj;
 
-    rt_val = zleader_draw(Z_LEADER(_zg));
-    _zl = Z_LEADER(_zg);
-
-    if(_zl->vtable.zgeneric_draw)
-	return _zl->vtable.zgeneric_draw(obj);
-    else
-	return rt_val;
+    return  zleader_draw(Z_LEADER(_zg));
 }
 
 

@@ -17,8 +17,6 @@ struct _ztrows
     zgenerics parent;					/* Inherited parent object */
     unsigned int _init_flg;				/* Internal flag */
     
-    struct _zgeneric_vtable vtable;			/* vtable */
-    
     zgenerics* super_cls;				/* super class */
     void* child;					/* Child pointer */
 };

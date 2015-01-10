@@ -27,8 +27,6 @@ struct _ztcell
     unsigned int _col_ix;				/* Internal column index */
     unsigned int line_flg;				/* Line flag */
 
-    struct _zgeneric_vtable vtable;			/* vtable for update draw, delete and new */
-
     zgeneric* super_cls;
     void* child;					/* Child pointer */
 };

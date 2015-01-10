@@ -45,7 +45,6 @@ zgeneric* znote_new(znote* obj)
     obj->usr_data = NULL;
     obj->cols = NULL;
     obj->child = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* Set child and function pointers of parent object */
     zgeneric_set_draw(obj, _znote_draw);
@@ -63,21 +62,15 @@ void znote_delete(znote* obj)
 {
     ZCHECK_OBJ_VOID(obj);
 
-    if(obj->vtable.zgeneric_delete)
-	{
-	    obj->vtable.zgeneric_delete((void*) obj->super_cls);
-	    return;
-	}
-
     /* Call destructor of parent object */
     zgeneric_block_parent_destructor(obj);
     zbase_delete(&obj->parent);
-
 
     if(obj->note)
 	free(obj->note);
     if(obj->fnote)
 	free(obj->note);
+    
     obj->note = NULL;
     obj->fnote = NULL;
     obj->super_cls = NULL;
@@ -85,7 +78,6 @@ void znote_delete(znote* obj)
     obj->cols = NULL;
     obj->usr_data = NULL;
     obj->height_func = NULL;
-    ZGENERIC_INIT_VTABLE(obj);
 
     /* If object was internally created free it */
     if(ZDESTRUCTOR_CHECK)
