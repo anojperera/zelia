@@ -162,6 +162,7 @@ extern "C" {
     (obj)->parent.vtable.zgeneric_draw = (callback)
 #define zgeneric_set_device_auth_default_callback(obj, callback)	\
     (obj)->parent.vtable.zgeneric_auth_default_device = (callback)
+    
     /* helper macro for setting the child pointer */
 #define zgeneric_set_child_pointer(obj)		\
     (obj)->parent.child = (void*) (obj)
