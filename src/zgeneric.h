@@ -41,7 +41,7 @@ struct _zgeneric
     unsigned int def_dev_ctxt_flg;		/* defulat device context set */
     unsigned int ref_flg;			/* reference flag */
     zdevice* gdev;				/* primary device */
-    
+
     zgeneric* super_cls;			/* pointer to itself */
     void* cols;					/* pointer this objects collection */
     void* child;				/* child sheet object */
@@ -155,14 +155,14 @@ extern "C" {
 
     /* helper macros for setting function pointers */
 #define zgeneric_set_new_callback(obj, callback)	\
-    (obj)->parent.vtable.zgeneric_new = (callback)
-#define zgeneric_set_delete_callback(obj, callback)	\
-    (obj)->parent.vtable.zgeneric_delete = (callback)
+    (obj)->super_cls->vtable.zgeneric_new = (callback)
+#define zgeneric_set_delete_callback(obj, callback)		\
+    (obj)->super_cls->vtable.zgeneric_delete = (callback)
 #define zgeneric_set_draw(obj, callback)		\
-    (obj)->parent.vtable.zgeneric_draw = (callback)
+    (obj)->super_cls->vtable.zgeneric_draw = (callback)
 #define zgeneric_set_device_auth_default_callback(obj, callback)	\
-    (obj)->parent.vtable.zgeneric_auth_default_device = (callback)
-    
+    (obj)->super_cls->vtable.zgeneric_auth_default_device = (callback)
+
     /* helper macro for setting the child pointer */
 #define zgeneric_set_child_pointer(obj)		\
     (obj)->parent.child = (void*) (obj)
@@ -174,9 +174,9 @@ extern "C" {
 
     /* helper macro to indicate parent called the destructor */
 #define zgeneric_called_by_parent(obj)					\
-    ((obj)->parent.vtable.zgeneric_delete? ZELIA_OK : ZELIA_NULL)
-#define zgeneric_block_parent_destructor(obj)	\
-    (obj)->parent.vtable.zgeneric_delete = NULL
+    ((obj)->super_cls->vtable.zgeneric_delete? ZELIA_OK : ZELIA_NULL)
+#define zgeneric_block_parent_destructor(obj)		\
+    (obj)->super_cls->vtable.zgeneric_delete = NULL
 
 #define zgeneric_toggle_ref_flg(obj)		\
     if((obj)->ref_flg > 0)			\
@@ -186,7 +186,7 @@ extern "C" {
 
 #define zgeneric_get_ref_flg(obj)		\
     (obj)->ref_flg
-    
+
 #ifdef __cplusplus
 }
 #endif
