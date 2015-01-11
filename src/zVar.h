@@ -234,11 +234,11 @@ typedef enum {
 	return 0.0
 
 #define ZELIA_LOG_MESSAGE(msg)			\
-    fprintf(stdout, "%s - %s line %i\n", (msg), __FILE__, __LINE__)
+    fprintf(stdout, "[%s %s] %s - %s line %i\n", __DATE__, __TIME__, (msg), __FILE__, __LINE__)
 #define ZELIA_LOG_MESSAGE_WITH_INT(msg, val)	\
-    fprintf(stdout, "%s%i - %s line %i\n", (msg), (val), __FILE__, __LINE__)
+    fprintf(stdout, "[%s %s] %s%i - %s line %i\n", __DATE__, __TIME__, (msg), (val), __FILE__, __LINE__)
 #define ZELIA_LOG_MESSAGE_WITH_STR(msg, val)	\
-    fprintf(stdout, "%s%s - %s line %i\n", (msg), (val), __FILE__, __LINE__)
+    fprintf(stdout, "[%s %s] %s%s - %s line %i\n", __DATE__, __TIME__, (msg), (val), __FILE__, __LINE__)
 
 /* object conversion macros */
 #define Z_GENERIC(obj) ((obj)? (obj)->super_cls : NULL)

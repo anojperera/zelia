@@ -1,8 +1,15 @@
 #!/bin/bash
-gcc -g -Wall -pg -O0 -pedantic -o zelia main.c zelia_xml.c zfile.c zfile_attrib.c \
-    zbase.c zdevice.c zgeneric.c zgenerics.c zgland.c zglands.c \
-    zjb.c znote.c znotes.c ztable.c ztcell.c ztcells.c zterminal.c \
-    zterminals.c ztrow.c ztrows.c zarrow.c zleader.c zlabel.c -D_GNU_SOURCE \
+# make shared object
+# creating shared object
+gcc -g -Wall -O0 -fPIC -pedantic -c *.c -D_GNU_SOURCE -I/usr/include/libxml2/ `pkg-config --cflags gtk+-2.0`
+rm main.o
+mv *.o ../bin/
+gcc -shared -Wl,-soname,libzelia.so -o ../bin/libzelia.so.1.0.1 ../bin/*.o
+rm ../bin/*.o
+
+gcc -g -Wall -pg -O0 -pedantic -o ../bin/zelia main.c -L/home/pyrus/Prog/C++/zelia/bin/ -lzelia \
     -I/usr/include/libxml2/ `pkg-config --cflags --libs gtk+-2.0` \
     -lxml2 -lalist
+echo "complete"
+
 exit 0
