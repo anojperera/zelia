@@ -128,9 +128,9 @@
     <x>240.0</x>
     <y>200.0</y>
   </label>
-  <!-- <label> -->
-  <!--   <template_path>/home/pyrus/Prog/C++/zelia/resources/images/tag_plate_eng.svg</template_path> -->
-  <!--   <x>340.0</x> -->
-  <!--   <y>200.0</y> -->
-  <!-- </label> -->
+  <label>
+    <template_path>/home/pyrus/Prog/C++/zelia/resources/images/tag_plate_eng.svg</template_path>
+    <x>340.0</x>
+    <y>200.0</y>
+  </label>
 </zelia>
