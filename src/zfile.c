@@ -627,7 +627,7 @@ char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz)
 
     *sz = tmp_stat.st_size+1;
     *buff = (char*) malloc(tmp_stat.st_size+1);
-
+    memset(*buff, 0, *sz);
     if(!read(r_fd, (void*) *buff, tmp_stat.st_size))
 	{
 	    ZELIA_LOG_MESSAGE("zfile unable to read the file");
