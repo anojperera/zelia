@@ -598,7 +598,9 @@ static int _zfile_find_node_by_name(xmlDocPtr doc, const char* name, xmlNodePtr*
 char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz)
 {
     int r_fd = 0;
-    struct stat tmp_stat;								/* struct for holding the template file stat */    
+    struct stat tmp_stat;								/* struct for holding the template file stat */
+    ssize_t _rd_sz = 0;
+    char* _buff_t = NULL;
     
     ZELIA_LOG_MESSAGE_WITH_STR("zfile check file exist ", file_path);
     if(access(file_path, F_OK))
@@ -627,16 +629,22 @@ char* _zfile_read_contents(const char* file_path, char** buff, size_t* sz)
 
     *sz = tmp_stat.st_size+1;
     *buff = (char*) malloc(tmp_stat.st_size+1);
-    memset(*buff, 0, *sz);
-    if(!read(r_fd, (void*) *buff, tmp_stat.st_size))
+    _rd_sz = read(r_fd, (void*) *buff, tmp_stat.st_size);
+    if(_rd_sz <= 0)
 	{
 	    ZELIA_LOG_MESSAGE("zfile unable to read the file");
 	    free(*buff);
+	    *buff = NULL;
+	    *sz = 0;
 	    close(r_fd);
 
 	    return NULL;
 	}
-
+    
+    /* NULL terminate buffer */
+    _buff_t = *buff + _rd_sz;
+    *_buff_t = '\0';
+    
     /* close the file descriptor */
     close(r_fd);
     ZELIA_LOG_MESSAGE("zfile file read and loaded in to temporary buffer");
